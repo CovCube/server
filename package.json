@@ -1,0 +1,40 @@
+{
+  "name": "cube2_server",
+  "version": "1.0.0",
+  "description": "The Cube Server of the Anti Corona Platform of TU Dresden.",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "preserve": "npm run build",
+    "serve": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -q dist/index.js\"",
+    "prestart": "npm run build",
+    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArcticFall/cube2_server.git"
+  },
+  "author": "ArcticFall",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ArcticFall/cube2_server/issues"
+  },
+  "homepage": "https://github.com/ArcticFall/cube2_server#readme",
+  "dependencies": {
+    "@types/body-parser": "^1.19.0",
+    "@types/express": "^4.17.12",
+    "@types/node": "^16.0.0",
+    "body-parser": "^1.19.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.3.5"
+  },
+  "devDependencies": {
+    "concurrently": "^6.2.0",
+    "nodemon": "^2.0.9"
+  }
+}
