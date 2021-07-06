@@ -3,12 +3,14 @@ import bodyParser from "body-parser";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import {Pool} from "pg";
+import {setupDB} from "./utils/db_utils";
 import {router as apiRoutes} from "./api/api";
 
 //Parse environment variables
 dotenv.config();
 //Connect to database
 export const pool: Pool = new Pool();
+setupDB();
 //Create express app
 const PORT = process.env.PORT || 3000;
 const app: Express = express();
