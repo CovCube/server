@@ -1,0 +1,348 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Cube-Server API",
+    "description": "This is the API of the Cube Server",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/cubes": {
+      "get": {
+        "summary": "shows list of registered cubes",
+        "description": "returns all registered cubes in the system.",
+        "responses": {
+          "200": {
+            "description": "returned cube list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Cube"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "adds cube",
+        "description": "create cube on the server",
+        "requestBody": {
+          "description": "cube data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cube"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cube"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cubes/{cubeId}": {
+      "get": {
+        "summary": "shows details about a registered cube",
+        "description": "returns specified cube with details",
+        "parameters": [
+          {
+            "name": "cubeId",
+            "in": "path",
+            "description": "alphanumeric id of the cube to get",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "returned cube",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cube"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "cube with specified ID was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "cube with ID {id} was not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "update a registered cube",
+        "description": "updates specified cubes details",
+        "parameters": [
+          {
+            "name": "cubeId",
+            "in": "path",
+            "description": "alphanumeric id of the cube to update",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "cube data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cube"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "returned cube",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cube"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "cube with specified ID was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "cube with ID {id} was not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "delete a registered cube",
+        "description": "delete the specified cube",
+        "parameters": [
+          {
+            "name": "cubeId",
+            "in": "path",
+            "description": "alphanumeric id of the cube to update",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "deleted cube",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cube"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "cube with specified ID was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "cube with ID {id} was not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data": {
+      "post": {
+        "summary": "get sensor data",
+        "description": "get sensor data of a specified sensor type in a specified sensor timeframe",
+        "requestBody": {
+          "description": "request data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "returned sensor data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SensorData"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "sensor data of provided type was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "sensor data of type {type} was not found"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid input provided",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "[\"the provided sensor type does not exist\",\"there was an error with the provided timeframe\"]"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Cube": {
+        "required": [
+          "id",
+          "location"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "location": {
+            "type": "string",
+            "example": "APB/Floor0/Room023"
+          }
+        }
+      },
+      "DateTime": {
+        "required": [
+          "date",
+          "time"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SensorType": {
+        "type": "string",
+        "enum": [
+          "nfc",
+          "air"
+        ]
+      },
+      "SensorData": {
+        "required": [
+          "cube_id",
+          "date_time",
+          "location",
+          "sensor_data",
+          "sensor_type"
+        ],
+        "type": "object",
+        "properties": {
+          "sensor_type": {
+            "$ref": "#/components/schemas/SensorType"
+          },
+          "cube_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "location": {
+            "type": "string",
+            "example": "APB/Floor0/Room023"
+          },
+          "date_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sensor_data": {
+            "type": "string"
+          }
+        }
+      },
+      "body": {
+        "required": [
+          "end_date_time",
+          "sensor_type",
+          "start_date_time"
+        ],
+        "type": "object",
+        "properties": {
+          "sensor_type": {
+            "$ref": "#/components/schemas/SensorType"
+          },
+          "start_date_time": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "end_date_time": {
+            "$ref": "#/components/schemas/DateTime"
+          }
+        }
+      }
+    }
+  }
+}
