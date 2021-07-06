@@ -2,14 +2,16 @@ import express, { Express, Request, Response } from "express";
 import bodyParser from "body-parser";
 import helmet from "helmet";
 import dotenv from "dotenv";
+import {Pool} from "pg";
 import {router as apiRoutes} from "./api/api";
 
 //Parse environment variables
 dotenv.config();
+//Connect to database
+export const pool: Pool = new Pool();
 //Create express app
 const PORT = process.env.PORT || 3000;
 const app: Express = express();
-//const index = require('./routes/index')
 
 //Add middleware
 app.use(helmet());
