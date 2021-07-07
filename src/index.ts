@@ -10,9 +10,11 @@ import {router as apiRoutes} from "./api/api";
 
 //Parse environment variables
 dotenv.config();
+
 //Connect to database
 export const pool: Pool = new Pool();
 setupDB();
+
 //Connect to MQTT broker
 let mqttUrl = process.env.MQTTURL || 'mqtt://test.mosquitto.org';
 let mqttPort = parseInt(process.env.MQTTPORT || '1883');
@@ -22,6 +24,7 @@ mqttClient.on('connect', function() {
     console.log('Connected to MQTT server.');
     setupMQTT();
 });
+
 //Create express app
 const PORT = process.env.PORT || 3000;
 const app: Express = express();
