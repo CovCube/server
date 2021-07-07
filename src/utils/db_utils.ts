@@ -29,3 +29,11 @@ export function setupDB(): void {
                 });
         });
 }
+
+export function persistCube(cubeId: String, location: String, sensors: Array<String>, actuators: Array<String>) {
+    
+}
+
+export function persistSensorData(sensorType: String, cubeId: String, timestamp: Date, data: String) {
+
+}
