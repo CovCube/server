@@ -7,7 +7,7 @@ const topics: ISubscriptionMap = {
     'init/#': {qos: 2},
 }
 
-export function setupMQTT() {
+export function setupMQTT(): void {
 
     //Set event listeners
     mqtt.on('reconnect', () => logMQTTEvent('Reconnect'));
@@ -34,14 +34,14 @@ export function setupMQTT() {
     });
 }
 
-function logMQTTEvent(event: string, options: Array<any> = []) {
+function logMQTTEvent(event: string, options: Array<any> = []): void {
     console.log(`Event emitted: ${event}`);
     options.forEach(value => {
         console.log(value);
     });
 }
 
-function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: IPublishPacket) {
+function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: IPublishPacket): void {
     let message: string = messageBuffer.toString();
     let topic: Array<string> = topicString.split('/');
 
@@ -57,10 +57,10 @@ function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: I
     }
 }
 
-function handleSensorData(topic: Array<string>, message: string) {
+function handleSensorData(topic: Array<string>, message: string): void {
     persistSensorData(topic[1], topic[2], new Date(), message)
 }
 
-function handleInitMessage(topic: Array<string>, message: string) {
+function handleInitMessage(topic: Array<string>, message: string): void {
 
 }

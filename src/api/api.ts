@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+import express, { Router, Request, Response } from "express";
 import path from 'path';
 import {router as cubesRoute} from "./cubes";
 import {router as dataRoute} from "./data";
@@ -11,6 +11,6 @@ router.use('/cubes', cubesRoute);
 router.use('/data', dataRoute);
 
 //Handle root to display frontend
-router.get('/', (req, res) => {
+router.get('/', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../public/api_docs.json'))
 });

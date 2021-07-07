@@ -18,22 +18,22 @@ export function setupDB(): void {
                             console.log("Successfully created sensor_data table.")
                             client.release();
                         })
-                        .catch(err => {
+                        .catch((err: Error) => {
                             client.release();
                             console.log(err.stack);
                         });
                 })
-                .catch(err => {
+                .catch((err: Error) => {
                     client.release();
                     console.log(err.stack);
                 });
         });
 }
 
-export function persistCube(cubeId: String, location: String, sensors: Array<String>, actuators: Array<String>) {
+export function persistCube(cubeId: String, location: String, sensors: Array<String>, actuators: Array<String>): void {
     
 }
 
-export function persistSensorData(sensorType: String, cubeId: String, timestamp: Date, data: String) {
+export function persistSensorData(sensorType: String, cubeId: String, timestamp: Date, data: String): void {
 
 }
