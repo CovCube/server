@@ -11,11 +11,11 @@ export function setupDB(): void {
             client
                 .query(cubes_table)
                 .then((res: QueryResult) => {
-                    console.log(res);
+                    console.log("Successfully created cubes table.");
                     client
                         .query(sensor_data_table)
                         .then((res: QueryResult) => {
-                            console.log(res);
+                            console.log("Successfully created sensor_data table.")
                             client.release();
                         })
                         .catch(err => {
