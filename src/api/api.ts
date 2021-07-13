@@ -10,7 +10,7 @@ export var router: Router = express.Router();
 router.use('/cubes', cubesRoute);
 router.use('/data', dataRoute);
 
-//Handle root to display frontend
+//Handle root to display API documentation
 router.get('/', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../public/api_docs.json'))
 });
