@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from "express";
-import { getCubes } from "../utils/db_utils";
+import { getCubes, persistCube } from "../utils/db_utils";
 import { Cube } from "../types";
 
 //Export the router
@@ -18,7 +18,27 @@ router.get('/', function(req: Request, res: Response) {
 });
 
 router.post('/', function(req: Request, res: Response) {
-    res.send(200);
+    let cubeId = req.body['cubeId'];
+    let location = req.body['location'];
+    let sensors = req.body['sensors'];
+    let actuators= req.body['actuators'];
+
+
+    persistCube(cubeId, location, sensors, actuators)
+        .then(() => {
+            res.sendStatus(201);
+        })
+        .catch ((e: Error) => {
+            console.log(e.stack);
+
+            switch (e.message) {
+                case 'duplicate key value violates unique constraint "cubes_pkey"':
+                    res.status(501).send("cubeId already exists.");
+                    break;
+                default:
+                    res.status(501).send("Database error.");
+            }
+        });
 });
 
 router.get('/:cubeId', function(req: Request, res: Response) {

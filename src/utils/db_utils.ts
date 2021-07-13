@@ -33,20 +33,26 @@ export function setupDB(): void {
         });
 }
 
-export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): void {
-    pool
+export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
+    return new Promise((resolve, reject) => {
+        pool
         .connect()
         .then((client: PoolClient) => {
             client
                 .query(persistCubeQuery, [cubeId, location, sensors, actuators])
                 .then((res: QueryResult) => {
                     client.release();
+                    resolve();
                 })
                 .catch((err: Error) => {
                     client.release();
-                    console.log(err.stack);
+                    reject(err);
                 });
+        })
+        .catch((err: Error) => {
+            reject(err);
         });
+    });
 }
 
 export function persistSensorData(sensorType: string, cubeId: string, timestamp: string, data: string): void {
