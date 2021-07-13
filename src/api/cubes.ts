@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from "express";
-import { getCubes, persistCube } from "../utils/db_utils";
+import { getCubes, getCubeWithId, persistCube } from "../utils/db_utils";
 import { Cube } from "../types";
 
 //Export the router
@@ -43,7 +43,17 @@ router.post('/', function(req: Request, res: Response) {
 });
 
 router.get('/:cubeId', function(req: Request, res: Response) {
-    res.send(200);
+
+    let cubeId = req.params['cubeId'];
+
+    getCubeWithId(cubeId)
+        .then((cube: Cube) => {
+            res.status(200).send(cube);
+        })
+        .catch ((e: Error) => {
+            console.log(e.stack);
+            res.status(501).send("Database error.");
+        });
 });
 
 router.put('/:cubeId', function(req: Request, res: Response) {
