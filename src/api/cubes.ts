@@ -14,7 +14,7 @@ router.get('/', function(req: Request, res: Response) {
         })
         .catch ((e: Error) => {
             console.log(e.stack);
-            res.status(501).send("Database error.");
+            res.status(501).send("database error");
         });
 });
 
@@ -34,10 +34,10 @@ router.post('/', function(req: Request, res: Response) {
 
             switch (e.message) {
                 case 'duplicate key value violates unique constraint "cubes_pkey"':
-                    res.status(501).send("cubeId already exists.");
+                    res.status(501).send("cubeId already exists");
                     break;
                 default:
-                    res.status(501).send("Database error.");
+                    res.status(501).send("database error");
             }
         });
 });
@@ -74,7 +74,7 @@ router.put('/:cubeId', function(req: Request, res: Response) {
         })
         .catch ((e: Error) => {
             console.log(e.stack);
-            res.status(501).send("Database error.");
+            res.status(501).send("database error");
         });
 });
 
@@ -88,6 +88,6 @@ router.delete('/:cubeId', function(req: Request, res: Response) {
         })
         .catch ((e: Error) => {
             console.log(e.stack);
-            res.status(501).send("Database error.");
+            res.status(501).send("database error");
         });
 });
