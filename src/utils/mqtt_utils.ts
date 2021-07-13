@@ -1,6 +1,6 @@
 import {ISubscriptionMap, IPublishPacket} from "mqtt";
 import {mqttClient as mqtt} from "../index";
-import {persistCube, persistSensorData} from "./db_utils";
+import {getTimestamp, persistCube, persistSensorData} from "./db_utils";
 
 const topics: ISubscriptionMap = {
     'sensor/#': {qos: 2},
@@ -58,7 +58,7 @@ function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: I
 }
 
 function handleSensorData(topic: Array<string>, message: string): void {
-    persistSensorData(topic[1], topic[2], new Date(), message)
+    persistSensorData(topic[1], topic[2], getTimestamp(), message);
 }
 
 function handleInitMessage(topic: Array<string>, message: string): void {
