@@ -9,6 +9,7 @@ const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cu
 
 const getCubesQuery: string = 'SELECT * FROM cubes';
 const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE cube_id=$1';
+const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE cube_id=$1';
 
 export function setupDB(): void {
     pool
@@ -103,7 +104,6 @@ export function getCubes(): Promise<Array<Cube>> {
 }
 
 export function getCubeWithId(cubeId: string): Promise<Cube> {
-
     return new Promise((resolve, reject) => {
         pool
         .connect()
@@ -114,6 +114,27 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
                     let cube: Cube = res.rows[0];
                     cube.location = cube.location.trim();
                     resolve(cube);
+                })
+                .catch((err: Error) => {
+                    client.release();
+                    reject(err);
+                });
+        })
+        .catch((err: Error) => {
+            reject(err);
+        });
+    });
+}
+
+export function deleteCubeWithId(cubeId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        pool
+        .connect()
+        .then((client: PoolClient) => {
+            client
+                .query(deleteCubeWithIdQuery, [cubeId])
+                .then((res: QueryResult) => {
+                    resolve();
                 })
                 .catch((err: Error) => {
                     client.release();

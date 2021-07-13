@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from "express";
-import { getCubes, getCubeWithId, persistCube } from "../utils/db_utils";
+import { deleteCubeWithId, getCubes, getCubeWithId, persistCube } from "../utils/db_utils";
 import { Cube } from "../types";
 
 //Export the router
@@ -61,5 +61,15 @@ router.put('/:cubeId', function(req: Request, res: Response) {
 });
 
 router.delete('/:cubeId', function(req: Request, res: Response) {
-    res.send(200);
+    
+    let cubeId = req.params['cubeId'];
+
+    deleteCubeWithId(cubeId)
+        .then(() => {
+            res.sendStatus(200);
+        })
+        .catch ((e: Error) => {
+            console.log(e.stack);
+            res.status(501).send("Database error.");
+        });
 });
