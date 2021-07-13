@@ -113,6 +113,11 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
             client
                 .query(getCubeWithIdQuery, [cubeId])
                 .then((res: QueryResult) => {
+
+                    if (res.rows.length == 0) {
+                        reject(new Error("no cube with specified id found"));
+                    }
+
                     let cube: Cube = res.rows[0];
                     cube.location = cube.location.trim();
                     resolve(cube);
