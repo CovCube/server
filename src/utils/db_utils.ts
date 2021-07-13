@@ -1,20 +1,20 @@
 import {PoolClient, QueryResult} from 'pg';
 import {pool} from "../index";
 
-const cubes_table: string = "CREATE TABLE IF NOT EXISTS cubes (cube_id UUID NOT NULL, location CHAR(255) NOT NULL, sensors CHAR(5)[], actuators CHAR(5)[], PRIMARY KEY (cube_id))";
-const sensor_data_table: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL UNIQUE NOT NULL,sensor_type CHAR(5) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, PRIMARY KEY (id), FOREIGN KEY(cube_id) REFERENCES cubes (cube_id))";
-const cube_persist: string = "INSERT INTO cubes (cube_id, location, sensors, actuators) VALUES ($1, $2, $3, $4)"
-const sensor_data_persist: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)"
+const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (cube_id UUID NOT NULL, location CHAR(255) NOT NULL, sensors CHAR(5)[], actuators CHAR(5)[], PRIMARY KEY (cube_id))";
+const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL UNIQUE NOT NULL,sensor_type CHAR(5) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, PRIMARY KEY (id), FOREIGN KEY(cube_id) REFERENCES cubes (cube_id))";
+const persistCubeQuery: string = "INSERT INTO cubes (cube_id, location, sensors, actuators) VALUES ($1, $2, $3, $4)";
+const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
 
 export function setupDB(): void {
     pool
         .connect()
         .then((client: PoolClient) => {
             client
-                .query(cubes_table)
+                .query(createCubesTableQuery)
                 .then((res: QueryResult) => {
                     client
-                        .query(sensor_data_table)
+                        .query(createSensorDataTableQuery)
                         .then((res: QueryResult) => {
                             client.release();
                         })
@@ -30,12 +30,12 @@ export function setupDB(): void {
         });
 }
 
-export function persistCube(cubeId: String, location: String, sensors: Array<String>, actuators: Array<String>): void {
+export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): void {
     pool
         .connect()
         .then((client: PoolClient) => {
             client
-                .query(cube_persist, [cubeId, location, sensors, actuators])
+                .query(persistCubeQuery, [cubeId, location, sensors, actuators])
                 .then((res: QueryResult) => {
                     client.release();
                 })
@@ -46,12 +46,12 @@ export function persistCube(cubeId: String, location: String, sensors: Array<Str
         });
 }
 
-export function persistSensorData(sensorType: String, cubeId: String, timestamp: string, data: String): void {
+export function persistSensorData(sensorType: string, cubeId: string, timestamp: string, data: string): void {
     pool
         .connect()
         .then((client: PoolClient) => {
             client
-                .query(sensor_data_persist, [sensorType, cubeId, timestamp, data])
+                .query(persistSensorDataQuery, [sensorType, cubeId, timestamp, data])
                 .then((res: QueryResult) => {
                     client.release();
                 })
