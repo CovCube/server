@@ -1,4 +1,4 @@
-import {ISubscriptionMap, IPublishPacket} from "mqtt";
+import {ISubscriptionMap, IPublishPacket, ISubscriptionGrant} from "mqtt";
 import {mqttClient as mqtt} from "../index";
 import {getTimestamp, persistCube, persistSensorData} from "./db_utils";
 
@@ -21,13 +21,13 @@ export function setupMQTT(): void {
     mqtt.on('message', handleMQTTMessage);
 
     //Subscribe to topics
-    mqtt.subscribe(topics, function(err, granted) {
+    mqtt.subscribe(topics, function(err: Error, granted: ISubscriptionGrant[]) {
         if(err) {
             console.log(err);
         }
 
         if (granted) {
-            granted.forEach(function(value) {
+            granted.forEach(function(value: ISubscriptionGrant) {
                 console.log(`Subscribed to ${value.topic} with QoS level ${value.qos}.`);
             })
         }

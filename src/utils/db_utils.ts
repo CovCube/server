@@ -40,22 +40,22 @@ export function setupDB(): void {
 export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
     return new Promise((resolve, reject) => {
         pool
-        .connect()
-        .then((client: PoolClient) => {
-            client
-                .query(persistCubeQuery, [cubeId, location, sensors, actuators])
-                .then((res: QueryResult) => {
-                    client.release();
-                    resolve();
-                })
-                .catch((err: Error) => {
-                    client.release();
-                    reject(err);
-                });
-        })
-        .catch((err: Error) => {
-            reject(err);
-        });
+            .connect()
+            .then((client: PoolClient) => {
+                client
+                    .query(persistCubeQuery, [cubeId, location, sensors, actuators])
+                    .then((res: QueryResult) => {
+                        client.release();
+                        resolve();
+                    })
+                    .catch((err: Error) => {
+                        client.release();
+                        reject(err);
+                    });
+            })
+            .catch((err: Error) => {
+                reject(err);
+            });
     });
 }
 
@@ -78,108 +78,108 @@ export function persistSensorData(sensorType: string, cubeId: string, timestamp:
 export function getCubes(): Promise<Array<Cube>> {
     return new Promise((resolve, reject) => {
         pool
-        .connect()
-        .then((client: PoolClient) => {
-            client
-                .query(getCubesQuery)
-                .then((res: QueryResult) => {
-                    let cubes: Array<Cube> = [];
+            .connect()
+            .then((client: PoolClient) => {
+                client
+                    .query(getCubesQuery)
+                    .then((res: QueryResult) => {
+                        let cubes: Array<Cube> = [];
 
-                    res.rows.forEach((row) => {
-                        let cube = row;
-                        cube.location = row.location.trim();
+                        res.rows.forEach((row) => {
+                            let cube = row;
+                            cube.location = row.location.trim();
 
-                        cubes.push(cube);
+                            cubes.push(cube);
+                        })
+
+                        resolve(cubes);
                     })
-
-                    resolve(cubes);
-                })
-                .catch((err: Error) => {
-                    client.release();
-                    reject(err);
-                });
-        })
-        .catch((err: Error) => {
-            reject(err);
-        });
+                    .catch((err: Error) => {
+                        client.release();
+                        reject(err);
+                    });
+            })
+            .catch((err: Error) => {
+                reject(err);
+            });
     });
 }
 
 export function getCubeWithId(cubeId: string): Promise<Cube> {
     return new Promise((resolve, reject) => {
         pool
-        .connect()
-        .then((client: PoolClient) => {
-            client
-                .query(getCubeWithIdQuery, [cubeId])
-                .then((res: QueryResult) => {
+            .connect()
+            .then((client: PoolClient) => {
+                client
+                    .query(getCubeWithIdQuery, [cubeId])
+                    .then((res: QueryResult) => {
 
-                    if (res.rows.length == 0) {
-                        reject(new Error("no cube with specified id found"));
-                    }
+                        if (res.rows.length == 0) {
+                            reject(new Error("no cube with specified id found"));
+                        }
 
-                    let cube: Cube = res.rows[0];
-                    cube.location = cube.location.trim();
-                    resolve(cube);
-                })
-                .catch((err: Error) => {
-                    client.release();
-                    reject(err);
-                });
-        })
-        .catch((err: Error) => {
-            reject(err);
-        });
+                        let cube: Cube = res.rows[0];
+                        cube.location = cube.location.trim();
+                        resolve(cube);
+                    })
+                    .catch((err: Error) => {
+                        client.release();
+                        reject(err);
+                    });
+            })
+            .catch((err: Error) => {
+                reject(err);
+            });
     });
 }
 
 export function updateCubeWithId(cubeId: string, variables: CubeVariables): Promise<Cube> {
     return new Promise((resolve, reject) => {
         pool
-        .connect()
-        .then((client: PoolClient) => {
-            Object.keys(variables).forEach((key: string) => {
-                let query = format(updateCubeWithIdQuery, key, variables[key], cubeId);
+            .connect()
+            .then((client: PoolClient) => {
+                Object.keys(variables).forEach((key: string) => {
+                    let query = format(updateCubeWithIdQuery, key, variables[key], cubeId);
 
-                client
-                    .query(query)
-                    .catch((err: Error) => {
-                        client.release();
-                        reject(err);
-                    });
+                    client
+                        .query(query)
+                        .catch((err: Error) => {
+                            client.release();
+                            reject(err);
+                        });
+                });
+
+                resolve(getCubeWithId(cubeId));
+            })
+            .catch((err: Error) => {
+                reject(err);
             });
-
-            resolve(getCubeWithId(cubeId));
-        })
-        .catch((err: Error) => {
-            reject(err);
-        });
     });
 }
 
 export function deleteCubeWithId(cubeId: string): Promise<void> {
     return new Promise((resolve, reject) => {
         pool
-        .connect()
-        .then((client: PoolClient) => {
-            client
-                .query(deleteCubeWithIdQuery, [cubeId])
-                .then((res: QueryResult) => {
-                    resolve();
-                })
-                .catch((err: Error) => {
-                    client.release();
-                    reject(err);
-                });
-        })
-        .catch((err: Error) => {
-            reject(err);
-        });
+            .connect()
+            .then((client: PoolClient) => {
+                client
+                    .query(deleteCubeWithIdQuery, [cubeId])
+                    .then((res: QueryResult) => {
+                        resolve();
+                    })
+                    .catch((err: Error) => {
+                        client.release();
+                        reject(err);
+                    });
+            })
+            .catch((err: Error) => {
+                reject(err);
+            });
     });
 }
 
 export function getTimestamp(): string {
-    let time = new Date();
+    let time: Date = new Date();
 
-    return `${time.getUTCFullYear()}-${time.getUTCMonth()}-${time.getUTCDate()} ${time.getUTCHours()}:${time.getUTCMinutes()}:${time.getUTCSeconds()}-0`
+    return `${time.getUTCFullYear()}-${time.getUTCMonth()}-${time.getUTCDate()} ${time.getUTCHours()}:${time.getUTCMinutes()}:${time.getUTCSeconds()}-0`;
 }

@@ -19,11 +19,11 @@ router.get('/', function(req: Request, res: Response) {
 });
 
 router.post('/', function(req: Request, res: Response) {
-    let cubeId = req.body['cubeId'];
-    let location = req.body['location'];
-    let sensors = req.body['sensors'];
-    let actuators= req.body['actuators'];
 
+    let cubeId: string = req.body['cubeId'];
+    let location: string = req.body['location'];
+    let sensors: Array<string> = req.body['sensors'];
+    let actuators: Array<string> = req.body['actuators'];
 
     persistCube(cubeId, location, sensors, actuators)
         .then(() => {
@@ -44,7 +44,7 @@ router.post('/', function(req: Request, res: Response) {
 
 router.get('/:cubeId', function(req: Request, res: Response) {
 
-    let cubeId = req.params['cubeId'];
+    let cubeId: string = req.params['cubeId'];
 
     getCubeWithId(cubeId)
         .then((cube: Cube) => {
@@ -80,7 +80,7 @@ router.put('/:cubeId', function(req: Request, res: Response) {
 
 router.delete('/:cubeId', function(req: Request, res: Response) {
     
-    let cubeId = req.params['cubeId'];
+    let cubeId: string = req.params['cubeId'];
 
     deleteCubeWithId(cubeId)
         .then(() => {
