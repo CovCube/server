@@ -35,10 +35,10 @@ export function setupMQTT(): void {
 }
 
 function logMQTTEvent(event: string, options: Array<any> = []): void {
-    //console.log(`Event emitted: ${event}`);
-    options.forEach(value => {
-        console.log(value);
-    });
+    console.log(`Event emitted: ${event}`);
+    //options.forEach(value => {
+    //    console.log(value);
+    //});
 }
 
 function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: IPublishPacket): void {
