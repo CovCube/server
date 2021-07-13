@@ -35,7 +35,7 @@ export function setupMQTT(): void {
 }
 
 function logMQTTEvent(event: string, options: Array<any> = []): void {
-    console.log(`Event emitted: ${event}`);
+    //console.log(`Event emitted: ${event}`);
     options.forEach(value => {
         console.log(value);
     });
