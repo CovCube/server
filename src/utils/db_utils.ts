@@ -96,7 +96,6 @@ export function getCubes(): Promise<Array<Cube>> {
                 });
         })
         .catch((err: Error) => {
-            console.log("Error in pool.")
             reject(err);
         });
     });
