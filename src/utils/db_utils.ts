@@ -104,8 +104,6 @@ export function getCubes(): Promise<Array<Cube>> {
 
 export function getCubeWithId(cubeId: string): Promise<Cube> {
 
-    console.log(cubeId);
-
     return new Promise((resolve, reject) => {
         pool
         .connect()
@@ -113,7 +111,6 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
             client
                 .query(getCubeWithIdQuery, [cubeId])
                 .then((res: QueryResult) => {
-                    console.log(res);
                     let cube: Cube = res.rows[0];
                     cube.location = cube.location.trim();
                     resolve(cube);
