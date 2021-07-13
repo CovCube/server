@@ -13,6 +13,7 @@ router.get('/', function(req: Request, res: Response) {
             });
         })
         .catch ((e: Error) => {
+            console.log(e.stack);
             res.status(501).send("Database error.");
         });
 });
