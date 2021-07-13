@@ -13,11 +13,9 @@ export function setupDB(): void {
             client
                 .query(cubes_table)
                 .then((res: QueryResult) => {
-                    console.log("Successfully created cubes table.");
                     client
                         .query(sensor_data_table)
                         .then((res: QueryResult) => {
-                            console.log("Successfully created sensor_data table.")
                             client.release();
                         })
                         .catch((err: Error) => {
@@ -39,12 +37,11 @@ export function persistCube(cubeId: String, location: String, sensors: Array<Str
             client
                 .query(cube_persist, [cubeId, location, sensors, actuators])
                 .then((res: QueryResult) => {
-                    console.log(res);
                     client.release();
                 })
                 .catch((err: Error) => {
-                    console.log(err.stack);
                     client.release();
+                    console.log(err.stack);
                 });
         });
 }
@@ -56,12 +53,11 @@ export function persistSensorData(sensorType: String, cubeId: String, timestamp:
             client
                 .query(sensor_data_persist, [sensorType, cubeId, timestamp, data])
                 .then((res: QueryResult) => {
-                    console.log(res);
                     client.release();
                 })
                 .catch((err: Error) => {
-                    console.log(err.stack);
                     client.release();
+                    console.log(err.stack);
                 });
         });
 }
