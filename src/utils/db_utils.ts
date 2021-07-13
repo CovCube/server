@@ -3,6 +3,7 @@ import {pool} from "../index";
 
 const cubes_table: string = "CREATE TABLE IF NOT EXISTS cubes (cube_id UUID NOT NULL, location CHAR(255) NOT NULL, sensors CHAR(5)[], actuators CHAR(5)[], PRIMARY KEY (cube_id))";
 const sensor_data_table: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL UNIQUE NOT NULL,sensor_type CHAR(5) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, PRIMARY KEY (id), FOREIGN KEY(cube_id) REFERENCES cubes (cube_id))";
+const cube_persist: string = "INSERT INTO cubes (cube_id, location, sensors, actuators) VALUES ($1, $2, $3, $4)"
 
 export function setupDB(): void {
     pool
@@ -31,6 +32,21 @@ export function setupDB(): void {
 }
 
 export function persistCube(cubeId: String, location: String, sensors: Array<String>, actuators: Array<String>): void {
+    pool
+        .connect()
+        .then((client: PoolClient) => {
+            client
+                .query(cube_persist, [cubeId, location, sensors, actuators])
+                .then((res: QueryResult) => {
+                    console.log(res);
+                    client.release();
+                })
+                .catch((err: Error) => {
+                    console.log(err.stack);
+                    client.release();
+                });
+        });
+}
     
 }
 
