@@ -1,6 +1,6 @@
 import express, { Router, Request, Response } from "express";
-import { deleteCubeWithId, getCubes, getCubeWithId, persistCube } from "../utils/db_utils";
-import { Cube } from "../types";
+import { deleteCubeWithId, getCubes, getCubeWithId, persistCube, updateCubeWithId } from "../utils/db_utils";
+import { Cube, CubeVariables } from "../types";
 
 //Export the router
 export var router: Router = express.Router();
@@ -57,7 +57,19 @@ router.get('/:cubeId', function(req: Request, res: Response) {
 });
 
 router.put('/:cubeId', function(req: Request, res: Response) {
-    res.send(200);
+
+    let cubeId: string = req.params['cubeId'];
+    let variables: CubeVariables = req.body;
+    console.log(variables);
+
+    updateCubeWithId(cubeId, variables)
+        .then((cube: Cube) => {
+            res.status(200).send(cube);
+        })
+        .catch ((e: Error) => {
+            console.log(e.stack);
+            res.status(501).send("Database error.");
+        });
 });
 
 router.delete('/:cubeId', function(req: Request, res: Response) {

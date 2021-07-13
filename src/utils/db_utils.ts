@@ -1,6 +1,7 @@
 import {PoolClient, QueryResult} from 'pg';
+import format from 'pg-format';
 import {pool} from "../index";
-import { Cube } from '../types';
+import { Cube, CubeVariables } from '../types';
 
 const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (cube_id UUID NOT NULL, location CHAR(255) NOT NULL, sensors CHAR(5)[], actuators CHAR(5)[], PRIMARY KEY (cube_id))";
 const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL UNIQUE NOT NULL,sensor_type CHAR(5) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, PRIMARY KEY (id), FOREIGN KEY(cube_id) REFERENCES cubes (cube_id))";
@@ -9,6 +10,7 @@ const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cu
 
 const getCubesQuery: string = 'SELECT * FROM cubes';
 const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE cube_id=$1';
+const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE cube_id=%L';
 const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE cube_id=$1';
 
 export function setupDB(): void {
@@ -119,6 +121,31 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
                     client.release();
                     reject(err);
                 });
+        })
+        .catch((err: Error) => {
+            reject(err);
+        });
+    });
+}
+
+export function updateCubeWithId(cubeId: string, variables: CubeVariables): Promise<Cube> {
+    return new Promise((resolve, reject) => {
+        pool
+        .connect()
+        .then((client: PoolClient) => {
+            Object.keys(variables).forEach((key: string) => {
+                let query = format(updateCubeWithIdQuery, key, variables[key], cubeId);
+                console.log(query);
+
+                client
+                    .query(query)
+                    .catch((err: Error) => {
+                        client.release();
+                        reject(err);
+                    });
+            });
+
+            resolve(getCubeWithId(cubeId));
         })
         .catch((err: Error) => {
             reject(err);
