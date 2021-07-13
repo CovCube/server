@@ -60,7 +60,6 @@ router.put('/:cubeId', function(req: Request, res: Response) {
 
     let cubeId: string = req.params['cubeId'];
     let variables: CubeVariables = req.body;
-    console.log(variables);
 
     updateCubeWithId(cubeId, variables)
         .then((cube: Cube) => {

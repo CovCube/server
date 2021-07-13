@@ -135,7 +135,6 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
         .then((client: PoolClient) => {
             Object.keys(variables).forEach((key: string) => {
                 let query = format(updateCubeWithIdQuery, key, variables[key], cubeId);
-                console.log(query);
 
                 client
                     .query(query)
