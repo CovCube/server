@@ -32,7 +32,7 @@ const app: Express = express();
 
 //Register template engine
 app.set('views', './public/template');
-app.set('view engine', 'pug');
+app.set('view engine', 'hbs');
 
 //Add middleware
 app.use(helmet());
