@@ -4,9 +4,9 @@
   "description": "The Cube Server of the Anti Corona Platform of TU Dresden.",
   "main": "index.js",
   "scripts": {
+    "copy-files": "copyfiles ./public/**/*.* ./dist/",
     "build": "rimraf dist/!(public) && tsc && npm run copy-files",
     "preserve": "npm run build",
-    "copy-files": "copyfiles ./public/**/*.* ./dist/",
     "serve": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -q dist/index.js\"",
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production node dist/index.js",
