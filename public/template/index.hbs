@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cube Server</title>
+</head>
+<body>
+    {{#if cubes}}
+        <table>
+            <thead>
+                <th>location</th>
+                <th>id</th>
+                <th></th>
+            </thead>
+            {{#each cubes}}
+                <tr>
+                    <td>{{this.location}}</td>
+                    <td>{{this.cube_id}}</td>
+                    <td>
+                        <a href="cubes/{{this.cube_id}}">
+                            <button type="button">
+                                <img src="/static/edit-regular.svg" height="20px" alt="Edit">
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+            {{/each}}
+        </table>
+    {{else}}
+        <p>There aren't any registered cubes!</p>
+    {{/if}}
+</body>
+</html>
