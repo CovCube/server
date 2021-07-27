@@ -30,6 +30,10 @@ mqttClient.on('connect', function() {
 const PORT: number = parseInt(process.env.PORT || '3000');
 const app: Express = express();
 
+//Register template engine
+app.set('views', './views');
+app.set('view engine', 'pug');
+
 //Add middleware
 app.use(helmet());
 app.use(bodyParser.json());
