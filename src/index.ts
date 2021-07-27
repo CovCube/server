@@ -35,7 +35,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //Delegate routing
-app.use(apiRoutes);
+app.use('/api', apiRoutes);
 
 //Start server
 app.listen(PORT, () => console.log(`Running on port: ${PORT}`));
