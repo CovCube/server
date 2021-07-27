@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from "express";
+import path from 'path';
 import bodyParser from "body-parser";
 import helmet from "helmet";
 import dotenv from "dotenv";
@@ -33,6 +34,9 @@ const app: Express = express();
 //Register template engine
 app.set('views', './public/template');
 app.set('view engine', 'hbs');
+
+//Register static path
+app.use('/static', express.static(path.join(__dirname, '../public/img')));
 
 //Add middleware
 app.use(helmet());
