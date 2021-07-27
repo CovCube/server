@@ -20,7 +20,7 @@ router.get('/', function(req: Request, res: Response) {
 
 router.post('/', function(req: Request, res: Response) {
 
-    let cubeId: string = req.body['cubeId'];
+    let cubeId: string = req.body['id'];
     let location: string = req.body['location'];
     let sensors: Array<string> = req.body['sensors'];
     let actuators: Array<string> = req.body['actuators'];
