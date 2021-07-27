@@ -6,6 +6,7 @@ import {Pool} from "pg";
 import mqtt, {Client as MQTTClient} from "mqtt";
 import {setupDB} from "./utils/db_utils";
 import {setupMQTT} from "./utils/mqtt_utils";
+import {router as viewRoutes} from "./views/views";
 import {router as apiRoutes} from "./api/api";
 
 //Parse environment variables
@@ -35,6 +36,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //Delegate routing
+app.use('/', viewRoutes);
 app.use('/api', apiRoutes);
 
 //Start server
