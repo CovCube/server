@@ -19,8 +19,8 @@
     {{#if cubes}}
         <table>
             <thead>
-                <th>location</th>
-                <th>id</th>
+                <th>Location</th>
+                <th>Id</th>
                 <th></th>
             </thead>
             {{#each cubes}}
@@ -29,9 +29,7 @@
                     <td>{{this.cube_id}}</td>
                     <td>
                         <a href="cubes/{{this.cube_id}}">
-                            <button type="button">
-                                <img src="/static/img/edit-regular.svg" height="20px" alt="Edit">
-                            </button>
+                            <img src="/static/img/edit-regular.svg" height="20px" alt="Edit">
                         </a>
                     </td>
                 </tr>
