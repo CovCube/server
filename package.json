@@ -4,10 +4,11 @@
   "description": "The Cube Server of the Anti Corona Platform of TU Dresden.",
   "main": "index.js",
   "scripts": {
-    "copy-files": "copyfiles ./public/**/*.* ./dist/",
-    "build": "rimraf dist/!(public) && tsc && npm run copy-files",
+    "copyfiles:public": "rimraf dist/!(public) && copyfiles \"./public/**/*.*\" \"./dist/\"",
+    "onchange:public": "onchange -i -k \"./public/**/*.*\" -- copyfiles \"./public/**/*.*\" \"./dist/\"",
+    "build": "concurrently \"tsc\" \"npm:copyfiles:*\"",
     "preserve": "npm run build",
-    "serve": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -e json,hbs -q dist/index.js\"",
+    "serve": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -q dist/index.js\" \"npm:onchange:*\"",
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -43,6 +44,7 @@
   },
   "devDependencies": {
     "concurrently": "^6.2.0",
-    "nodemon": "^2.0.9"
+    "nodemon": "^2.0.9",
+    "onchange": "^7.1.0"
   }
 }
