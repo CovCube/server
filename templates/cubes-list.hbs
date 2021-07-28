@@ -6,13 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}}</title>
 
+    <link rel="stylesheet" href="/static/css/normalize.css">
     <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/cubes-list.css">
 </head>
 <body>
+    {{!Add header}}
     {{> header}}
 
-    {{! test test test}}
-
+    {{!Fill content}}
+    <div id="content">
     {{#if cubes}}
         <table>
             <thead>
@@ -37,7 +40,9 @@
     {{else}}
         <p>There aren't any registered cubes!</p>
     {{/if}}
+    </div>
 
+    {{!Add footer}}
     {{> footer}}
 </body>
 </html>
