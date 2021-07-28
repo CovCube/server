@@ -10,10 +10,11 @@ router.get('/', (req, res) => {
     getCubes()
         .then((cubes: Array<Cube>) => {
             let data = {
+                content: 'cubes_table',
                 cubes: cubes,
             }
 
-            res.render('index', data);
+            res.render('cubes-view', data);
         })
         .catch ((e: Error) => {
             console.log(e.stack);

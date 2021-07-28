@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from "express";
+import hbs from 'hbs';
 import path from 'path';
 import bodyParser from "body-parser";
 import helmet from "helmet";
@@ -32,8 +33,10 @@ const PORT: number = parseInt(process.env.PORT || '3000');
 const app: Express = express();
 
 //Register template engine
-app.set('views', './public/template');
+app.set('views', './templates');
 app.set('view engine', 'hbs');
+//Register partials
+hbs.registerPartials(__dirname + '/templates/partials', function() {});
 
 //Register static path
 app.use('/static', express.static(path.join(__dirname, '../public/img')));

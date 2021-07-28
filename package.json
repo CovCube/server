@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "copyfiles:public": "rimraf dist/!(public) && copyfiles \"./public/**/*.*\" \"./dist/\"",
+    "copyfiles:templates": "rimraf dist/!(templates) && copyfiles \"./templates/**/*.*\" \"./dist/\"",
     "onchange:public": "onchange -i -k \"./public/**/*.*\" -- copyfiles \"./public/**/*.*\" \"./dist/\"",
+    "onchange:templates": "onchange -i -k \"./templates/**/*.*\" -- copyfiles \"./templates/**/*.*\" \"./dist/\"",
     "build": "concurrently \"tsc\" \"npm:copyfiles:*\"",
     "preserve": "npm run build",
     "serve": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -q dist/index.js\" \"npm:onchange:*\"",
@@ -43,6 +45,7 @@
     "typescript": "^4.3.5"
   },
   "devDependencies": {
+    "@types/hbs": "^4.0.1",
     "concurrently": "^6.2.0",
     "nodemon": "^2.0.9",
     "onchange": "^7.1.0"
