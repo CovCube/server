@@ -19,6 +19,6 @@ router.get('/', (req, res) => {
         })
         .catch ((e: Error) => {
             console.log(e.stack);
-            res.status(501).send("database error");
+            res.status(501).send("view error");
         });
 });
