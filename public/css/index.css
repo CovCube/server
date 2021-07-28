@@ -1,3 +1,39 @@
 header, footer {
-    background-color: #2A2D34;
+    background-color: #DDD5D0;
+}
+
+header {
+    height: 6.5vh;
+    margin-bottom: 1vh;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    border-bottom: 2px solid #272D2D;
+}
+
+header > img {
+    height: 75%;
+    width: auto;
+
+    margin: 0 1vw;
+}
+
+header > p {
+    font-size: 2em;
+
+    height: min-content;
+    margin: 0;
+}
+
+#content {
+    margin: 0 1vw;
+}
+
+footer {
+    height: 1vh;
+    margin-top: 1vh;
+
+    border-top: 2px solid #272D2D;
 }
