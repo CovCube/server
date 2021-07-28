@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from "express";
-import { getCubes } from "../utils/db_utils";
+import { getCubes, getCubeWithId } from "../utils/db_utils";
 import { Cube } from "../types";
 import { compareCubes } from "../utils/utils";
 
@@ -7,7 +7,7 @@ import { compareCubes } from "../utils/utils";
 export var router: Router = express.Router();
 
 //Delegate view-routes to their views
-router.get('/', (req, res) => {
+router.get('/', (req: Request, res:Response) => {
     getCubes()
         .then((cubes: Array<Cube>) => {
             let data = {
@@ -16,6 +16,25 @@ router.get('/', (req, res) => {
             }
 
             res.render('cubes-list', data);
+        })
+        .catch ((e: Error) => {
+            console.log(e.stack);
+            res.status(501).send("view error");
+        });
+});
+
+router.get('/cubes/:cubeId', (req, res) => {
+
+    let cubeId: string = req.params['cubeId'];
+
+    getCubeWithId(cubeId)
+        .then((cube: Cube) => {
+            let data = {
+                title: 'Cube',
+                cube: cube,
+            }
+
+            res.render('cube-detail', data);
         })
         .catch ((e: Error) => {
             console.log(e.stack);
