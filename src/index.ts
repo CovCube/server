@@ -39,7 +39,7 @@ app.set('view engine', 'hbs');
 hbs.registerPartials(__dirname + '/templates/partials', function() {});
 
 //Register static path
-app.use('/static', express.static(path.join(__dirname, '../public/img')));
+app.use('/static', express.static(path.join(__dirname, './public')));
 
 //Add middleware
 app.use(helmet());
