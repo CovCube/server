@@ -120,7 +120,7 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
 
                         let cube: Cube = res.rows[0];
                         cube.location = cube.location.trim();
-                        console.log(cube);
+
                         resolve(cube);
                     })
                     .catch((err: Error) => {
