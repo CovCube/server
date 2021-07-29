@@ -3,15 +3,15 @@ import format from 'pg-format';
 import {pool} from "../index";
 import { Cube, CubeVariables } from '../types';
 
-const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (cube_id UUID NOT NULL, location CHAR(255) NOT NULL, sensors CHAR(5)[], actuators CHAR(5)[], PRIMARY KEY (cube_id))";
-const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL UNIQUE NOT NULL,sensor_type CHAR(5) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, PRIMARY KEY (id), FOREIGN KEY(cube_id) REFERENCES cubes (cube_id))";
-const persistCubeQuery: string = "INSERT INTO cubes (cube_id, location, sensors, actuators) VALUES ($1, $2, $3, $4)";
+const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID NOT NULL, location CHAR(255) NOT NULL, sensors CHAR(5)[], actuators CHAR(5)[], PRIMARY KEY (id))";
+const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL UNIQUE NOT NULL,sensor_type CHAR(5) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, PRIMARY KEY (id), FOREIGN KEY(cube_id) REFERENCES cubes (id))";
+const persistCubeQuery: string = "INSERT INTO cubes (id, location, sensors, actuators) VALUES ($1, $2, $3, $4)";
 const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
 
 const getCubesQuery: string = 'SELECT * FROM cubes';
-const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE cube_id=$1';
-const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE cube_id=%L';
-const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE cube_id=$1';
+const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
+const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE id=%L';
+const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
 
 export function setupDB(): void {
     pool
@@ -120,6 +120,7 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
 
                         let cube: Cube = res.rows[0];
                         cube.location = cube.location.trim();
+                        console.log(cube);
                         resolve(cube);
                     })
                     .catch((err: Error) => {
