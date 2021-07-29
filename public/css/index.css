@@ -41,8 +41,4 @@ header > p {
 }
 
 footer {
-    height: 1vh;
-    margin-top: 1vh;
-
-    border-top: 2px solid var(--contrast-color);
 }
