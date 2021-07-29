@@ -7,7 +7,7 @@ table {
 }
 
 table thead > tr {
-    background-color: #2D2D34;
+    background-color: var(--contrast-color);
     color: #ffffff;
 }
 
@@ -24,7 +24,7 @@ table th:first-child {
 
 table tr {
     background-color: #ffffff;
-    box-shadow: 0px 0px 9px 0px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow);
 }
 
 table td {

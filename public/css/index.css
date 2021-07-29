@@ -1,5 +1,13 @@
+:root {
+    --main-color: #7383bf;
+    --contrast-color: #272D2D;
+    --bg-color: #FFFCFF;
+    
+    --shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+}
+
 header, footer {
-    background-color: #DDD5D0;
+    background-color: var(--bg-color);
 }
 
 header {
@@ -9,8 +17,8 @@ header {
     display: flex;
     flex-direction: row;
     align-items: center;
-
-    border-bottom: 2px solid #272D2D;
+    
+    box-shadow: var(--shadow);
 }
 
 header > img {
@@ -36,5 +44,5 @@ footer {
     height: 1vh;
     margin-top: 1vh;
 
-    border-top: 2px solid #272D2D;
+    border-top: 2px solid var(--contrast-color);
 }
