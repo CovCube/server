@@ -1,0 +1,37 @@
+input#location {
+    min-width: 15vw;
+}
+
+#tables {
+    display: flex;
+    flex-direction: row;
+
+    margin: 2vh 0;
+}
+
+#tables > table:first-child {
+    margin-right: 5vw;
+}
+
+#sensors {
+    min-width: 30vw;
+    width: min-content;
+}
+
+#actuators {
+    min-width: 10vw;
+    width: min-content;
+}
+
+tr > td:last-child {
+    width: 25px;
+}
+
+.add-item select {
+    min-width: 25%;
+    margin-right: 10px;
+}
+
+.icon-delete {
+
+}

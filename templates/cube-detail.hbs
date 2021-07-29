@@ -11,8 +11,64 @@
     {{!Fill content}}
     <div id="content">
         <h2>Cube</h2>
+        <h3>{{cube.id}}</h3>
 
-        
+        <label for="location">Location:</label>
+        <input type="text" name="location" id="location" value="{{cube.location}}">
+
+        <div id="tables">
+            <table id="sensors">
+                <thead>
+                    <th>Sensor</th>
+                    <th>Push Rate</th>
+                    <th></th>
+                </thead>
+                {{#each cube.sensors}}
+                    <tr>
+                        <td>{{this}}</td>
+                        <td>
+                            <input type="text" name="push_rate" id="push_rate">
+                        </td>
+                        <td>
+                            <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                        </td>
+                    </tr>
+                {{/each}}
+                <tr class="add-item">
+                    <td colspan="3">
+                        <select name="" id="">
+
+                        </select>
+
+                        <img class="icon-delete" src="/static/img/plus-solid.svg" height="20px" alt="Add">
+                    </td>
+                </tr>
+            </table>
+            <table id="actuators">
+                <thead>
+                    <th colspan="2">Actuators</th>
+                </thead>
+                {{#each cube.actuators}}
+                    <tr>
+                        <td>{{this}}</td>
+                        <td>
+                            <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                        </td>
+                    </tr>
+                {{/each}}
+                <tr class="add-item">
+                    <td colspan="2">
+                        <select name="" id="">
+                            
+                        </select>
+
+                        <img class="icon-delete" src="/static/img/plus-solid.svg" height="20px" alt="Add">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <button type="button">Discard</button>
+        <button type="button">Save</button>
     </div>
 
     {{!Add footer}}
