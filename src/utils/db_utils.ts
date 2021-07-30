@@ -10,9 +10,10 @@ const createCubeSensorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_sen
 const createCubeActuatorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_actuators (id SERIAL UNIQUE NOT NULL, cube_id UUID NOT NULL, actuator_type CHAR(64) NOT NULL, FOREIGN KEY (cube_id) REFERENCES cubes (id), FOREIGN KEY (actuator_type) REFERENCES actuator_types (name))";
 //TODO: Add foreign key for sensor_type to sensor_data table
 const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL UNIQUE NOT NULL,sensor_type CHAR(5) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, PRIMARY KEY (id), FOREIGN KEY(cube_id) REFERENCES cubes (id))";
+
+const persistCubeQuery: string = "INSERT INTO cubes (id, location) VALUES ($1, $2)";
 //TODO: Add queries to link cubes with their sensors, actuators
 const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
-
 const getCubesQuery: string = 'SELECT * FROM cubes';
 const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
 //TODO: Add queries to get a cubes sensors, actuators
@@ -47,67 +48,29 @@ export function setupDB(): Promise<[void, void | QueryResult]> {
     return Promise.all([junctionTableRes, sensorDataTableRes]);
 }
 
-export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
-    return new Promise((resolve, reject) => {
-        pool
-            .connect()
-            .then((client: PoolClient) => {
-                client
-                    .query(persistCubeQuery, [cubeId, location, sensors, actuators])
-                    .then((res: QueryResult) => {
-                        client.release();
-                        resolve();
-                    })
-                    .catch((err: Error) => {
-                        client.release();
-                        reject(err);
-                    });
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
+export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void | QueryResult> {
+    return pool.query(persistCubeQuery, [cubeId, location])
 }
 
-export function persistSensorData(sensorType: string, cubeId: string, timestamp: string, data: string): void {
-    pool
-        .connect()
-        .then((client: PoolClient) => {
-            client
-                .query(persistSensorDataQuery, [sensorType, cubeId, timestamp, data])
-                .then((res: QueryResult) => {
-                    client.release();
-                })
-                .catch((err: Error) => {
-                    client.release();
-                    console.log(err.stack);
-                });
-        });
+export function persistSensorData(sensorType: string, cubeId: string, timestamp: string, data: string): Promise<void | QueryResult> {
+    return pool.query(persistSensorDataQuery, [sensorType, cubeId, timestamp, data])
 }
 
 export function getCubes(): Promise<Array<Cube>> {
     return new Promise((resolve, reject) => {
         pool
-            .connect()
-            .then((client: PoolClient) => {
-                client
-                    .query(getCubesQuery)
-                    .then((res: QueryResult) => {
-                        let cubes: Array<Cube> = [];
+            .query(getCubesQuery)
+            .then((res: QueryResult) => {
+                let cubes: Array<Cube> = [];
 
-                        res.rows.forEach((row) => {
-                            let cube = row;
-                            cube.location = row.location.trim();
+                res.rows.forEach((row) => {
+                    let cube = row;
+                    cube.location = row.location.trim();
 
-                            cubes.push(cube);
-                        })
+                    cubes.push(cube);
+                })
 
-                        resolve(cubes);
-                    })
-                    .catch((err: Error) => {
-                        client.release();
-                        reject(err);
-                    });
+                resolve(cubes);
             })
             .catch((err: Error) => {
                 reject(err);
@@ -118,25 +81,17 @@ export function getCubes(): Promise<Array<Cube>> {
 export function getCubeWithId(cubeId: string): Promise<Cube> {
     return new Promise((resolve, reject) => {
         pool
-            .connect()
-            .then((client: PoolClient) => {
-                client
-                    .query(getCubeWithIdQuery, [cubeId])
-                    .then((res: QueryResult) => {
+            .query(getCubeWithIdQuery, [cubeId])
+            .then((res: QueryResult) => {
 
-                        if (res.rows.length == 0) {
-                            reject(new Error("no cube with specified id found"));
-                        }
+                if (res.rows.length == 0) {
+                    reject(new Error("no cube with specified id found"));
+                }
 
-                        let cube: Cube = res.rows[0];
-                        cube.location = cube.location.trim();
+                let cube: Cube = res.rows[0];
+                cube.location = cube.location.trim();
 
-                        resolve(cube);
-                    })
-                    .catch((err: Error) => {
-                        client.release();
-                        reject(err);
-                    });
+                resolve(cube);
             })
             .catch((err: Error) => {
                 reject(err);
@@ -171,17 +126,9 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 export function deleteCubeWithId(cubeId: string): Promise<void> {
     return new Promise((resolve, reject) => {
         pool
-            .connect()
-            .then((client: PoolClient) => {
-                client
-                    .query(deleteCubeWithIdQuery, [cubeId])
-                    .then((res: QueryResult) => {
-                        resolve();
-                    })
-                    .catch((err: Error) => {
-                        client.release();
-                        reject(err);
-                    });
+            .query(deleteCubeWithIdQuery, [cubeId])
+            .then((res: QueryResult) => {
+                resolve();
             })
             .catch((err: Error) => {
                 reject(err);
