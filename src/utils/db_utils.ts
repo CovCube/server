@@ -3,7 +3,11 @@ import format from 'pg-format';
 import {pool} from "../index";
 import { Cube, CubeVariables } from '../types';
 
-const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID NOT NULL, location CHAR(255) NOT NULL, sensors CHAR(5)[], actuators CHAR(5)[], PRIMARY KEY (id))";
+const createSensorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_types (name CHAR(64) NOT NULL, push_rate NUMERIC NOT NULL, PRIMARY KEY (name))";
+const createActuatorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS actuator_types (name CHAR(64) NOT NULL, PRIMARY KEY (name))";
+const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID NOT NULL, location CHAR(255) NOT NULL, PRIMARY KEY (id))";
+const createCubeSensorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_sensors (id SERIAL UNIQUE NOT NULL, cube_id UUID NOT NULL, sensor_type CHAR(64) NOT NULL, FOREIGN KEY (cube_id) REFERENCES cubes (id), FOREIGN KEY (sensor_type) REFERENCES sensor_types (name))";
+const createCubeActuatorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_actuators (id SERIAL UNIQUE NOT NULL, cube_id UUID NOT NULL, actuator_type CHAR(64) NOT NULL, FOREIGN KEY (cube_id) REFERENCES cubes (id), FOREIGN KEY (actuator_type) REFERENCES actuator_types (name))";
 const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL UNIQUE NOT NULL,sensor_type CHAR(5) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, PRIMARY KEY (id), FOREIGN KEY(cube_id) REFERENCES cubes (id))";
 const persistCubeQuery: string = "INSERT INTO cubes (id, location, sensors, actuators) VALUES ($1, $2, $3, $4)";
 const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
@@ -13,28 +17,31 @@ const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
 const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE id=%L';
 const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
 
-export function setupDB(): void {
-    pool
-        .connect()
-        .then((client: PoolClient) => {
-            client
-                .query(createCubesTableQuery)
-                .then((res: QueryResult) => {
-                    client
-                        .query(createSensorDataTableQuery)
-                        .then((res: QueryResult) => {
-                            client.release();
-                        })
-                        .catch((err: Error) => {
-                            client.release();
-                            console.log(err.stack);
-                        });
-                })
-                .catch((err: Error) => {
-                    client.release();
-                    console.log(err.stack);
-                });
+export function setupDB(): Promise<[void, void | QueryResult]> {
+
+    let createSensorTypesTableRes: Promise<QueryResult> = pool.query(createSensorTypesTableQuery);
+    let createActuatorTypesTableRes: Promise<QueryResult> = pool.query(createActuatorTypesTableQuery);
+    let createCubesTableRes: Promise<QueryResult> = pool.query(createCubesTableQuery);
+
+    //Wait for base table creation
+    let junctionTableRes = Promise.all([createSensorTypesTableRes, createActuatorTypesTableRes, createCubesTableRes])
+        .then(() => {
+            //Create junction tables
+            pool.query(createCubeSensorsTableQuery);
+            pool.query(createCubeActuatorsTableQuery);
+        }).catch((err) => {
+            console.log(err.stack);
         });
+            
+    //Create sensor_data table, when cube table is created
+    let sensorDataTableRes = createCubesTableRes
+        .then(() => {
+            return pool.query(createSensorDataTableQuery);
+        }).catch((err) => {
+            console.log(err.stack);
+        });
+
+    return Promise.all([junctionTableRes, sensorDataTableRes]);
 }
 
 export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
