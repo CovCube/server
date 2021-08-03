@@ -69,7 +69,7 @@ export function getSensorTypes(): Promise<Array<Sensor>>  {
     return new Promise((resolve, reject) => {
         pool.query(getSensorTypesQuery)
             .then((res) => {
-                let sensor_types: Array<Object> = [];
+                let sensor_types: Array<Sensor> = [];
 
                 res.rows.forEach((value) => {
                     sensor_types.push({
@@ -159,7 +159,7 @@ export function deactivateActuatorType(actuator_type: string): Promise<void> {
     return new Promise((resolve, reject) => {
         pool.query(deactivateActuatorTypeQuery, [actuator_type])
             .then(() => {
-                resolve(s);
+                resolve();
             })
             .catch((err: Error) => {
                 reject(err);
