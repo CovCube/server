@@ -17,7 +17,8 @@ const persistCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, 
 const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
 const getCubesQuery: string = 'SELECT * FROM cubes';
 const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
-//TODO: Add queries to get a cubes sensors, actuators
+const getCubeSensorsWithIdQuery: string = 'SELECT * FROM cube_sensors WHERE cube_id=$1';
+const getCubeActuatorsWithIdQuery: string = 'SELECT * FROM cube_actuators WHERE cube_id=$1';
 const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE id=%L';
 const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
 //TODO: Make sure cube references are deleted everywhere
@@ -106,6 +107,8 @@ export function getCubes(): Promise<Array<Cube>> {
 
 export function getCubeWithId(cubeId: string): Promise<Cube> {
     return new Promise((resolve, reject) => {
+        let cube: Cube;
+
         pool
             .query(getCubeWithIdQuery, [cubeId])
             .then((res: QueryResult) => {
@@ -114,9 +117,36 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
                     reject(new Error("no cube with specified id found"));
                 }
 
-                let cube: Cube = res.rows[0];
+                cube= res.rows[0];
                 cube.location = cube.location.trim();
 
+                return;
+            })
+            .then(() => {
+                return pool.query(getCubeSensorsWithIdQuery, [cubeId]);
+            })
+            .then((res: QueryResult) => {
+                cube.sensors = [];
+
+                res.rows.forEach((value) => {
+                    cube.sensors.push(value.sensor_type.trim());
+                })
+
+                return;
+            })
+            .then(() => {
+                return pool.query(getCubeActuatorsWithIdQuery, [cubeId]);
+            })
+            .then((res: QueryResult) => {
+                cube.actuators = [];
+
+                res.rows.forEach((value) => {
+                    cube.actuators.push(value.actuator_type.trim());
+                })
+
+                return;
+            })
+            .then (() => {
                 resolve(cube);
             })
             .catch((err: Error) => {
