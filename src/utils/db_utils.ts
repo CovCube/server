@@ -132,7 +132,7 @@ export function getActuatorTypes(): Promise<Array<string>>  {
                 let sensor_types: Array<string> = [];
 
                 res.rows.forEach((value) => {
-                    sensor_types.push(value.name);
+                    sensor_types.push(value.name.trim());
                 })
 
                 resolve(sensor_types);
