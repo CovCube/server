@@ -35,7 +35,9 @@
                 <tr class="add-item">
                     <td colspan="3">
                         <select name="" id="">
-
+                            {{#each all_sensors}}
+                                <option value="{{this.name}}">{{this.name}}</option>
+                            {{/each}}
                         </select>
 
                         <img class="icon-delete" src="/static/img/plus-solid.svg" height="20px" alt="Add">
@@ -54,15 +56,19 @@
                         </td>
                     </tr>
                 {{/each}}
-                <tr class="add-item">
-                    <td colspan="2">
-                        <select name="" id="">
-                            
-                        </select>
+                {{#if all_actuators}}
+                    <tr class="add-item">
+                        <td colspan="2">
+                            <select name="" id="">
+                                {{#each all_actuators}}
+                                    <option value="{{this}}">{{this}}</option>
+                                {{/each}}
+                            </select>
 
-                        <img class="icon-delete" src="/static/img/plus-solid.svg" height="20px" alt="Add">
-                    </td>
-                </tr>
+                            <img class="icon-delete" src="/static/img/plus-solid.svg" height="20px" alt="Add">
+                        </td>
+                    </tr>
+                {{/if}}
             </table>
         </div>
         <button type="button">Discard</button>

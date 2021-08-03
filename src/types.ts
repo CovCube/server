@@ -13,3 +13,10 @@ export interface Sensor {
     name: string,
     push_rate: number
 }
+
+export interface CubeDetailDataObject {
+    title: string,
+    cube: Cube,
+    all_sensors: Array<Sensor>,
+    all_actuators: Array<string>
+}
