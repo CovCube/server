@@ -17,11 +17,11 @@ const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_da
 //Manage sensors
 const getSensorTypesQuery: string = 'SELECT * FROM sensor_types';
 const getSensorTypeWithNameQuery: string = 'SELECT * FROM sensor_types WHERE name= $1';
-const addSensorTypeQuery: string = "INSERT INTO sensor_types (name, push_rate, active) VALUES ($1, $2, $3)";
+const addSensorTypeQuery: string = "INSERT INTO sensor_types (name, push_rate, active) VALUES ($1, $2, TRUE)";
 const updateSensorTypePushRateQuery: string = "UPDATE sensor_types SET push_rate= $2 WHERE name= $1";
 const deactivateSensorTypeQuery: string = "UPDATE sensor_types SET active= FALSE WHERE name= $1";
 const getActuatorTypesQuery: string = 'SELECT * FROM actuator_types';
-const addActuatorTypeQuery: string = "INSERT INTO actuator_types (name, active) VALUES ($1, $2)";
+const addActuatorTypeQuery: string = "INSERT INTO actuator_types (name, active) VALUES ($1, TRUE)";
 const deactivateActuatorTypeQuery: string = "UPDATE actuator_types SET active= FALSE WHERE name= $1";
 //Persist cube
 const persistCubeQuery: string = "INSERT INTO cubes (id, location) VALUES ($1, $2)";
