@@ -16,6 +16,7 @@ const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_da
 
 //Manage sensors
 const getSensorTypesQuery: string = 'SELECT * FROM sensor_types';
+const getSensorTypeWithNameQuery: string = 'SELECT * FROM sensor_types WHERE name= $1';
 const addSensorTypeQuery: string = "INSERT INTO sensor_types (name, push_rate, active) VALUES ($1, $2, $3)";
 const updateSensorTypePushRateQuery: string = "UPDATE sensor_types SET push_rate= $2 WHERE name= $1";
 const deactivateSensorTypeQuery: string = "UPDATE sensor_types SET active= FALSE WHERE name= $1";
@@ -98,7 +99,10 @@ export function addSensorType(sensor_type: string, push_rate: number): Promise<v
 }
 
 export function updateSensorTypePushRate(sensor_type: string, push_rate: number): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+        await pool.query(getSensorTypeWithNameQuery, [sensor_type])
+                    .catch((err: Error) => reject(new Error("no sensor type with specified name found")));
+
         pool.query(updateSensorTypePushRateQuery, [sensor_type, push_rate])
             .then(() => {
                 resolve()
@@ -269,7 +273,11 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
 }
 
 export function updateCubeWithId(cubeId: string, variables: CubeVariables): Promise<Cube> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+
+        await pool.query(getCubeWithIdQuery, [cubeId])
+                    .catch((err: Error) => reject(new Error("no cube with specified id found")));
+
         pool
             .connect()
             .then((client: PoolClient) => {

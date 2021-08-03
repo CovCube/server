@@ -51,7 +51,14 @@ router.put('/sensors/:name', function(req: Request, res: Response) {
         })
         .catch ((e: Error) => {
             console.log(e.stack);
-            res.status(501).send("database error");
+            
+            switch (e.message) {
+                case 'no sensor type with specified name found':
+                    res.status(404).send("sensor type name not found");
+                    break;
+                default:
+                    res.status(501).send("database error");
+            }
         });
 });
 

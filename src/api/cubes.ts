@@ -55,7 +55,7 @@ router.get('/:cubeId', function(req: Request, res: Response) {
             
             switch (e.message) {
                 case 'no cube with specified id found':
-                    res.status(501).send("cubeId not found");
+                    res.status(404).send("cubeId not found");
                     break;
                 default:
                     res.status(501).send("database error");
@@ -74,7 +74,14 @@ router.put('/:cubeId', function(req: Request, res: Response) {
         })
         .catch ((e: Error) => {
             console.log(e.stack);
-            res.status(501).send("database error");
+            
+            switch (e.message) {
+                case 'no cube with specified id found':
+                    res.status(404).send("cubeId not found");
+                    break;
+                default:
+                    res.status(501).send("database error");
+            }
         });
 });
 
