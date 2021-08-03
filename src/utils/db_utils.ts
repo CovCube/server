@@ -5,14 +5,14 @@ import {pool} from "../index";
 import { Cube, CubeVariables, Sensor } from '../types';
 
 //Base tables
-const createSensorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_types (name CHAR(64) NOT NULL, push_rate NUMERIC NOT NULL, active BOOLEAN NOT NULL, PRIMARY KEY (name))";
-const createActuatorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS actuator_types (name CHAR(64) NOT NULL, active BOOLEAN NOT NULL, PRIMARY KEY (name))";
-const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID NOT NULL, location CHAR(255) NOT NULL, PRIMARY KEY (id))";
+const createSensorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_types (name CHAR(64) PRIMARY KEY, push_rate NUMERIC NOT NULL, active BOOLEAN NOT NULL)";
+const createActuatorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS actuator_types (name CHAR(64) PRIMARY KEY, active BOOLEAN NOT NULL)";
+const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID PRIMARY KEY, location CHAR(255) NOT NULL)";
 //Junction tables
-const createCubeSensorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_sensors (id SERIAL UNIQUE NOT NULL, cube_id UUID NOT NULL, sensor_type CHAR(64) NOT NULL, FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY (sensor_type) REFERENCES sensor_types (name) ON DELETE CASCADE)";
-const createCubeActuatorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_actuators (id SERIAL UNIQUE NOT NULL, cube_id UUID NOT NULL, actuator_type CHAR(64) NOT NULL, FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY (actuator_type) REFERENCES actuator_types (name) ON DELETE CASCADE)";
+const createCubeSensorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_sensors (cube_id UUID NOT NULL, sensor_type CHAR(64) NOT NULL, PRIMARY KEY (cube_id, sensor_type),FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY (sensor_type) REFERENCES sensor_types (name) ON DELETE CASCADE)";
+const createCubeActuatorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_actuators (cube_id UUID NOT NULL, actuator_type CHAR(64) NOT NULL, PRIMARY KEY (cube_id, actuator_type), FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY (actuator_type) REFERENCES actuator_types (name) ON DELETE CASCADE)";
 //sensor data tables
-const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL UNIQUE NOT NULL,sensor_type CHAR(64) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, PRIMARY KEY (id), FOREIGN KEY(cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY(sensor_type) REFERENCES sensor_types(name) ON DELETE CASCADE)";
+const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL PRIMARY KEY, sensor_type CHAR(64) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, FOREIGN KEY(cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY(sensor_type) REFERENCES sensor_types(name) ON DELETE CASCADE)";
 
 //Manage sensors
 const getSensorTypesQuery: string = 'SELECT * FROM sensor_types';
