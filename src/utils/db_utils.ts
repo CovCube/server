@@ -179,6 +179,9 @@ export function persistCube(cubeId: string, location: string, sensors: Array<str
             .then((client: PoolClient) => {
                 sensors.forEach(async (value: string) => {
                     await client.query(persistCubeSensorsQuery, [cubeId, value])
+                                .catch((err: Error) => {
+                                    reject(err);
+                                });
                 })
                 
                 return client;
@@ -186,6 +189,9 @@ export function persistCube(cubeId: string, location: string, sensors: Array<str
             .then(async (client: PoolClient) => {
                 actuators.forEach(async (value: string) => {
                     await client.query(persistCubeActuatorsQuery, [cubeId, value])
+                                .catch((err: Error) => {
+                                    reject(err);
+                                });
             })
 
             resolve()
