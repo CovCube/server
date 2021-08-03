@@ -14,7 +14,7 @@
     "/cubes": {
       "get": {
         "summary": "shows list of registered cubes",
-        "description": "returns all registered cubes in the system.",
+        "description": "returns all registered cubes in the system",
         "responses": {
           "200": {
             "description": "returned cube list",
@@ -47,14 +47,7 @@
         },
         "responses": {
           "201": {
-            "description": "successfully created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cube"
-                }
-              }
-            }
+            "description": "successfully created"
           }
         }
       }
@@ -94,7 +87,18 @@
               "text/plain": {
                 "schema": {
                   "type": "string",
-                  "example": "cube with ID {id} was not found"
+                  "example": "cubeId not found"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "database error encountered",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "database error"
                 }
               }
             }
@@ -146,7 +150,18 @@
               "text/plain": {
                 "schema": {
                   "type": "string",
-                  "example": "cube with ID {id} was not found"
+                  "example": "cubeId not found"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "database error encountered",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "database error"
                 }
               }
             }
@@ -181,13 +196,13 @@
               }
             }
           },
-          "404": {
-            "description": "cube with specified ID was not found",
+          "501": {
+            "description": "database error encountered",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "string",
-                  "example": "cube with ID {id} was not found"
+                  "example": "database error"
                 }
               }
             }
@@ -204,7 +219,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/body"
+                "$ref": "#/components/schemas/data_body"
               }
             }
           },
@@ -242,6 +257,213 @@
                 "schema": {
                   "type": "string",
                   "example": "[\"the provided sensor type does not exist\",\"there was an error with the provided timeframe\"]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/sensors": {
+      "get": {
+        "summary": "shows list of sensor types",
+        "description": "returns all sensor types in the system",
+        "responses": {
+          "200": {
+            "description": "returned sensor type list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SensorType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "adds sensor type",
+        "description": "create sensor type on the server",
+        "requestBody": {
+          "description": "sensor type data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorType"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "successfully created"
+          }
+        }
+      }
+    },
+    "/config/sensors/{name}": {
+      "put": {
+        "summary": "update push rate of sensor type",
+        "description": "updates specified sensor types push rate",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name of the sensor type to update",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "push_rate",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/sensors_name_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully updated push rate"
+          },
+          "404": {
+            "description": "sensor type with specified name was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "sensor type name not found"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "database error encountered",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "database error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "deactivate sensor type",
+        "description": "sensor types can not be delete, but be set inactive",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name of the sensor type to update",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "deleted sensor type"
+          },
+          "501": {
+            "description": "database error encountered",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "database error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/actuators": {
+      "get": {
+        "summary": "shows list of actuator types",
+        "description": "returns all actuator types in the system",
+        "responses": {
+          "200": {
+            "description": "returned actuator type list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActuatorType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "adds actuator type",
+        "description": "create actuator type on the server",
+        "requestBody": {
+          "description": "actuator type data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActuatorType"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "successfully created"
+          }
+        }
+      }
+    },
+    "/config/actuators/{name}": {
+      "delete": {
+        "summary": "deactivate actuator type",
+        "description": "actuator types can not be delete, but be set inactive",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name of the actuator type to update",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "deleted actuator type"
+          },
+          "501": {
+            "description": "database error encountered",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "database error"
                 }
               }
             }
@@ -286,13 +508,6 @@
           }
         }
       },
-      "SensorType": {
-        "type": "string",
-        "enum": [
-          "nfc",
-          "air"
-        ]
-      },
       "SensorData": {
         "required": [
           "cube_id",
@@ -324,7 +539,36 @@
           }
         }
       },
-      "body": {
+      "SensorType": {
+        "required": [
+          "name",
+          "push_rate"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "nfc"
+          },
+          "push_rate": {
+            "type": "number",
+            "example": 30
+          }
+        }
+      },
+      "ActuatorType": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "led"
+          }
+        }
+      },
+      "data_body": {
         "required": [
           "end_date_time",
           "sensor_type",
@@ -340,6 +584,18 @@
           },
           "end_date_time": {
             "$ref": "#/components/schemas/DateTime"
+          }
+        }
+      },
+      "sensors_name_body": {
+        "required": [
+          "push_rate"
+        ],
+        "type": "object",
+        "properties": {
+          "push_rate": {
+            "type": "number",
+            "example": 30
           }
         }
       }
