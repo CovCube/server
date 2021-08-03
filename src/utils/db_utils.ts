@@ -1,3 +1,4 @@
+import { Client } from 'mqtt';
 import {PoolClient, QueryResult} from 'pg';
 import format from 'pg-format';
 import {pool} from "../index";
@@ -11,7 +12,8 @@ const createCubeActuatorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_a
 const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL UNIQUE NOT NULL,sensor_type CHAR(64) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, PRIMARY KEY (id), FOREIGN KEY(cube_id) REFERENCES cubes (id), FOREIGN KEY(sensor_type) REFeRENCES sensor_types(name))";
 
 const persistCubeQuery: string = "INSERT INTO cubes (id, location) VALUES ($1, $2)";
-//TODO: Add queries to link cubes with their sensors, actuators
+const persistCubeSensorsQuery: string = "INSERT INTO cube_sensors (cube_id, sensor_type) VALUES ($1, $2)";
+const persistCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type) VALUES ($1, $2)";
 const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
 const getCubesQuery: string = 'SELECT * FROM cubes';
 const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
@@ -47,8 +49,33 @@ export function setupDB(): Promise<[void, void | QueryResult]> {
     return Promise.all([junctionTableRes, sensorDataTableRes]);
 }
 
-export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void | QueryResult> {
-    return pool.query(persistCubeQuery, [cubeId, location])
+export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
+    return new Promise((resolve, reject) => {
+
+        pool.connect()
+            .then(async (client: PoolClient) => {
+                await client.query(persistCubeQuery, [cubeId, location]);
+
+                return client;
+            })
+            .then((client: PoolClient) => {
+                sensors.forEach(async (value: string) => {
+                    await client.query(persistCubeSensorsQuery, [cubeId, value])
+                })
+                
+                return client;
+            })
+            .then(async (client: PoolClient) => {
+                actuators.forEach(async (value: string) => {
+                    await client.query(persistCubeActuatorsQuery, [cubeId, value])
+            })
+
+            resolve()
+            })
+            .catch((err: Error) => {
+                reject(err);
+            })
+    })
 }
 
 export function persistSensorData(sensorType: string, cubeId: string, timestamp: string, data: string): Promise<void | QueryResult> {
