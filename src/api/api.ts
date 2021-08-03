@@ -2,6 +2,7 @@ import express, { Router, Request, Response } from "express";
 import path from 'path';
 import {router as cubesRoute} from "./cubes";
 import {router as dataRoute} from "./data";
+import {router as configRoute} from "./config";
 
 //Export the router
 export var router: Router = express.Router();
@@ -9,6 +10,7 @@ export var router: Router = express.Router();
 //Delegate API-routes to their routers
 router.use('/cubes', cubesRoute);
 router.use('/data', dataRoute);
+router.use('/config', configRoute);
 
 //Handle root to display API documentation
 router.get('/', (req: Request, res: Response) => {

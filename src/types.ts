@@ -8,3 +8,8 @@ export interface Cube {
 export interface CubeVariables {
     [key: string]: string | Array<string>,
 }
+
+export interface Sensor {
+    name: string,
+    push_rate: number
+}
