@@ -22,8 +22,12 @@ function addSensorActuator (type) {
 
     //Add to form data
     let input = document.getElementById(type+'s_input');
-    input.value = input.value.concat(',', option);
-
+    if (input.value.length == 0) {
+        input.value = input.value.concat(option);
+    } else {
+        input.value = input.value.concat(',', option);
+    }
+    
     //Add row and cells
     let table = document.getElementById(type+'s');
     let new_row = table.insertRow(table.rows.length-1);
