@@ -31,12 +31,9 @@
                             </td>
                         </tr>
                     {{/each}}
-                    {{#if all_sensors}}
-                        <tr class="add-item">
+                    {{#if additional_sensors}}
                             <td>
-                                <select>
-                                    {{#each all_sensors}}
-                                        <option value="{{this.name}}">{{this.name}}</option>
+                                    {{#each additional_sensors}}
                                     {{/each}}
                                 </select>
                             </td>
@@ -58,12 +55,9 @@
                             </td>
                         </tr>
                     {{/each}}
-                    {{#if all_actuators}}
-                        <tr class="add-item">
+                    {{#if additional_actuators}}
                             <td>
-                                <select>
-                                    {{#each all_actuators}}
-                                        <option value="{{this}}">{{this}}</option>
+                                    {{#each additional_actuators}}
                                     {{/each}}
                                 </select>
                             </td>

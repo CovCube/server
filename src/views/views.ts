@@ -31,18 +31,18 @@ router.get('/cubes/:cubeId', (req, res) => {
         .then((values: Array<any>) => {
 
             let cube: Cube = values[0];
-            let all_sensors = values[1].filter((sensor: Sensor) => {
+            let additional_sensors = values[1].filter((sensor: Sensor) => {
                 return !cube.sensors.includes(sensor.name.trim())
             });
-            let all_actuators = values[2].filter((actuator: string) => {
+            let additional_actuators = values[2].filter((actuator: string) => {
                 return !cube.actuators.includes(actuator.trim())
             });
             
             let data: CubeDetailDataObject = {
                 'title': 'Cube',
                 'cube':  cube,
-                'all_sensors': all_sensors,
-                'all_actuators': all_actuators
+                'additional_sensors': additional_sensors,
+                'additional_actuators': additional_actuators
             }
 
             res.render('cube-detail', data);

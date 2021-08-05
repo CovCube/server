@@ -17,6 +17,6 @@ export interface Sensor {
 export interface CubeDetailDataObject {
     title: string,
     cube: Cube,
-    all_sensors: Array<Sensor>,
-    all_actuators: Array<string>
+    additional_sensors: Array<Sensor>,
+    additional_actuators: Array<string>
 }
