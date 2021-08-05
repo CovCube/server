@@ -33,7 +33,6 @@ router.post('/cubes/:cubeId', async (req, res) => {
 
     let cubeId: string = req.params['cubeId'];
     let variables = req.body;
-    console.log(variables)
 
     await updateCubeWithId(cubeId, variables);
     
