@@ -1,7 +1,8 @@
 import express, { Router, Request, Response } from "express";
-import { getActuatorTypes, getCubes, getCubeWithId, getSensorTypes } from "../utils/db_utils";
+import { getActuatorTypes, getCubes, getCubeWithId, getSensorTypes, updateCubeWithId } from "../utils/db_utils";
 import { Cube, CubeDetailDataObject, Sensor } from "../types";
 import { compareCubes } from "../utils/utils";
+import { Application } from "express-serve-static-core";
 
 //Export the router
 export var router: Router = express.Router();
@@ -24,6 +25,23 @@ router.get('/', (req: Request, res:Response) => {
 });
 
 router.get('/cubes/:cubeId', (req, res) => {
+
+    getCubeWithIdView(req, res);
+});
+
+router.post('/cubes/:cubeId', (req, res) => {
+
+    let cubeId: string = req.params['cubeId'];
+    let variables = req.body;
+
+    console.log(variables)
+
+    //updateCubeWithId(cubeId, variables)
+    
+    getCubeWithIdView(req, res);
+});
+
+function getCubeWithIdView (req: Request, res: Response): void {
 
     let cubeId: string = req.params['cubeId'];
 
@@ -51,4 +69,4 @@ router.get('/cubes/:cubeId', (req, res) => {
             console.log(e.stack);
             res.status(501).send("view error");
         });
-});
+}
