@@ -29,14 +29,13 @@ router.get('/cubes/:cubeId', (req, res) => {
     getCubeWithIdView(req, res);
 });
 
-router.post('/cubes/:cubeId', (req, res) => {
+router.post('/cubes/:cubeId', async (req, res) => {
 
     let cubeId: string = req.params['cubeId'];
     let variables = req.body;
-
     console.log(variables)
 
-    //updateCubeWithId(cubeId, variables)
+    await updateCubeWithId(cubeId, variables);
     
     getCubeWithIdView(req, res);
 });

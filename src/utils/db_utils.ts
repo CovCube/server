@@ -228,6 +228,42 @@ export function getCubes(): Promise<Array<Cube>> {
     });
 }
 
+async function getCubeSensors(cubeId: string): Promise<Array<string>> {
+    return new Promise((resolve, reject) => {
+        let sensors: Array<string> = [];
+
+        pool.query(getCubeSensorsWithIdQuery, [cubeId])
+            .then((res) => {
+                res.rows.forEach((value) => {
+                    sensors.push(value.sensor_type.trim());
+                })
+
+                resolve(sensors)
+            })
+            .catch((err: Error) => {
+                reject(err);
+            });
+    });
+}
+
+async function getCubeActuators(cubeId: string): Promise<Array<string>> {
+    return new Promise((resolve, reject) => {
+        let actuators: Array<string> = [];
+
+        pool.query(getCubeActuatorsWithIdQuery, [cubeId])
+            .then((res) => {
+                res.rows.forEach((value) => {
+                    actuators.push(value.actuator_type.trim());
+                })
+
+                resolve(actuators)
+            })
+            .catch((err: Error) => {
+                reject(err);
+            });
+    });
+}
+
 export function getCubeWithId(cubeId: string): Promise<Cube> {
     return new Promise((resolve, reject) => {
         let cube: Cube;
@@ -246,28 +282,16 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
                 return;
             })
             .then(() => {
-                return pool.query(getCubeSensorsWithIdQuery, [cubeId]);
+                return getCubeSensors(cubeId);
             })
-            .then((res: QueryResult) => {
-                cube.sensors = [];
-
-                res.rows.forEach((value) => {
-                    cube.sensors.push(value.sensor_type.trim());
-                })
-
-                return;
+            .then((sensors: Array<string>) => {
+                cube.sensors = sensors;
             })
             .then(() => {
-                return pool.query(getCubeActuatorsWithIdQuery, [cubeId]);
+                return getCubeActuators(cubeId);
             })
-            .then((res: QueryResult) => {
-                cube.actuators = [];
-
-                res.rows.forEach((value) => {
-                    cube.actuators.push(value.actuator_type.trim());
-                })
-
-                return;
+            .then((actuators: Array<string>) => {
+                cube.actuators = actuators;
             })
             .then (() => {
                 resolve(cube);
@@ -284,20 +308,36 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
         await pool.query(getCubeWithIdQuery, [cubeId])
                     .catch((err: Error) => reject(new Error("no cube with specified id found")));
 
-        pool
-            .connect()
-            .then((client: PoolClient) => {
-                Object.keys(variables).forEach((key: string) => {
-                    let query = format(updateCubeWithIdQuery, key, variables[key], cubeId);
+        let cube_sensors: Array<string>;
+        let cube_actuators: Array<string>;
 
-                    client
-                        .query(query)
-                        .catch((err: Error) => {
-                            client.release();
-                            reject(err);
-                        });
-                });
+        pool.query(format(updateCubeWithIdQuery, 'location', variables.location, cubeId))
+            .then(() => {
+                return Promise.all([getCubeSensors(cubeId), getCubeActuators(cubeId)]);
+            })
+            .then((values) => {
+                cube_sensors = values[0];
+                cube_actuators = values[1];
+            })
+            .then(() => {
+                let sensors = variables.sensors.split(',');
 
+                sensors.forEach(async (value) => {
+                    if (!cube_sensors.includes(value)) {
+                        await pool.query(persistCubeSensorsQuery, [cubeId, value]);
+                    }
+                })
+            })
+            .then(() => {
+                let actuators = variables.actuators.split(',');
+
+                actuators.forEach(async (value) => {
+                    if (!cube_actuators.includes(value)) {
+                        await pool.query(persistCubeActuatorsQuery, [cubeId, value]);
+                    }
+                })
+            })
+            .then(() => {
                 resolve(getCubeWithId(cubeId));
             })
             .catch((err: Error) => {

@@ -6,7 +6,9 @@ export interface Cube {
 }
 
 export interface CubeVariables {
-    [key: string]: string | Array<string>,
+    location: string,
+    sensors: string,
+    actuators: string
 }
 
 export interface Sensor {
