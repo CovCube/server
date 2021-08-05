@@ -2,9 +2,17 @@ const deleteSensorActuatorHTML = '<img class="icon-delete" src="/static/img/minu
 
 window.addEventListener('DOMContentLoaded', () => {
 
+    //Add listeners for add icons
     document.getElementById("add-sensor-button").addEventListener('click', addSensorActuator.bind(this, "sensor"));
     document.getElementById("add-actuator-button").addEventListener('click', addSensorActuator.bind(this, "actuator"));
-    
+
+    //Add listeners for remove icons
+    document.getElementById('sensors').querySelectorAll('.icon-delete').forEach(element => {
+        element.addEventListener('click', removeSensorActuator.bind(this, 'sensor'));
+    });
+    document.getElementById('actuators').querySelectorAll('.icon-delete').forEach(element => {
+        element.addEventListener('click', removeSensorActuator.bind(this, 'actuator'));
+    });   
 });
 
 function addSensorActuator (type) {
@@ -33,4 +41,25 @@ function addSensorActuator (type) {
     if (select_elem.children.length == 0) {
         document.getElementById('additional_'+type+'s_row').style.display= 'none';
     }
+}
+
+function removeSensorActuator (type, event) {
+
+    let row = event.currentTarget.parentNode.parentNode;
+    let option = row.querySelector('input').value;
+
+    //Remove from form data
+    let input = document.getElementById(type+'s_input');
+    let splits = input.value.split(',');
+    input.value = splits.filter(split => split !== option);
+
+    //Remove row
+    row.parentNode.removeChild(row);
+
+    //Add as option
+    let select_elem = document.getElementById('additional_'+type+'s_select');
+    let option_elem = new Option(option, option);
+    option_elem.id = 'add-'+type+'-'+option;
+    option_elem.addEventListener('click', addSensorActuator.bind(this, type));
+    select_elem.appendChild(option_elem);
 }
