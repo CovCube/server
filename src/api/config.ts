@@ -8,9 +8,8 @@ export var router: Router = express.Router();
 router.get('/sensors', function(req: Request, res: Response) {
     getSensorTypes()
         .then((sensors: Array<Sensor>) => {
-            res.status(200).send({
-                sensors: sensors
-            });
+            console.log(sensors);
+            res.status(200).send(sensors);
         })
         .catch ((e: Error) => {
             console.log(e.stack);

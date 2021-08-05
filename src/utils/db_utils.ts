@@ -73,8 +73,8 @@ export function getSensorTypes(): Promise<Array<Sensor>>  {
 
                 res.rows.forEach((value) => {
                     sensor_types.push({
-                        name: value.name,
-                        push_rate: value.push_rate
+                        name: value.name.trim(),
+                        push_rate: parseInt(value.push_rate)
                     })
                 })
 
