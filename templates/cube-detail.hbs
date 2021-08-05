@@ -23,6 +23,7 @@
                         <th>Sensor</th>
                         <th></th>
                     </thead>
+                    <input type="hidden" name="sensors" id="sensors_input" value="{{cube.sensors}}">
                     {{#each cube.sensors}}
                         <tr>
                             <td>{{this}}</td>
@@ -50,6 +51,7 @@
                     <thead>
                         <th colspan="2">Actuators</th>
                     </thead>
+                    <input type="hidden" name="actuators" id="actuators_input" value="{{cube.actuators}}">
                     {{#each cube.actuators}}
                         <tr>
                             <td>{{this}}</td>

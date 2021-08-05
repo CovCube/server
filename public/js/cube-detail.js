@@ -12,6 +12,10 @@ function addSensorActuator (type) {
     let select_elem = document.getElementById('additional_'+type+'s_select');
     let option = select_elem.selectedOptions.item(0).value;
 
+    //Add to form data
+    let input = document.getElementById(type+'s_input');
+    input.value = input.value.concat(',', option);
+
     //Add row and cells
     let table = document.getElementById(type+'s');
     let new_row = table.insertRow(table.rows.length-1);
