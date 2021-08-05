@@ -71,4 +71,8 @@ function removeSensorActuator (type, event) {
     option_elem.id = 'add-'+type+'-'+option;
     option_elem.addEventListener('click', addSensorActuator.bind(this, type));
     select_elem.appendChild(option_elem);
+
+    //Make selection visible, if not
+    let addition_row = document.getElementById('additional_'+type+'s_row');
+    if (addition_row.style.display == 'none') {addition_row.style.display = ''};
 }
