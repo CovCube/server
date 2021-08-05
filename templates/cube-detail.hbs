@@ -32,13 +32,16 @@
                         </tr>
                     {{/each}}
                     {{#if additional_sensors}}
+                        <tr class="add-item" id="additional_sensors_row">
                             <td>
+                                <select id="additional_sensors_select">
                                     {{#each additional_sensors}}
+                                        <option value="{{this.name}}" id="add-sensor-{{this.name}}">{{this.name}}</option>
                                     {{/each}}
                                 </select>
                             </td>
                             <td>
-                                <img class="icon-add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
+                                <img class="icon-add" id="add-sensor-button" src="/static/img/plus-solid.svg" height="20px" alt="Add">
                             </td>
                         </tr>
                     {{/if}}
@@ -56,13 +59,16 @@
                         </tr>
                     {{/each}}
                     {{#if additional_actuators}}
+                        <tr class="add-item" id="additional_actuators_row">
                             <td>
+                                <select id="additional_actuators_select">
                                     {{#each additional_actuators}}
+                                        <option value="{{this}}" id="add-actuator-{{this}}">{{this}}</option>
                                     {{/each}}
                                 </select>
                             </td>
                             <td>
-                                <img class="icon-add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
+                                <img class="icon-add" id="add-actuator-button" src="/static/img/plus-solid.svg" height="20px" alt="Add">
                             </td>
                         </tr>
                     {{/if}}
@@ -75,5 +81,7 @@
 
     {{!Add footer}}
     {{> footer}}
+
+    <script src="/static/js/cube-detail.js"></script>
 </body>
 </html>
