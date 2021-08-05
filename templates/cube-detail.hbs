@@ -13,68 +13,70 @@
         <h2>Cube</h2>
         <h3>{{cube.id}}</h3>
 
-        <label for="location">Location:</label>
-        <input type="text" name="location" id="location" value="{{cube.location}}">
+        <form action="/cubes/{{cube.id}}" method="post">
+            <label for="location">Location:</label>
+            <input type="text" name="location" id="location" value="{{cube.location}}">
 
-        <div id="tables">
-            <table id="sensors">
-                <thead>
-                    <th>Sensor</th>
-                    <th></th>
-                </thead>
-                {{#each cube.sensors}}
-                    <tr>
-                        <td>{{this}}</td>
-                        <td>
-                            <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
-                        </td>
-                    </tr>
-                {{/each}}
-                {{#if all_sensors}}
-                    <tr class="add-item">
-                        <td>
-                            <select name="" id="">
-                                {{#each all_sensors}}
-                                    <option value="{{this.name}}">{{this.name}}</option>
-                                {{/each}}
-                            </select>
-                        </td>
-                        <td>
-                            <img class="icon-add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
-                        </td>
-                    </tr>
-                {{/if}}
-            </table>
-            <table id="actuators">
-                <thead>
-                    <th colspan="2">Actuators</th>
-                </thead>
-                {{#each cube.actuators}}
-                    <tr>
-                        <td>{{this}}</td>
-                        <td>
-                            <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
-                        </td>
-                    </tr>
-                {{/each}}
-                {{#if all_actuators}}
-                    <tr class="add-item">
-                        <td>
-                            <select name="" id="">
-                                {{#each all_actuators}}
-                                    <option value="{{this}}">{{this}}</option>
-                                {{/each}}
-                            </select>
-                        </td>
-                        <td>
-                            <img class="icon-add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
-                        </td>
-                    </tr>
-                {{/if}}
-            </table>
-        </div>
-        <button type="button">Discard</button>
-        <button type="button">Save</button>
+            <div id="tables">
+                <table id="sensors">
+                    <thead>
+                        <th>Sensor</th>
+                        <th></th>
+                    </thead>
+                    {{#each cube.sensors}}
+                        <tr>
+                            <td>{{this}}</td>
+                            <td>
+                                <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                            </td>
+                        </tr>
+                    {{/each}}
+                    {{#if all_sensors}}
+                        <tr class="add-item">
+                            <td>
+                                <select name="" id="">
+                                    {{#each all_sensors}}
+                                        <option value="{{this.name}}">{{this.name}}</option>
+                                    {{/each}}
+                                </select>
+                            </td>
+                            <td>
+                                <img class="icon-add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
+                            </td>
+                        </tr>
+                    {{/if}}
+                </table>
+                <table id="actuators">
+                    <thead>
+                        <th colspan="2">Actuators</th>
+                    </thead>
+                    {{#each cube.actuators}}
+                        <tr>
+                            <td>{{this}}</td>
+                            <td>
+                                <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                            </td>
+                        </tr>
+                    {{/each}}
+                    {{#if all_actuators}}
+                        <tr class="add-item">
+                            <td>
+                                <select name="" id="">
+                                    {{#each all_actuators}}
+                                        <option value="{{this}}">{{this}}</option>
+                                    {{/each}}
+                                </select>
+                            </td>
+                            <td>
+                                <img class="icon-add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
+                            </td>
+                        </tr>
+                    {{/if}}
+                </table>
+            </div>
+            <input type="reset" name="reset" value="Reset" />
+            <button type="submit" name="submit" value="Submit" />
+        </form>
     </div>
 
     {{!Add footer}}
