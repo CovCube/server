@@ -1,4 +1,4 @@
-const deleteSensorActuatorHTML = '<img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">'
+const deleteSensorActuatorHTML = '<img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">';
 
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -33,6 +33,10 @@ function addSensorActuator (type) {
     let new_row = table.insertRow(table.rows.length-1);
     let name_cell = new_row.insertCell();
     let delete_cell = new_row.insertCell();
+    let input_elem = document.createElement('input');
+    input_elem.type = 'hidden';
+    input_elem.value = option;
+    new_row.appendChild(input_elem);
     //Populate cells
     name_cell.innerHTML = option;
     delete_cell.innerHTML = deleteSensorActuatorHTML;
