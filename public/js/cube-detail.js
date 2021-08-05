@@ -40,7 +40,7 @@ function addSensorActuator (type) {
     //Populate cells
     name_cell.innerHTML = option;
     delete_cell.innerHTML = deleteSensorActuatorHTML;
-    delete_cell.children[0].addEventListener('click', removeSensorActuator.bind(this, 'sensor'));
+    delete_cell.children[0].addEventListener('click', removeSensorActuator.bind(this, type));
 
     //Remove option from select
     let option_elem = document.getElementById('add-'+type+'-'+option);
