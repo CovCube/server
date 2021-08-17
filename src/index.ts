@@ -4,9 +4,11 @@ import path from 'path';
 import bodyParser from "body-parser";
 import helmet from "helmet";
 import dotenv from "dotenv";
+import passport from "passport";
 import {Pool} from "pg";
 import mqtt, {Client as MQTTClient} from "mqtt";
 import {setupDB} from "./utils/db_utils";
+import {setupPassport} from "./utils/passport_utils";
 import {setupMQTT} from "./utils/mqtt_utils";
 import {router as viewRoutes} from "./views/views";
 import {router as apiRoutes} from "./api/api";
@@ -17,6 +19,9 @@ dotenv.config();
 //Connect to database
 export const pool: Pool = new Pool();
 setupDB();
+
+//Setup passport
+setupPassport();
 
 //Connect to MQTT broker
 let mqttUrl: string = process.env.MQTTURL || 'mqtt://test.mosquitto.org';
@@ -45,6 +50,7 @@ app.use('/static', express.static(path.join(__dirname, './public')));
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
 
 //Delegate routing
 app.use('/', viewRoutes);
