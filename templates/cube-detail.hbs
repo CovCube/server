@@ -13,7 +13,7 @@
         <h2>Cube</h2>
         <h3>{{cube.id}}</h3>
 
-        <form action="/cubes/{{cube.id}}" method="post">
+        <form action="/cubes/{{cube.id}}" method="post" id="form">
             <label for="location">Location:</label>
             <input type="text" name="location" id="location" value="{{cube.location}}">
 
@@ -23,6 +23,7 @@
                         <th>Sensor</th>
                         <th></th>
                     </thead>
+                    <input type="hidden" id="original_sensors_input" value="{{cube.sensors}}">
                     <input type="hidden" name="sensors" id="sensors_input" value="{{cube.sensors}}">
                     {{#each cube.sensors}}
                         <tr id="sensor_row_{{this}}">
@@ -55,6 +56,7 @@
                     <thead>
                         <th colspan="2">Actuators</th>
                     </thead>
+                    <input type="hidden" id="original_actuators_input" value="{{cube.actuators}}">
                     <input type="hidden" name="actuators" id="actuators_input" value="{{cube.actuators}}">
                     {{#each cube.actuators}}
                         <tr id="actuator_row_{{this}}">

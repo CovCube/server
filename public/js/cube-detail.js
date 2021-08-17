@@ -2,18 +2,66 @@ const deleteSensorActuatorHTML = '<img class="icon-delete" src="/static/img/minu
 
 window.addEventListener('DOMContentLoaded', () => {
 
+    //Add listener for form reset event
+    document.getElementById('form').addEventListener('reset', resetForm);
+
     //Add listeners for add icons
     document.getElementById("add-sensor-button").addEventListener('click', addSensorActuatorEventHandler.bind(this, "sensor"));
     document.getElementById("add-actuator-button").addEventListener('click', addSensorActuatorEventHandler.bind(this, "actuator"));
 
     //Add listeners for remove icons
     document.getElementById('sensors').querySelectorAll('.icon-delete').forEach(element => {
-        element.addEventListener('click', removeSensorActuator.bind(this, 'sensor'));
+        element.addEventListener('click', removeSensorActuatorEventHandler.bind(this, 'sensor'));
     });
     document.getElementById('actuators').querySelectorAll('.icon-delete').forEach(element => {
         element.addEventListener('click', removeSensorActuatorEventHandler.bind(this, 'actuator'));
     });   
 });
+
+
+function resetForm() {
+    let original_sensors = document.getElementById('original_sensors_input').value.split(',');
+    console.log(original_sensors);
+    let sensors_input = document.getElementById('sensors_input').value.split(',');
+    console.log(sensors_input);
+    let original_actuators = document.getElementById('original_actuators_input').value.split(',');
+    console.log(original_actuators);
+    let actuators_input = document.getElementById('actuators_input').value.split(',');
+    console.log(actuators_input);
+
+    original_sensors.forEach((value) => {
+        if (!sensors_input.includes(value)) {
+            addSensorActuator('sensor', value);
+        } else {
+            let index = sensors_input.indexOf(value);
+            sensors_input.splice(index, 1);
+        }
+    });
+
+    original_actuators.forEach((value) => {
+        if (!actuators_input.includes(value)) {
+            addSensorActuator('actuator', value);
+        } else {
+            let index = actuators_input.indexOf(value);
+            actuators_input.splice(index, 1);
+        }
+    });
+    
+    sensors_input.forEach((value) => {
+        //If value is empty, skip the rest
+        if (!value) return;
+        removeSensorActuator('sensor', value);
+    })
+    
+    actuators_input.forEach((value) => {
+        //If value is empty, skip the rest
+        if (!value) return;
+        removeSensorActuator('actuator', value);
+    })
+
+    document.getElementById('sensors_input').value = original_sensors;
+    document.getElementById('actuators_input').value = original_actuators;
+}
 
 function addSensorActuatorEventHandler (type) {
 
@@ -35,6 +83,7 @@ function addSensorActuator (type, option) {
     //Add row and cells
     let table = document.getElementById(type+'s');
     let new_row = table.insertRow(table.rows.length-1);
+    new_row.id = type + '_row_' + option;
     let name_cell = new_row.insertCell();
     let delete_cell = new_row.insertCell();
     let input_elem = document.createElement('input');
@@ -51,7 +100,7 @@ function addSensorActuator (type, option) {
     option_elem.parentNode.removeChild(option_elem);
 
     //Remove select if empty
-    if (select_elem.children.length == 0) {
+    if (document.getElementById('additional_'+type+'s_select').children.length == 0) {
         document.getElementById('additional_'+type+'s_row').style.display= 'none';
     }
 }
