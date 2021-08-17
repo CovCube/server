@@ -166,7 +166,7 @@ export function deactivateActuatorType(actuator_type: string): Promise<void> {
     });
 }
 
-export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
+export function addCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
     return new Promise((resolve, reject) => {
 
         pool.connect()

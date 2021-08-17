@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from "express";
-import { deleteCubeWithId, getCubes, getCubeWithId, persistCube, updateCubeWithId } from "../utils/db_utils";
+import { deleteCubeWithId, getCubes, getCubeWithId, addCube, updateCubeWithId } from "../utils/db_utils";
 import { Cube, CubeVariables } from "../types";
 
 //Export the router
@@ -25,7 +25,7 @@ router.post('/', function(req: Request, res: Response) {
     let sensors: Array<string> = req.body['sensors'];
     let actuators: Array<string> = req.body['actuators'];
 
-    persistCube(cubeId, location, sensors, actuators)
+    addCube(cubeId, location, sensors, actuators)
         .then(() => {
             res.sendStatus(201);
         })
