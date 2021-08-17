@@ -1,5 +1,3 @@
-import e from 'express';
-import { Client } from 'mqtt';
 import {PoolClient, QueryResult} from 'pg';
 import format from 'pg-format';
 import {pool} from "../index";
