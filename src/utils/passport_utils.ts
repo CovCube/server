@@ -1,11 +1,11 @@
 import passport from "passport";
 import {Strategy as LocalStrategy} from "passport-local";
 
-export function setupPassport() {
+export function setupPassport():void {
     passport.use(new LocalStrategy((username, password, done) => {
         //Return (null, user), (error) or (null, false, message) for incorrect credentials
         return done(null, "User");
-    }))
+    }));
 
     passport.serializeUser((user, done) => {
         //Return user id
