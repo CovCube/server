@@ -10,14 +10,14 @@ const getUserWithIdQuery: string = 'SELECT * FROM users WHERE id=$1';
 
 export async function setupPassport():Promise<void> {
     passport.use(new LocalStrategy((username, password, done) => {
-        //Return (null, user), (error) or (null, false, message) for incorrect credentials
+        //TODO: Return (null, user), (error) or (null, false, message) for incorrect credentials
         return done(null, "User");
     }));
 
     await pool.query(createUsersTableQuery);
 
     passport.serializeUser((user, done) => {
-        //Return user id
+        //TODO: Return user id
         done(null, 1);
     });
 
@@ -33,3 +33,5 @@ export async function setupPassport():Promise<void> {
             });
     });
 }
+
+//TODO: Add utils to add, update, remove users
