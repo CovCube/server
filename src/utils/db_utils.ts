@@ -23,20 +23,19 @@ const deactivateSensorTypeQuery: string = "UPDATE sensor_types SET active= FALSE
 const getActuatorTypesQuery: string = 'SELECT * FROM actuator_types';
 const addActuatorTypeQuery: string = "INSERT INTO actuator_types (name, active) VALUES ($1, TRUE)";
 const deactivateActuatorTypeQuery: string = "UPDATE actuator_types SET active= FALSE WHERE name= $1";
-//Persist cube
+//Manage cubes
+const getCubesQuery: string = 'SELECT * FROM cubes';
+const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
 const persistCubeQuery: string = "INSERT INTO cubes (id, location) VALUES ($1, $2)";
+const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE id=%L';
+const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
+//Manage cube sensors/actuators
+const getCubeSensorsWithIdQuery: string = 'SELECT * FROM cube_sensors WHERE cube_id=$1';
+const getCubeActuatorsWithIdQuery: string = 'SELECT * FROM cube_actuators WHERE cube_id=$1';
 const persistCubeSensorsQuery: string = "INSERT INTO cube_sensors (cube_id, sensor_type) VALUES ($1, $2)";
 const persistCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type) VALUES ($1, $2)";
 //Persist sensor data
 const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
-//Get cubes
-const getCubesQuery: string = 'SELECT * FROM cubes';
-const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
-const getCubeSensorsWithIdQuery: string = 'SELECT * FROM cube_sensors WHERE cube_id=$1';
-const getCubeActuatorsWithIdQuery: string = 'SELECT * FROM cube_actuators WHERE cube_id=$1';
-const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE id=%L';
-//Modify cubes
-const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
 
 export function setupDB(): Promise<[void, void | QueryResult]> {
 
