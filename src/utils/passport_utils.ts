@@ -1,11 +1,20 @@
 import passport from "passport";
 import {Strategy as LocalStrategy} from "passport-local";
+import { QueryResult } from "pg";
+import { pool } from "..";
+import { User } from "../types";
 
-export function setupPassport():void {
+//User table
+const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) NOT NULL, password CHAR(32) NOT NULL)";
+const getUserWithIdQuery: string = 'SELECT * FROM users WHERE id=$1';
+
+export async function setupPassport():Promise<void> {
     passport.use(new LocalStrategy((username, password, done) => {
         //Return (null, user), (error) or (null, false, message) for incorrect credentials
         return done(null, "User");
     }));
+
+    await pool.query(createUsersTableQuery);
 
     passport.serializeUser((user, done) => {
         //Return user id
@@ -13,7 +22,14 @@ export function setupPassport():void {
     });
 
     passport.deserializeUser((id, done) => {
-        //Return user object
-        done(null, "Test");
+
+        pool.query(getUserWithIdQuery, [id])
+            .then((res: QueryResult) => {
+                let user: User = res.rows[0];
+                done(null, user);
+            })
+            .catch((err: Error) => {
+                done(err, null);
+            });
     });
 }
