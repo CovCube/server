@@ -1,3 +1,4 @@
+import e from 'express';
 import { Client } from 'mqtt';
 import {PoolClient, QueryResult} from 'pg';
 import format from 'pg-format';
@@ -32,8 +33,10 @@ const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
 //Manage cube sensors/actuators
 const getCubeSensorsWithIdQuery: string = 'SELECT * FROM cube_sensors WHERE cube_id=$1';
 const addCubeSensorsQuery: string = "INSERT INTO cube_sensors (cube_id, sensor_type) VALUES ($1, $2)";
+const deleteCubeSensorsQuery: string = "DELETE FROM cube_sensors WHERE cube_id=$1 AND sensor_type=$2"
 const getCubeActuatorsWithIdQuery: string = 'SELECT * FROM cube_actuators WHERE cube_id=$1';
 const addCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type) VALUES ($1, $2)";
+const deleteCubeActuatorsQuery: string = "DELETE FROM cube_actuators WHERE cube_id=$1 AND actuator_type=$2"
 //Persist sensor data
 const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
 
@@ -322,19 +325,41 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
                 let sensors = variables.sensors.split(',');
 
                 sensors.forEach(async (value) => {
+                    value = value.trim();
+                    //Add sensor if not already existent
                     if (!cube_sensors.includes(value)) {
                         await pool.query(addCubeSensorsQuery, [cubeId, value]);
+                    } else {
+                        //Remove sensor from array of existing sensors, to later remove the remaining sensors in the array
+                        let index = cube_sensors.indexOf(value);
+                        cube_sensors.splice(index, 1);
                     }
-                })
+                });
+
+                //Remove sensors from cube, that aren't in the update
+                cube_sensors.forEach(async (value) => {
+                    await pool.query(deleteCubeSensorsQuery, [cubeId, value]);
+                });
             })
             .then(() => {
                 let actuators = variables.actuators.split(',');
 
                 actuators.forEach(async (value) => {
+                    value = value.trim();
+                    //Add actuator if not already existent
                     if (!cube_actuators.includes(value)) {
                         await pool.query(addCubeActuatorsQuery, [cubeId, value]);
+                    } else {
+                        //Remove actuator from array of existing actuators, to later remove the remaining actuators in the array
+                        let index = cube_actuators.indexOf(value);
+                        cube_actuators.splice(index, 1);
                     }
-                })
+                });
+
+                //Remove actuators from cube, that aren't in the update
+                cube_actuators.forEach(async (value) => {
+                    await pool.query(deleteCubeActuatorsQuery, [cubeId, value]);
+                });
             })
             .then(() => {
                 resolve(getCubeWithId(cubeId));
