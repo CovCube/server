@@ -26,14 +26,14 @@ const deactivateActuatorTypeQuery: string = "UPDATE actuator_types SET active= F
 //Manage cubes
 const getCubesQuery: string = 'SELECT * FROM cubes';
 const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
-const persistCubeQuery: string = "INSERT INTO cubes (id, location) VALUES ($1, $2)";
+const addCubeQuery: string = "INSERT INTO cubes (id, location) VALUES ($1, $2)";
 const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE id=%L';
 const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
 //Manage cube sensors/actuators
 const getCubeSensorsWithIdQuery: string = 'SELECT * FROM cube_sensors WHERE cube_id=$1';
 const getCubeActuatorsWithIdQuery: string = 'SELECT * FROM cube_actuators WHERE cube_id=$1';
-const persistCubeSensorsQuery: string = "INSERT INTO cube_sensors (cube_id, sensor_type) VALUES ($1, $2)";
-const persistCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type) VALUES ($1, $2)";
+const addCubeSensorsQuery: string = "INSERT INTO cube_sensors (cube_id, sensor_type) VALUES ($1, $2)";
+const addCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type) VALUES ($1, $2)";
 //Persist sensor data
 const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
 
@@ -171,13 +171,13 @@ export function persistCube(cubeId: string, location: string, sensors: Array<str
 
         pool.connect()
             .then(async (client: PoolClient) => {
-                await client.query(persistCubeQuery, [cubeId, location]);
+                await client.query(addCubeQuery, [cubeId, location]);
 
                 return client;
             })
             .then((client: PoolClient) => {
                 sensors.forEach(async (value: string) => {
-                    await client.query(persistCubeSensorsQuery, [cubeId, value])
+                    await client.query(addCubeSensorsQuery, [cubeId, value])
                                 .catch((err: Error) => {
                                     reject(err);
                                 });
@@ -187,7 +187,7 @@ export function persistCube(cubeId: string, location: string, sensors: Array<str
             })
             .then(async (client: PoolClient) => {
                 actuators.forEach(async (value: string) => {
-                    await client.query(persistCubeActuatorsQuery, [cubeId, value])
+                    await client.query(addCubeActuatorsQuery, [cubeId, value])
                                 .catch((err: Error) => {
                                     reject(err);
                                 });
@@ -323,7 +323,7 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 
                 sensors.forEach(async (value) => {
                     if (!cube_sensors.includes(value)) {
-                        await pool.query(persistCubeSensorsQuery, [cubeId, value]);
+                        await pool.query(addCubeSensorsQuery, [cubeId, value]);
                     }
                 })
             })
@@ -332,7 +332,7 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 
                 actuators.forEach(async (value) => {
                     if (!cube_actuators.includes(value)) {
-                        await pool.query(persistCubeActuatorsQuery, [cubeId, value]);
+                        await pool.query(addCubeActuatorsQuery, [cubeId, value]);
                     }
                 })
             })
