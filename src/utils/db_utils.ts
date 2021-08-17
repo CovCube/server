@@ -326,6 +326,9 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 
                 sensors.forEach(async (value) => {
                     value = value.trim();
+                    //If value is empty, skip the rest
+                    if (!value) return;
+
                     //Add sensor if not already existent
                     if (!cube_sensors.includes(value)) {
                         await pool.query(addCubeSensorsQuery, [cubeId, value]);
@@ -346,6 +349,9 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 
                 actuators.forEach(async (value) => {
                     value = value.trim();
+                    //If value is empty, skip the rest
+                    if (!value) return;
+
                     //Add actuator if not already existent
                     if (!cube_actuators.includes(value)) {
                         await pool.query(addCubeActuatorsQuery, [cubeId, value]);
