@@ -74,11 +74,11 @@ table td {
     padding: 10px 0;
 }
 
-table td:first-child {
+table td:first-of-type {
     padding-left: 15px;
 }
 
-table td:last-child {
+table td:last-of-type {
     padding-right: 15px;
 }
 
