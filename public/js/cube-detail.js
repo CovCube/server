@@ -3,19 +3,19 @@ const deleteSensorActuatorHTML = '<img class="icon-delete" src="/static/img/minu
 window.addEventListener('DOMContentLoaded', () => {
 
     //Add listeners for add icons
-    document.getElementById("add-sensor-button").addEventListener('click', addSensorActuator.bind(this, "sensor"));
-    document.getElementById("add-actuator-button").addEventListener('click', addSensorActuator.bind(this, "actuator"));
+    document.getElementById("add-sensor-button").addEventListener('click', addSensorActuatorEventHandler.bind(this, "sensor"));
+    document.getElementById("add-actuator-button").addEventListener('click', addSensorActuatorEventHandler.bind(this, "actuator"));
 
     //Add listeners for remove icons
     document.getElementById('sensors').querySelectorAll('.icon-delete').forEach(element => {
         element.addEventListener('click', removeSensorActuator.bind(this, 'sensor'));
     });
     document.getElementById('actuators').querySelectorAll('.icon-delete').forEach(element => {
-        element.addEventListener('click', removeSensorActuator.bind(this, 'actuator'));
+        element.addEventListener('click', removeSensorActuatorEventHandler.bind(this, 'actuator'));
     });   
 });
 
-function addSensorActuator (type) {
+function addSensorActuatorEventHandler (type) {
 
     let select_elem = document.getElementById('additional_'+type+'s_select');
     let option = select_elem.selectedOptions.item(0).value;
@@ -27,7 +27,11 @@ function addSensorActuator (type) {
     } else {
         input.value = input.value.concat(',', option);
     }
-    
+
+    addSensorActuator(type, option);
+}
+
+function addSensorActuator (type, option) {
     //Add row and cells
     let table = document.getElementById(type+'s');
     let new_row = table.insertRow(table.rows.length-1);
@@ -40,7 +44,7 @@ function addSensorActuator (type) {
     //Populate cells
     name_cell.innerHTML = option;
     delete_cell.innerHTML = deleteSensorActuatorHTML;
-    delete_cell.children[0].addEventListener('click', removeSensorActuator.bind(this, type));
+    delete_cell.children[0].addEventListener('click', removeSensorActuatorEventHandler.bind(this, type));
 
     //Remove option from select
     let option_elem = document.getElementById('add-'+type+'-'+option);
@@ -52,7 +56,7 @@ function addSensorActuator (type) {
     }
 }
 
-function removeSensorActuator (type, event) {
+function removeSensorActuatorEventHandler (type, event) {
 
     let row = event.currentTarget.parentNode.parentNode;
     let option = row.querySelector('input').value;
@@ -62,6 +66,11 @@ function removeSensorActuator (type, event) {
     let splits = input.value.split(',');
     input.value = splits.filter(split => split !== option);
 
+    removeSensorActuator(type, option);
+}
+
+function removeSensorActuator (type, option) {
+    let row = document.getElementById(type+'_row_'+option);
     //Remove row
     row.parentNode.removeChild(row);
 
