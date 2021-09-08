@@ -1,5 +1,7 @@
 import passport from "passport";
 import {Strategy as LocalStrategy} from "passport-local";
+import bcrypt from "bcrypt";
+import crypto from "crypto";
 import { pool } from "..";
 import { User } from "../types";
 
@@ -7,17 +9,20 @@ import { User } from "../types";
 const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(32) NOT NULL)";
 const getUserWithIdQuery: string = 'SELECT * FROM users WHERE id=$1';
 const getUserWithUsernameQuery: string = 'SELECT * FROM users WHERE name=$1';
+//bcrypt
+const saltRounds: number = 10;
 
 export async function setupPassport():Promise<void> {
     passport.use(new LocalStrategy((username, password, done) => {
         getUserByUsername(username)
-            .then((user: null | User) => {
+            .then(async (user: null | User) => {
                 //Check if user returned
                 if (!user) {
                     return done(null, false, {message: 'Nutzer existiert nicht'});
                 }
                 //check if correct password is provided
-                if (!checkPassword(user, password)) {
+                let passCheck = await checkPassword(user, password);
+                if (!passCheck) {
                     return done(null, false, {message: 'Passwort ist inkorrekt'});
                 }
                 //return user if all is correct
@@ -89,9 +94,8 @@ function getUserById(id: string): Promise<null | User> {
     });
 }
 
-function checkPassword(user: User, password: string): Boolean {
-    //TODO: Check password
-    return true;
+async function checkPassword(user: User, password: string): Promise<boolean> {
+    return await bcrypt.compare(password, user.password);
 }
 
 //TODO: Add utils to add, update, remove users
