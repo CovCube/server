@@ -1,6 +1,5 @@
 import passport from "passport";
 import {Strategy as LocalStrategy} from "passport-local";
-import { QueryResult } from "pg";
 import { pool } from "..";
 import { User } from "../types";
 
