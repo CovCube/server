@@ -17,7 +17,7 @@ export async function setupPassport():Promise<void> {
                     return done(null, false, {message: 'Nutzer existiert nicht'});
                 }
                 //check if correct password is provided
-                if (checkPassword(user, password)) {
+                if (!checkPassword(user, password)) {
                     return done(null, false, {message: 'Passwort ist inkorrekt'});
                 }
                 //return user if all is correct
@@ -33,6 +33,7 @@ export async function setupPassport():Promise<void> {
     passport.serializeUser((user, done) => {
         //Error is that Express.user has no id, but this is how the documentation shows it
         //@ts-ignore
+        console.log(user);
         done(null, user.id);
     });
 
