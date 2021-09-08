@@ -17,8 +17,9 @@ export async function setupPassport():Promise<void> {
     await pool.query(createUsersTableQuery);
 
     passport.serializeUser((user, done) => {
-        //TODO: Return user id
-        done(null, 1);
+        //Error is that Express.user has no id, but this is how the documentation shows it
+        //@ts-ignore
+        done(null, user.id);
     });
 
     passport.deserializeUser((id, done) => {
