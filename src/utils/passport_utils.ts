@@ -89,6 +89,7 @@ function getUserById(id: string): Promise<null | User> {
 }
 
 function checkPassword(user: User, password: string): Boolean {
+    //TODO: Check password
     return true;
 }
 
