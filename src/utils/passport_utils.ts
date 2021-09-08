@@ -22,7 +22,13 @@ export async function setupPassport():Promise<void> {
         done(null, user.id);
     });
 
-    passport.deserializeUser((id, done) => {
+    passport.deserializeUser(async (id: string, done) => {
+
+        getUserById(id)
+            .then((user: null | User) => {
+                if (!user) {
+                    done("User does not exist", null);
+                }
 
         pool.query(getUserWithIdQuery, [id])
             .then((res: QueryResult) => {
@@ -32,6 +38,24 @@ export async function setupPassport():Promise<void> {
             .catch((err: Error) => {
                 done(err, null);
             });
+    });
+}
+
+function getUserById(id: string): Promise<null | User> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res = await pool.query(getUserWithIdQuery, [id]);
+
+            //If there is no user, return nothing
+            if (!res.rows) {
+                resolve(null);
+            }
+
+            //Return user
+            resolve(res.rows[0]);
+        } catch(err) {
+            reject(err);
+        }
     });
 }
 
