@@ -5,7 +5,7 @@ import { pool } from "..";
 import { User } from "../types";
 
 //User table
-const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) NOT NULL, password CHAR(32) NOT NULL)";
+const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(32) NOT NULL)";
 const getUserWithIdQuery: string = 'SELECT * FROM users WHERE id=$1';
 
 export async function setupPassport():Promise<void> {
