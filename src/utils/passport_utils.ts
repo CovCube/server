@@ -18,7 +18,7 @@ export async function setupPassport():Promise<void> {
                     return done(null, false, {message: 'Nutzer existiert nicht'});
                 }
                 //check if correct password is provided
-                if (!user.checkPassword(password)) {
+                if (checkPassword(user, password)) {
                     return done(null, false, {message: 'Passwort ist inkorrekt'});
                 }
                 //return user if all is correct
@@ -87,6 +87,10 @@ function getUserById(id: string): Promise<null | User> {
             reject(err);
         }
     });
+}
+
+function checkPassword(user: User, password: string): Boolean {
+    return true;
 }
 
 //TODO: Add utils to add, update, remove users
