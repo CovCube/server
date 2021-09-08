@@ -1,7 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import hbs from 'hbs';
 import path from 'path';
-import bodyParser from "body-parser";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import {Pool} from "pg";
@@ -43,8 +42,8 @@ app.use('/static', express.static(path.join(__dirname, './public')));
 
 //Add middleware
 app.use(helmet());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 //Delegate routing
 app.use('/', viewRoutes);
