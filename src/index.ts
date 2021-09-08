@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express";
 import hbs from 'hbs';
 import path from 'path';
 import bodyParser from "body-parser";
+import session from 'express-session';
 import helmet from "helmet";
 import dotenv from "dotenv";
 import passport from "passport";
@@ -48,9 +49,17 @@ app.use('/static', express.static(path.join(__dirname, './public')));
 
 //Add middleware
 app.use(helmet());
+app.use(session({
+    secret: process.env.SESSIONSECRET || 'secret',
+    //Check if session store implements touch
+    resave: false,
+    //Because of cookie banner
+    saveUninitialized: false
+}))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
+app.use(passport.session());
 
 //Delegate routing
 app.use('/', viewRoutes);
