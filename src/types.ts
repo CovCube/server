@@ -26,5 +26,6 @@ export interface CubeDetailDataObject {
 export interface User {
     id: string,
     name: string,
-    password: string
+    password: string,
+    checkPassword: (password: string) => Boolean,
 }
