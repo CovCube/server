@@ -7,11 +7,26 @@ import { User } from "../types";
 //User table
 const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(32) NOT NULL)";
 const getUserWithIdQuery: string = 'SELECT * FROM users WHERE id=$1';
+const getUserWithUsernameQuery: string = 'SELECT * FROM users WHERE name=$1';
 
 export async function setupPassport():Promise<void> {
     passport.use(new LocalStrategy((username, password, done) => {
-        //TODO: Return (null, user), (error) or (null, false, message) for incorrect credentials
-        return done(null, "User");
+        getUserByUsername(username)
+            .then((user: null | User) => {
+                //Check if user returned
+                if (!user) {
+                    return done(null, false, {message: 'Nutzer existiert nicht'});
+                }
+                //check if correct password is provided
+                if (!user.checkPassword(password)) {
+                    return done(null, false, {message: 'Passwort ist inkorrekt'});
+                }
+                //return user if all is correct
+                return done(null, user);
+            })
+            .catch((err: Error) => {
+                return done(err);
+            });
     }));
 
     await pool.query(createUsersTableQuery);
@@ -30,14 +45,29 @@ export async function setupPassport():Promise<void> {
                     done("User does not exist", null);
                 }
 
-        pool.query(getUserWithIdQuery, [id])
-            .then((res: QueryResult) => {
-                let user: User = res.rows[0];
                 done(null, user);
             })
             .catch((err: Error) => {
                 done(err, null);
             });
+    });
+}
+
+function getUserByUsername(username: string): Promise<null | User> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res = await pool.query(getUserWithUsernameQuery, [username]);
+
+            //If there is no user, return nothing
+            if (!res.rows) {
+                resolve(null);
+            }
+
+            //Return user
+            resolve(res.rows[0]);
+        } catch(err) {
+            reject(err);
+        }
     });
 }
 
