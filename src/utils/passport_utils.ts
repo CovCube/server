@@ -95,7 +95,7 @@ function getUserByUsername(username: string): Promise<null | User> {
     });
 }
 
-function getUserById(id: string): Promise<null | User> {
+export function getUserById(id: string): Promise<null | User> {
     return new Promise(async (resolve, reject) => {
         try {
             let res = await pool.query(getUserWithIdQuery, [id]);
@@ -160,7 +160,7 @@ export function updateUser(inputUser: User): Promise<User> {
     });
 }
 
-export function removeUser(user: User): Promise<void> {
+export function deleteUser(user: User): Promise<void> {
     return new Promise((resolve, reject) => {
         pool.query(deleteUserQuery, [user.id])
             .then((res: QueryResult) => {
