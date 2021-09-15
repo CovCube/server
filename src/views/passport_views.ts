@@ -1,5 +1,6 @@
 import express, { Router, Request, Response } from "express";
 import passport from "passport";
+import { getUsers } from "../utils/passport_utils";
 
 export var router: Router = express.Router();
 
@@ -18,3 +19,15 @@ router.post('/login',
         successRedirect: '/',
     }
 ));
+
+router.get('/users', (req: Request, res: Response) => {
+    getUsers()
+        .then((users) => {
+            console.log(users);
+            res.render("users-list", {users: users});
+        })
+        .catch((e: Error) => {
+            console.log(e.stack);
+            res.status(501).send("view error");
+        });
+});

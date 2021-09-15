@@ -8,6 +8,7 @@ import { QueryResult } from "pg";
 
 //User table
 const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(32) NOT NULL)";
+const getUsersQuery: string = 'SELECT * FROM users';
 const getUserWithIdQuery: string = 'SELECT * FROM users WHERE id=$1';
 const getUserWithUsernameQuery: string = 'SELECT * FROM users WHERE name=$1';
 const addUserQuery: string = "INSERT INTO users (id, name, password) VALUES ($1, $2, $3)";
@@ -60,6 +61,18 @@ export async function setupPassport():Promise<void> {
             })
             .catch((err: Error) => {
                 done(err, null);
+            });
+    });
+}
+
+export function getUsers(): Promise<Array<User>> {
+    return new Promise((resolve, reject) => {
+        pool.query(getUsersQuery)
+            .then((res: QueryResult) => {
+                resolve(res.rows);
+            })
+            .catch((err: Error) => {
+                reject(err);
             });
     });
 }
