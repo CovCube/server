@@ -104,7 +104,7 @@ async function checkPassword(user: User, password: string): Promise<boolean> {
     return await bcrypt.compare(password, user.password);
 }
 
-function addUser(name: string, password: string): Promise<void> {
+export function addUser(name: string, password: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
         let id: string = uuidv5(name, uuidNamespace);
         let hashed_password: string = await bcrypt.hash(password, saltRounds);
@@ -116,10 +116,10 @@ function addUser(name: string, password: string): Promise<void> {
             .catch((err: Error)=> {
                 reject(err);
             });
-    })
+    });
 }
 
-function updateUser(inputUser: User): Promise<User> {
+export function updateUser(inputUser: User): Promise<User> {
     return new Promise(async (resolve, reject) => {
         let oldUser: User | null = await getUserById(inputUser.id);
 
@@ -144,10 +144,10 @@ function updateUser(inputUser: User): Promise<User> {
                     reject(err);
                 });
         }
-    })
+    });
 }
 
-function removeUser(user: User): Promise<void> {
+export function removeUser(user: User): Promise<void> {
     return new Promise((resolve, reject) => {
         pool.query(deleteUserQuery, [user.id])
             .then((res: QueryResult) => {
