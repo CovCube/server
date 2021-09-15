@@ -69,7 +69,13 @@ export function getUsers(): Promise<Array<User>> {
     return new Promise((resolve, reject) => {
         pool.query(getUsersQuery)
             .then((res: QueryResult) => {
-                resolve(res.rows);
+                let users: Array<User> = res.rows;
+
+                users.forEach(user => {
+                    user.name = user.name.trim()
+                })
+
+                resolve(users);
             })
             .catch((err: Error) => {
                 reject(err);
@@ -145,7 +151,7 @@ export function updateUser(inputUser: User): Promise<User> {
                 updatedUser.name = inputUser.name;
             }
     
-            if (!checkPassword(oldUser, inputUser.password)) {
+            if (inputUser.password && !checkPassword(oldUser, inputUser.password)) {
                 updatedUser.password = await bcrypt.hash(inputUser.password, saltRounds);
             }
 

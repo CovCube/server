@@ -20,20 +20,22 @@
             </thead>
             {{#each users}}
                 <tr>
-                    <form action="/users/{{this.id}}" method="post" id="form">
+                    <form action="/users/{{this.id}}" method="post" id="{{this.id}}_form">
                         <td>
                             <span id="{{this.id}}_name_span">{{this.name}}</span>
-                            <input id="{{this.id}}_name_input" type="hidden" name="name" value="{{this.name}}">
+                            <input id="{{this.id}}_name_input" type="hidden" name="name" value="{{this.name}}" placeholder="username">
                         </td>
                         <td>
-                            <input id="{{this.id}}_password_input" type="hidden" name="password">
+                            <input id="{{this.id}}_password_input" type="hidden" name="password" placeholder="new password">
                         </td>
                         <td>
-                            <img class="icon-edit" src="/static/img/edit-regular.svg" height="20px" alt="Edit">
+                            <img id="{{this.id}}_edit" class="icon-edit" src="/static/img/edit-regular.svg" height="20px" alt="Edit">
+                            <input id="{{this.id}}_submit" type="hidden" name="submit" value="Submit" />
                         </td>
                         <td>
                             <a href="/users/delete/{{this.id}}">
-                                <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                                <img id="{{this.id}}_delete" class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                                <input id="{{this.id}}_reset" type="hidden" name="reset" value="Reset" />
                             </a>
                         </td>
                     </form>

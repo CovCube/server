@@ -1,7 +1,7 @@
 import express, { Router, Request, Response } from "express";
 import passport from "passport";
 import { User } from "../types";
-import { getUsers, getUserById, deleteUser } from "../utils/passport_utils";
+import { getUsers, getUserById, deleteUser, updateUser } from "../utils/passport_utils";
 
 export var router: Router = express.Router();
 
@@ -24,8 +24,24 @@ router.post('/login',
 router.get('/users', (req: Request, res: Response) => {
     getUsers()
         .then((users) => {
-            console.log(users);
             res.render("users-list", {users: users});
+        })
+        .catch((e: Error) => {
+            console.log(e.stack);
+            res.status(501).send("view error");
+        });
+});
+
+router.post('/users/:user_id', (req: Request, res: Response) => {
+    let user: User = {
+        id: req.params['user_id'],
+        name: req.body['name'],
+        password: req.body['password']
+    }
+
+    updateUser(user)
+        .then(() => {
+            res.redirect(303, '/users');
         })
         .catch((e: Error) => {
             console.log(e.stack);
