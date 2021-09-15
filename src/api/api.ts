@@ -7,6 +7,7 @@ import {router as configRoute} from "./config";
 //Export the router
 export var router: Router = express.Router();
 
+//TODO: Protect API routes with login
 //Delegate API-routes to their routers
 router.use('/cubes', cubesRoute);
 router.use('/data', dataRoute);
