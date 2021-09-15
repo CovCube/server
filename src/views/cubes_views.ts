@@ -2,10 +2,11 @@ import express, { Router, Request, Response } from "express";
 import { getActuatorTypes, getCubes, getCubeWithId, getSensorTypes, updateCubeWithId } from "../utils/db_utils";
 import { Cube, CubeDetailDataObject, Sensor } from "../types";
 import { compareCubes } from "../utils/utils";
+import { authenticateUser } from "../utils/passport_utils";
 
 export var router: Router = express.Router();
 
-router.get('/', (req: Request, res:Response) => {
+router.get('/', authenticateUser, (req: Request, res:Response) => {
     getCubes()
         .then((cubes: Array<Cube>) => {
             let data = {
@@ -21,12 +22,12 @@ router.get('/', (req: Request, res:Response) => {
         });
 });
 
-router.get('/cubes/:cubeId', (req, res) => {
+router.get('/cubes/:cubeId', authenticateUser, (req, res) => {
 
     getCubeWithIdView(req, res);
 });
 
-router.post('/cubes/:cubeId', async (req, res) => {
+router.post('/cubes/:cubeId', authenticateUser, async (req, res) => {
 
     let cubeId: string = req.params['cubeId'];
     let variables = req.body;

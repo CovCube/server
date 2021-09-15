@@ -5,6 +5,7 @@ import { v5 as uuidv5 } from "uuid";
 import { pool } from "..";
 import { User } from "../types";
 import { QueryResult } from "pg";
+import { NextFunction, Request, Response } from "express";
 
 //User table
 const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(32) NOT NULL)";
@@ -65,6 +66,19 @@ export async function setupPassport():Promise<void> {
     });
 }
 
+export function authenticateUser(req: Request, res: Response, next: NextFunction) {
+    //@ts-ignore
+    if (req.isAuthenticated()) {
+        return next();
+    }
+
+    res.redirect(303, '/login');
+}
+
+async function checkPassword(user: User, password: string): Promise<boolean> {
+    return await bcrypt.compare(password, user.password);
+}
+
 export function getUsers(): Promise<Array<User>> {
     return new Promise((resolve, reject) => {
         pool.query(getUsersQuery)
@@ -117,10 +131,6 @@ export function getUserById(id: string): Promise<null | User> {
             reject(err);
         }
     });
-}
-
-async function checkPassword(user: User, password: string): Promise<boolean> {
-    return await bcrypt.compare(password, user.password);
 }
 
 export function addUser(name: string, password: string): Promise<void> {

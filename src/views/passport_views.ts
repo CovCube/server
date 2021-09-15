@@ -1,7 +1,7 @@
 import express, { Router, Request, Response } from "express";
 import passport from "passport";
 import { User } from "../types";
-import { getUsers, getUserById, deleteUser, updateUser } from "../utils/passport_utils";
+import { getUsers, getUserById, deleteUser, updateUser, authenticateUser } from "../utils/passport_utils";
 
 export var router: Router = express.Router();
 
@@ -21,7 +21,8 @@ router.post('/login',
     }
 ));
 
-router.get('/users', (req: Request, res: Response) => {
+router.get('/users', authenticateUser, (req: Request, res: Response) => {
+    console.log(req);
     getUsers()
         .then((users) => {
             res.render("users-list", {users: users});
@@ -32,7 +33,7 @@ router.get('/users', (req: Request, res: Response) => {
         });
 });
 
-router.post('/users/:user_id', (req: Request, res: Response) => {
+router.post('/users/:user_id', authenticateUser, (req: Request, res: Response, next) => {
     let user: User = {
         id: req.params['user_id'],
         name: req.body['name'],
@@ -49,7 +50,7 @@ router.post('/users/:user_id', (req: Request, res: Response) => {
         });
 });
 
-router.get('/users/delete/:user_id', async (req: Request, res: Response) => {
+router.get('/users/delete/:user_id', authenticateUser, async (req: Request, res: Response) => {
 
     let userId: string = req.params['user_id'];
     let user: User | null = await getUserById(userId);
