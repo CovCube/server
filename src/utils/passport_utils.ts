@@ -12,6 +12,7 @@ const getUserWithIdQuery: string = 'SELECT * FROM users WHERE id=$1';
 const getUserWithUsernameQuery: string = 'SELECT * FROM users WHERE name=$1';
 const addUserQuery: string = "INSERT INTO users (id, name, password) VALUES ($1, $2, $3)";
 const updateUserQuery: string = "UPDATE users SET name=$2, password=$3 WHERE id=$1";
+const deleteUserQuery: string = "DELETE FROM users WHERE id=$1";
 //bcrypt
 const saltRounds: number = parseInt(process.env.BCRYPTSALTROUNDS || "10");
 //uuid
@@ -121,7 +122,7 @@ function addUser(name: string, password: string): Promise<void> {
 function updateUser(inputUser: User): Promise<User> {
     return new Promise(async (resolve, reject) => {
         let oldUser: User | null = await getUserById(inputUser.id);
-        
+
         if (!oldUser) {
             reject("User does not exist");
         } else {
@@ -146,5 +147,14 @@ function updateUser(inputUser: User): Promise<User> {
     })
 }
 
-
-//TODO: Add util to remove users
+function removeUser(user: User): Promise<void> {
+    return new Promise((resolve, reject) => {
+        pool.query(deleteUserQuery, [user.id])
+            .then((res: QueryResult) => {
+                resolve();
+            })
+            .catch((err: Error) => {
+                reject(err);
+            });
+    });
+}
