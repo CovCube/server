@@ -4,12 +4,14 @@ import bcrypt from "bcrypt";
 import { v5 as uuidv5 } from "uuid";
 import { pool } from "..";
 import { User } from "../types";
+import { QueryResult } from "pg";
 
 //User table
 const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(32) NOT NULL)";
 const getUserWithIdQuery: string = 'SELECT * FROM users WHERE id=$1';
 const getUserWithUsernameQuery: string = 'SELECT * FROM users WHERE name=$1';
 const addUserQuery: string = "INSERT INTO users (id, name, password) VALUES ($1, $2, $3)";
+const updateUserQuery: string = "UPDATE users SET name=$2, password=$3 WHERE id=$1";
 //bcrypt
 const saltRounds: number = parseInt(process.env.BCRYPTSALTROUNDS || "10");
 //uuid
@@ -116,4 +118,33 @@ function addUser(name: string, password: string): Promise<void> {
     })
 }
 
-//TODO: Add utils to update, remove users
+function updateUser(inputUser: User): Promise<User> {
+    return new Promise(async (resolve, reject) => {
+        let oldUser: User | null = await getUserById(inputUser.id);
+        
+        if (!oldUser) {
+            reject("User does not exist");
+        } else {
+            let updatedUser: User = oldUser;
+
+            if (oldUser.name != inputUser.name) {
+                updatedUser.name = inputUser.name;
+            }
+    
+            if (!checkPassword(oldUser, inputUser.password)) {
+                updatedUser.password = await bcrypt.hash(inputUser.password, saltRounds);
+            }
+
+            pool.query(updateUserQuery, [updatedUser.id, updatedUser.name, updatedUser.password])
+                .then((res: QueryResult) => {
+                    resolve(updatedUser);
+                })
+                .catch((err: Error) => {
+                    reject(err);
+                });
+        }
+    })
+}
+
+
+//TODO: Add util to remove users
