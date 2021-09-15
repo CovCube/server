@@ -150,8 +150,9 @@ export function updateUser(inputUser: User): Promise<User> {
             if (oldUser.name != inputUser.name) {
                 updatedUser.name = inputUser.name;
             }
-    
-            if (inputUser.password && !checkPassword(oldUser, inputUser.password)) {
+            
+            let passwordCheck = await checkPassword(oldUser, inputUser.password);
+            if (inputUser.password && !passwordCheck) {
                 updatedUser.password = await bcrypt.hash(inputUser.password, saltRounds);
             }
 
