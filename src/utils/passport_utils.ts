@@ -1,7 +1,7 @@
 import passport from "passport";
 import {Strategy as LocalStrategy} from "passport-local";
 import bcrypt from "bcrypt";
-import crypto from "crypto";
+import { v5 as uuidv5 } from "uuid";
 import { pool } from "..";
 import { User } from "../types";
 
@@ -9,8 +9,11 @@ import { User } from "../types";
 const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(32) NOT NULL)";
 const getUserWithIdQuery: string = 'SELECT * FROM users WHERE id=$1';
 const getUserWithUsernameQuery: string = 'SELECT * FROM users WHERE name=$1';
+const addUserQuery: string = "INSERT INTO users (id, name, password) VALUES ($1, $2, $3)";
 //bcrypt
-const saltRounds: number = 10;
+const saltRounds: number = parseInt(process.env.BCRYPTSALTROUNDS || "10");
+//uuid
+const uuidNamespace: string = process.env.UUIDNAMESPACE || "976eacb6-ce9b-4eda-9d44-55c942464a38";
 
 export async function setupPassport():Promise<void> {
     passport.use(new LocalStrategy((username, password, done) => {
@@ -98,4 +101,19 @@ async function checkPassword(user: User, password: string): Promise<boolean> {
     return await bcrypt.compare(password, user.password);
 }
 
-//TODO: Add utils to add, update, remove users
+function addUser(name: string, password: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        let id: string = uuidv5(name, uuidNamespace);
+        let hashed_password: string = await bcrypt.hash(password, saltRounds);
+        
+        pool.query(addUserQuery, [id, name, hashed_password])
+            .then(() => {
+                resolve();
+            })
+            .catch((err: Error)=> {
+                reject(err);
+            });
+    })
+}
+
+//TODO: Add utils to update, remove users
