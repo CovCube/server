@@ -44,7 +44,6 @@ export async function setupPassport():Promise<void> {
     await pool.query(createUsersTableQuery);
 
     passport.serializeUser((user, done) => {
-        console.log(user);
         done(null, user.id);
     });
 
