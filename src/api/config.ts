@@ -1,5 +1,9 @@
-import express, { Router, Request, Response } from "express";
+//type imports
+import { Router, Request, Response } from "express";
 import { Sensor } from "../types";
+//express imports
+import express from "express";
+//internal imports
 import { addActuatorType, addSensorType, deactivateActuatorType, deactivateSensorType, getActuatorTypes, getSensorTypes, updateSensorTypePushRate } from "../utils/db_utils";
 
 //Export the router

@@ -1,8 +1,13 @@
-import express, { Router, Request, Response } from "express";
+//type imports
+import { Router, Request, Response } from "express";
+//express imports
+import express from "express";
+//other external imports
 import path from 'path';
-import {router as cubesRoute} from "./cubes";
-import {router as dataRoute} from "./data";
-import {router as configRoute} from "./config";
+//internal imports
+import { router as cubesRoute } from "./cubes";
+import { router as dataRoute } from "./data";
+import { router as configRoute } from "./config";
 
 //Export the router
 export var router: Router = express.Router();
