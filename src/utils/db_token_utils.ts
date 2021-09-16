@@ -55,8 +55,7 @@ export function getTokenByToken(token: string): Promise<null | Token> {
 
 export function addToken(owner: string): Promise<Token> {
     return new Promise(async (resolve, reject) => {
-        let token: string = uuidv4().trim().replace('-', '');
-        console.log(token);
+        let token: string = uuidv4().trim().split('-').join('');
         
         pool.query(addTokenQuery, [token, owner])
             .then((res: QueryResult) => {
