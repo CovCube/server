@@ -1,18 +1,26 @@
-import express, { Express, Request, Response } from "express";
+//type imports
+import { Express } from "express";
+import { Client as MQTTClient } from "mqtt";
+//base imports
+import express from "express";
 import hbs from 'hbs';
 import path from 'path';
 import bodyParser from "body-parser";
+//middleware imports
 import session from 'express-session';
 import helmet from "helmet";
 import dotenv from "dotenv";
 import passport from "passport";
-import {Pool} from "pg";
-import mqtt, {Client as MQTTClient} from "mqtt";
-import {setupDB} from "./utils/db_cube_utils";
-import {setupPassport} from "./utils/passport_utils";
-import {setupMQTT} from "./utils/mqtt_utils";
-import {router as viewRoutes} from "./views/views";
-import {router as apiRoutes} from "./api/api";
+//pg imports
+import { Pool } from "pg";
+//mqtt imports
+import mqtt from "mqtt";
+//internal imports
+import { setupDB } from "./utils/db_cube_utils";
+import { setupPassport } from "./utils/passport_utils";
+import { setupMQTT } from "./utils/mqtt_utils";
+import { router as viewRoutes } from "./views/views";
+import { router as apiRoutes } from "./api/api";
 
 //Parse environment variables
 dotenv.config();
