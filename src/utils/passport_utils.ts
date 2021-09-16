@@ -1,8 +1,12 @@
-import passport from "passport";
-import {Strategy as LocalStrategy} from "passport-local";
-import bcrypt from "bcrypt";
+//type imports
 import { User } from "../types";
 import { NextFunction, Request, Response } from "express";
+//passport imports
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
+//other external imports
+import bcrypt from "bcrypt";
+//internal imports
 import { createUserTable, getUserByUsername, getUserById } from "./user_db_utils";
 
 export async function setupPassport():Promise<void> {

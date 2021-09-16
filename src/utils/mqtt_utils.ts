@@ -1,6 +1,8 @@
-import {ISubscriptionMap, IPublishPacket, ISubscriptionGrant} from "mqtt";
-import {mqttClient as mqtt} from "../index";
-import {getTimestamp, persistSensorData} from "./db_utils";
+//type imports
+import { ISubscriptionMap, IPublishPacket, ISubscriptionGrant } from "mqtt";
+//internal imports
+import { mqttClient as mqtt } from "../index";
+import { getTimestamp, persistSensorData } from "./db_utils";
 
 const topics: ISubscriptionMap = {
     'sensor/#': {qos: 2},

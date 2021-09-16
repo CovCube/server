@@ -1,8 +1,11 @@
-import { pool } from "..";
-import { QueryResult } from "pg";
-import { v5 as uuidv5 } from "uuid";
-import bcrypt from "bcrypt";
+//type imports
 import { User } from "../types";
+import { QueryResult } from "pg";
+//other external imports
+import bcrypt from "bcrypt";
+import { v5 as uuidv5 } from "uuid";
+//internal imports
+import { pool } from "..";
 
 //User table
 const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(32) NOT NULL)";
