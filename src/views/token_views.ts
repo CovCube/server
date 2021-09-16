@@ -5,7 +5,7 @@ import { Token } from "../types";
 import express from "express";
 //internal imports
 import { authenticateUser } from "../utils/passport_utils";
-import { getTokens, getTokenByToken, deleteToken } from "../utils/db_token_utils";
+import { getTokens, getTokenByToken, deleteToken, addToken } from "../utils/db_token_utils";
 
 export var router: Router = express.Router();
 
@@ -15,6 +15,19 @@ router.get('/', (req: Request, res: Response) => {
     getTokens()
         .then((tokens) => {
             res.render("tokens-list", {tokens: tokens});
+        })
+        .catch((e: Error) => {
+            console.log(e.stack);
+            res.status(501).send("view error");
+        });
+});
+
+router.post('/', (req: Request, res: Response) => {
+    let owner: string = req.body['owner'];
+
+    addToken(owner)
+        .then(() => {
+            res.redirect(303, '/tokens');
         })
         .catch((e: Error) => {
             console.log(e.stack);
