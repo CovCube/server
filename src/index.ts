@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 import passport from "passport";
 import {Pool} from "pg";
 import mqtt, {Client as MQTTClient} from "mqtt";
-import {setupDB} from "./utils/db_utils";
+import {setupDB} from "./utils/db_cube_utils";
 import {setupPassport} from "./utils/passport_utils";
 import {setupMQTT} from "./utils/mqtt_utils";
 import {router as viewRoutes} from "./views/views";
