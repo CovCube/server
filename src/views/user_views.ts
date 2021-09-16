@@ -5,7 +5,7 @@ import { User } from "../types";
 import express from "express";
 //internal imports
 import { authenticateUser } from "../utils/passport_utils";
-import { getUsers, getUserById, deleteUser, updateUser } from "../utils/db_user_utils";
+import { getUsers, getUserById, deleteUser, updateUser, addUser } from "../utils/db_user_utils";
 
 export var router: Router = express.Router();
 
@@ -22,7 +22,21 @@ router.get('/', (req: Request, res: Response) => {
         });
 });
 
-router.post('/:user_id', (req: Request, res: Response, next) => {
+router.post('/', (req: Request, res: Response) => {
+    let name: string = req.body['name'];
+    let password: string= req.body['password'];
+
+    addUser(name, password)
+        .then(() => {
+            res.redirect(303, '/users');
+        })
+        .catch((e: Error) => {
+            console.log(e.stack);
+            res.status(501).send("view error");
+        });
+});
+
+router.post('/:user_id', (req: Request, res: Response) => {
     let user: User = {
         id: req.params['user_id'],
         name: req.body['name'],
