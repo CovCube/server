@@ -28,7 +28,6 @@ router.post('/login',
 ));
 
 router.get('/users', authenticateUser, (req: Request, res: Response) => {
-    console.log(req);
     getUsers()
         .then((users) => {
             res.render("users-list", {users: users});
