@@ -41,7 +41,7 @@ const deleteCubeActuatorsQuery: string = "DELETE FROM cube_actuators WHERE cube_
 //Persist sensor data
 const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
 
-export function setupDB(): Promise<[void, void | QueryResult]> {
+export function setupCubeDB(): Promise<[void, void | QueryResult]> {
 
     let createSensorTypesTableRes: Promise<QueryResult> = pool.query(createSensorTypesTableQuery);
     let createActuatorTypesTableRes: Promise<QueryResult> = pool.query(createActuatorTypesTableQuery);

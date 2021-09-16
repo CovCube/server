@@ -16,7 +16,7 @@ import { Pool } from "pg";
 //mqtt imports
 import mqtt from "mqtt";
 //internal imports
-import { setupDB } from "./utils/db_cube_utils";
+import { setupCubeDB } from "./utils/db_cube_utils";
 import { setupPassport } from "./utils/passport_utils";
 import { setupMQTT } from "./utils/mqtt_utils";
 import { router as viewRoutes } from "./views/views";
@@ -27,7 +27,9 @@ dotenv.config();
 
 //Connect to database
 export const pool: Pool = new Pool();
-setupDB();
+
+//Setup cube database
+setupCubeDB();
 
 //Setup passport
 setupPassport();
