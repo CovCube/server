@@ -23,7 +23,7 @@ export interface CubeDetailDataObject {
     additional_actuators: Array<string>
 }
 
-export interface User {
+export interface User extends Express.User{
     id: string,
     name: string,
     password: string
