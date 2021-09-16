@@ -2,6 +2,8 @@
 import { Router, Request, Response } from "express";
 //express imports
 import express from "express";
+//passport imports
+import passport from "passport";
 //other external imports
 import path from 'path';
 //internal imports
@@ -12,7 +14,9 @@ import { router as configRoute } from "./config";
 //Export the router
 export var router: Router = express.Router();
 
-//TODO: Protect API routes with login
+//Authenticate user
+router.use('/', passport.authenticate('bearer', {session: false}));
+
 //Delegate API-routes to their routers
 router.use('/cubes', cubesRoute);
 router.use('/data', dataRoute);
