@@ -10,7 +10,9 @@ import { authenticateUser } from "../utils/passport_utils";
 
 export var router: Router = express.Router();
 
-router.get('/', authenticateUser, (req: Request, res:Response) => {
+router.use(authenticateUser);
+
+router.get('/',  (req: Request, res:Response) => {
     getCubes()
         .then((cubes: Array<Cube>) => {
             let data = {
@@ -26,12 +28,12 @@ router.get('/', authenticateUser, (req: Request, res:Response) => {
         });
 });
 
-router.get('/cubes/:cubeId', authenticateUser, (req, res) => {
+router.get('/:cubeId',  (req, res) => {
 
     getCubeWithIdView(req, res);
 });
 
-router.post('/cubes/:cubeId', authenticateUser, async (req, res) => {
+router.post('/:cubeId',  async (req, res) => {
 
     let cubeId: string = req.params['cubeId'];
     let variables = req.body;
