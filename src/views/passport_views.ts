@@ -7,7 +7,7 @@ import express from "express";
 import passport from "passport";
 //internal imports
 import { authenticateUser } from "../utils/passport_utils";
-import { getUsers, getUserById, deleteUser, updateUser } from "../utils/user_db_utils";
+import { getUsers, getUserById, deleteUser, updateUser } from "../utils/db_user_utils";
 
 export var router: Router = express.Router();
 
