@@ -5,7 +5,7 @@ import { Cube, CubeDetailDataObject, Sensor } from "../types";
 import express from "express";
 //internal imports
 import { getActuatorTypes, getCubes, getCubeWithId, getSensorTypes, updateCubeWithId } from "../utils/db_cube_utils";
-import { compareCubes } from "../utils/utils";
+import { compareCubes } from "../utils/general_utils";
 import { authenticateUser } from "../utils/passport_utils";
 
 export var router: Router = express.Router();
