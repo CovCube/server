@@ -1,0 +1,40 @@
+{{!Add html-head}}
+{{#> html_head}}
+    {{!Add custom scripts}}
+    <link rel="stylesheet" href="/static/css/tokens-list.css">
+{{/html_head}}
+
+<body>
+    {{!Add header}}
+    {{> header}}
+
+    {{!Fill content}}
+    <div id="content">
+    {{#if tokens}}
+        <table>
+            <thead>
+                <th>Owner</th>
+                <th>Token</th>
+                <th></th>
+            </thead>
+            {{#each tokens}}
+                <tr>
+                    <td>{{this.owner}}</td>
+                    <td>{{this.token}}</td>
+                    <td>
+                        <a href="/tokens/delete/{{this.token}}">
+                            <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                        </a>
+                    </td>
+                </tr>
+            {{/each}}
+        </table>
+    {{else}}
+        <p>There aren't any tokens!</p>
+    {{/if}}
+    </div>
+
+    {{!Add footer}}
+    {{> footer}}
+</body>
+</html>
