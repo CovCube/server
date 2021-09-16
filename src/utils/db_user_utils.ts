@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import { v5 as uuidv5 } from "uuid";
 //internal imports
 import { pool } from "..";
+import { checkPassword } from "./passport_utils";
 
 //User table
 const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(32) NOT NULL)";

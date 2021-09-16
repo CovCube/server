@@ -61,6 +61,6 @@ export function authenticateUser(req: Request, res: Response, next: NextFunction
     res.redirect(303, '/login');
 }
 
-async function checkPassword(user: User, password: string): Promise<boolean> {
+export async function checkPassword(user: User, password: string): Promise<boolean> {
     return await bcrypt.compare(password, user.password);
 }
