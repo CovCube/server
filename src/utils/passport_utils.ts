@@ -12,7 +12,7 @@ import { createUserTable, getUserByUsername, getUserById } from "./db_user_utils
 import { createTokensTable, getTokenByToken } from "./db_token_utils";
 
 export async function setupPassport():Promise<void> {
-    
+
     await createUserTable();
 
     passport.use(new LocalStrategy((username, password, done) => {
@@ -42,7 +42,7 @@ export async function setupPassport():Promise<void> {
             .then(async (tokenObj: null | Token) => {
                 //Check if token object returned
                 if (!tokenObj) {
-                    return done(null, false, {message: 'Nutzer existiert nicht', scope: 'all'});
+                    return done(null, false, {message: 'Token existiert nicht', scope: 'all'});
                 }
 
                 //return tokenObj if all is correct
