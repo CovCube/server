@@ -12,6 +12,9 @@ import { createUserTable, getUserByUsername, getUserById } from "./db_user_utils
 import { createTokensTable, getTokenByToken } from "./db_token_utils";
 
 export async function setupPassport():Promise<void> {
+    
+    await createUserTable();
+
     passport.use(new LocalStrategy((username, password, done) => {
         getUserByUsername(username)
             .then(async (user: null | User) => {
@@ -50,8 +53,6 @@ export async function setupPassport():Promise<void> {
             });
 
     }));
-    
-    await createUserTable();
 
     passport.serializeUser((user, done) => {
         done(null, user.id);
