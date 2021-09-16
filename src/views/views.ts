@@ -1,4 +1,8 @@
-import express, { Router } from "express";
+//type imports
+import { Router } from "express";
+//express imports
+import express from "express";
+//internal imports
 import { router as cubeViewsRouter } from "./cubes_views";
 import { router as passportViewsRouter } from "./passport_views";
 

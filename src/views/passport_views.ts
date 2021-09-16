@@ -1,6 +1,11 @@
-import express, { Router, Request, Response } from "express";
-import passport from "passport";
+//type imports
+import { Router, Request, Response } from "express";
 import { User } from "../types";
+//express imports
+import express from "express";
+//passport imports
+import passport from "passport";
+//internal imports
 import { authenticateUser } from "../utils/passport_utils";
 import { getUsers, getUserById, deleteUser, updateUser } from "../utils/user_db_utils";
 

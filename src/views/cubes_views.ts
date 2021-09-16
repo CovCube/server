@@ -1,6 +1,10 @@
-import express, { Router, Request, Response } from "express";
-import { getActuatorTypes, getCubes, getCubeWithId, getSensorTypes, updateCubeWithId } from "../utils/db_utils";
+//type imports
+import { Router, Request, Response } from "express";
 import { Cube, CubeDetailDataObject, Sensor } from "../types";
+//express imports
+import express from "express";
+//internal imports
+import { getActuatorTypes, getCubes, getCubeWithId, getSensorTypes, updateCubeWithId } from "../utils/db_utils";
 import { compareCubes } from "../utils/utils";
 import { authenticateUser } from "../utils/passport_utils";
 
