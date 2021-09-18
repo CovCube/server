@@ -1,11 +1,15 @@
 //type imports
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, response } from "express";
+import { AxiosResponse } from "axios";
 import { Cube, CubeDetailDataObject, Sensor } from "../types";
 //express imports
 import express from "express";
+//other external imports
+import ip from "ip";
+import axios from "axios";
 //internal imports
-import { getActuatorTypes, getCubes, getCubeWithId, getSensorTypes, updateCubeWithId } from "../utils/db_cube_utils";
-import { compareCubes } from "../utils/general_utils";
+import { addCube, getActuatorTypes, getCubes, getCubeWithId, getSensorTypes, updateCubeWithId } from "../utils/db_cube_utils";
+import { cleanSensorsArray, compareCubes } from "../utils/general_utils";
 import { authenticateUser } from "../utils/passport_utils";
 
 export var router: Router = express.Router();
@@ -27,6 +31,35 @@ router.get('/',  (req: Request, res:Response) => {
             res.status(501).send("view error");
         });
 });
+
+router.post('/', (req: Request, res: Response) => {
+    let targetIP: string = req.body['ip'];
+    let location: string = req.body['location'];
+
+    let serverIP: string = ip.address();
+    let id: string = '';
+
+    let data = {
+        'adress': serverIP,
+        'id': id,
+        'location': location
+    }
+
+    axios.post(targetIP, data)
+        .then((response: AxiosResponse) => {
+            let sensors = cleanSensorsArray(response.data['sensors']);
+            let actuators = response.data['actuators'];
+
+            return addCube(id, location, sensors, actuators);
+        })
+        .then(() => {
+            res.redirect(303, '/cubes');
+        })
+        .catch((err: Error) => {
+            console.log(err.stack);
+            res.status(501).send("view error");
+        });
+})
 
 router.get('/:cubeId',  (req, res) => {
 
@@ -52,7 +85,7 @@ function getCubeWithIdView (req: Request, res: Response): void {
 
             let cube: Cube = values[0];
             let additional_sensors = values[1].filter((sensor: Sensor) => {
-                return !cube.sensors.includes(sensor.name.trim())
+                return !cube.sensors.includes(sensor.type.trim())
             });
             let additional_actuators = values[2].filter((actuator: string) => {
                 return !cube.actuators.includes(actuator.trim())

@@ -12,8 +12,8 @@ export interface CubeVariables {
 }
 
 export interface Sensor {
-    name: string,
-    push_rate: number
+    type: string,
+    scanInterval: number
 }
 
 export interface CubeDetailDataObject {

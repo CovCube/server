@@ -10,28 +10,53 @@
 
     {{!Fill content}}
     <div id="content">
-    {{#if cubes}}
+    
+        {{#if cubes}}
+            <h1>Cubes</h1>
+            <table>
+                <thead>
+                    <th>Location</th>
+                    <th>Id</th>
+                    <th></th>
+                </thead>
+                {{#each cubes}}
+                    <tr>
+                        <td>{{this.location}}</td>
+                        <td>{{this.id}}</td>
+                        <td>
+                            <a href="cubes/{{this.id}}">
+                                <img src="/static/img/edit-regular.svg" height="20px" alt="Edit">
+                            </a>
+                        </td>
+                    </tr>
+                {{/each}}
+            </table>
+        {{else}}
+            <p>There aren't any registered cubes!</p>
+        {{/if}}
+
+        <h1>Available Cubes</h1>
         <table>
             <thead>
+                <th>IP-Address</th>
                 <th>Location</th>
-                <th>Id</th>
+                <th></th>
                 <th></th>
             </thead>
-            {{#each cubes}}
-                <tr>
-                    <td>{{this.location}}</td>
-                    <td>{{this.id}}</td>
+            <tr>
+                <form action="/cubes" method="post" id="new_token_form">
                     <td>
-                        <a href="cubes/{{this.id}}">
-                            <img src="/static/img/edit-regular.svg" height="20px" alt="Edit">
-                        </a>
+                        <input id="new_cube_ip_input" type="text" name="ip" placeholder="ip-address">
                     </td>
-                </tr>
-            {{/each}}
+                    <td>
+                        <input id="new_cube_location_input" type="text" name="location" placeholder="location">
+                    </td>
+                    <td>
+                        <input id="new_cube_submit" type="submit" name="submit" value="Submit" />
+                    </td>
+                </form>
+            </tr>
         </table>
-    {{else}}
-        <p>There aren't any registered cubes!</p>
-    {{/if}}
     </div>
 
     {{!Add footer}}

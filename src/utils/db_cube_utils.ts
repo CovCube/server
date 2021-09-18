@@ -7,7 +7,7 @@ import format from 'pg-format';
 import { pool } from "../index";
 
 //Base tables
-const createSensorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_types (name CHAR(64) PRIMARY KEY, push_rate NUMERIC NOT NULL, active BOOLEAN NOT NULL)";
+const createSensorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_types (name CHAR(64) PRIMARY KEY, scan_interval NUMERIC NOT NULL, active BOOLEAN NOT NULL)";
 const createActuatorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS actuator_types (name CHAR(64) PRIMARY KEY, active BOOLEAN NOT NULL)";
 const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID PRIMARY KEY, location CHAR(255) NOT NULL)";
 //Junction tables
@@ -19,8 +19,8 @@ const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_da
 //Manage sensors
 const getSensorTypesQuery: string = 'SELECT * FROM sensor_types';
 const getSensorTypeWithNameQuery: string = 'SELECT * FROM sensor_types WHERE name= $1';
-const addSensorTypeQuery: string = "INSERT INTO sensor_types (name, push_rate, active) VALUES ($1, $2, TRUE)";
-const updateSensorTypePushRateQuery: string = "UPDATE sensor_types SET push_rate= $2 WHERE name= $1";
+const addSensorTypeQuery: string = "INSERT INTO sensor_types (name, scan_interval, active) VALUES ($1, $2, TRUE)";
+const updateSensorTypePushRateQuery: string = "UPDATE sensor_types SET scan_interval= $2 WHERE name= $1";
 const deactivateSensorTypeQuery: string = "UPDATE sensor_types SET active= FALSE WHERE name= $1";
 const getActuatorTypesQuery: string = 'SELECT * FROM actuator_types';
 const addActuatorTypeQuery: string = "INSERT INTO actuator_types (name, active) VALUES ($1, TRUE)";
@@ -76,8 +76,8 @@ export function getSensorTypes(): Promise<Array<Sensor>>  {
 
                 res.rows.forEach((value) => {
                     sensor_types.push({
-                        name: value.name.trim(),
-                        push_rate: parseInt(value.push_rate)
+                        type: value.name.trim(),
+                        scanInterval: parseInt(value.scan_interval)
                     })
                 })
 
@@ -89,9 +89,9 @@ export function getSensorTypes(): Promise<Array<Sensor>>  {
     });
 }
 
-export function addSensorType(sensor_type: string, push_rate: number): Promise<void>  {
+export function addSensorType(sensor_type: string, scan_interval: number): Promise<void>  {
     return new Promise((resolve, reject) => {
-        pool.query(addSensorTypeQuery, [sensor_type, push_rate])
+        pool.query(addSensorTypeQuery, [sensor_type, scan_interval])
             .then(() => {
                 resolve()
             })
@@ -101,12 +101,12 @@ export function addSensorType(sensor_type: string, push_rate: number): Promise<v
     });
 }
 
-export function updateSensorTypePushRate(sensor_type: string, push_rate: number): Promise<void> {
+export function updateSensorTypePushRate(sensor_type: string, scan_interval: number): Promise<void> {
     return new Promise(async (resolve, reject) => {
         await pool.query(getSensorTypeWithNameQuery, [sensor_type])
                     .catch((err: Error) => reject(new Error("no sensor type with specified name found")));
 
-        pool.query(updateSensorTypePushRateQuery, [sensor_type, push_rate])
+        pool.query(updateSensorTypePushRateQuery, [sensor_type, scan_interval])
             .then(() => {
                 resolve()
             })
