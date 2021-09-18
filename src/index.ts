@@ -35,9 +35,9 @@ setupCubeDB();
 setupPassport();
 
 //Connect to MQTT broker
-let mqttUrl: string = process.env.MQTTURL || 'mqtt://test.mosquitto.org';
+let mqttUrl: string = process.env.MQTTURL || 'test.mosquitto.org';
 let mqttPort: number = parseInt(process.env.MQTTPORT || '1883');
-export const mqttClient: MQTTClient = mqtt.connect(mqttUrl, {port: mqttPort});
+export const mqttClient: MQTTClient = mqtt.connect('mqtt://'+mqttUrl, {port: mqttPort});
 
 mqttClient.on('connect', function() {
     console.log('Connected to MQTT server.');
