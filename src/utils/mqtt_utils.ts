@@ -4,8 +4,9 @@ import { ISubscriptionMap, IPublishPacket, ISubscriptionGrant } from "mqtt";
 import { mqttClient as mqtt } from "../index";
 import { getTimestamp, persistSensorData } from "./db_cube_utils";
 
+//TODO: Look if topics can be subscribed by cube or via .env
 const topics: ISubscriptionMap = {
-    'sensor/#': {qos: 2},
+    'sensor/+/+/test/test': {qos: 2},
     'init/#': {qos: 2},
 }
 
