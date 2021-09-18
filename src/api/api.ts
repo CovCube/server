@@ -1,11 +1,21 @@
-import express, { Router, Request, Response } from "express";
+//type imports
+import { Router, Request, Response } from "express";
+//express imports
+import express from "express";
+//passport imports
+import passport from "passport";
+//other external imports
 import path from 'path';
-import {router as cubesRoute} from "./cubes";
-import {router as dataRoute} from "./data";
-import {router as configRoute} from "./config";
+//internal imports
+import { router as cubesRoute } from "./cubes";
+import { router as dataRoute } from "./data";
+import { router as configRoute } from "./config";
 
 //Export the router
 export var router: Router = express.Router();
+
+//Authenticate user
+router.use('/', passport.authenticate('bearer', {session: false}));
 
 //Delegate API-routes to their routers
 router.use('/cubes', cubesRoute);

@@ -1,4 +1,7 @@
-import express, { Router, Request, Response } from "express";
+//type imports
+import { Router, Request, Response } from "express";
+//express imports
+import express from "express";
 
 //Export the router
 export var router: Router = express.Router();

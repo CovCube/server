@@ -1,0 +1,59 @@
+{{!Add html-head}}
+{{#> html_head}}
+    {{!Add custom scripts}}
+    <link rel="stylesheet" href="/static/css/tokens-list.css">
+{{/html_head}}
+
+<body>
+    {{!Add header}}
+    {{> header}}
+
+    {{!Fill content}}
+    <div id="content">
+    {{#if tokens}}
+        <table>
+            <thead>
+                <th>Owner</th>
+                <th>Token</th>
+                <th></th>
+                <th></th>
+            </thead>
+            {{#each tokens}}
+                <tr>
+                    <td>{{this.owner}}</td>
+                    <td>{{this.token}}</td>
+                    <td></td>
+                    <td>
+                        <a href="/tokens/delete/{{this.token}}">
+                            <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                        </a>
+                    </td>
+                </tr>
+            {{/each}}
+                <tr>
+                    <form action="/tokens/" method="post" id="new_token_form">
+                        <td>
+                            <input id="new_token_owner_input" type="hidden" name="owner" placeholder="name">
+                        </td>
+                        <td></td>
+                        <td>
+                            <input id="new_token_submit" type="hidden" name="submit" value="Submit" />
+                        </td>
+                        <td>
+                            <img id="new_token_add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
+                            <img id="new_token_exit" src="/static/img/minus-solid.svg" height="20px" alt="Add" style="display: none;">
+                        </td>
+                    </form>
+                </tr>
+        </table>
+    {{else}}
+        <p>There aren't any tokens!</p>
+    {{/if}}
+    </div>
+
+    {{!Add footer}}
+    {{> footer}}
+
+    <script src="/static/js/tokens-list.js"></script>
+</body>
+</html>

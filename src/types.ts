@@ -22,3 +22,14 @@ export interface CubeDetailDataObject {
     additional_sensors: Array<Sensor>,
     additional_actuators: Array<string>
 }
+
+export interface User extends Express.User {
+    id: string,
+    name: string,
+    password: string
+}
+
+export interface Token {
+    token: string,
+    owner: string
+}

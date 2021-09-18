@@ -1,21 +1,38 @@
-import express, { Express, Request, Response } from "express";
+//type imports
+import { Express } from "express";
+import { Client as MQTTClient } from "mqtt";
+//base imports
+import express from "express";
 import hbs from 'hbs';
 import path from 'path';
+import bodyParser from "body-parser";
+//middleware imports
+import session from 'express-session';
 import helmet from "helmet";
 import dotenv from "dotenv";
-import {Pool} from "pg";
-import mqtt, {Client as MQTTClient} from "mqtt";
-import {setupDB} from "./utils/db_utils";
-import {setupMQTT} from "./utils/mqtt_utils";
-import {router as viewRoutes} from "./views/views";
-import {router as apiRoutes} from "./api/api";
+import passport from "passport";
+//pg imports
+import { Pool } from "pg";
+//mqtt imports
+import mqtt from "mqtt";
+//internal imports
+import { setupCubeDB } from "./utils/db_cube_utils";
+import { setupPassport } from "./utils/passport_utils";
+import { setupMQTT } from "./utils/mqtt_utils";
+import { router as viewRoutes } from "./views/views";
+import { router as apiRoutes } from "./api/api";
 
 //Parse environment variables
 dotenv.config();
 
 //Connect to database
 export const pool: Pool = new Pool();
-setupDB();
+
+//Setup cube database
+setupCubeDB();
+
+//Setup passport
+setupPassport();
 
 //Connect to MQTT broker
 let mqttUrl: string = process.env.MQTTURL || 'mqtt://test.mosquitto.org';
@@ -42,8 +59,17 @@ app.use('/static', express.static(path.join(__dirname, './public')));
 
 //Add middleware
 app.use(helmet());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: process.env.SESSIONSECRET || 'secret',
+    //Check if session store implements touch
+    resave: false,
+    //Because of cookie banner
+    saveUninitialized: false
+}))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Delegate routing
 app.use('/', viewRoutes);

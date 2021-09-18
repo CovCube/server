@@ -1,3 +1,4 @@
+//type imports
 import { Cube } from "../types";
 
 export function compareCubes(a: Cube, b:Cube):number {

@@ -1,7 +1,10 @@
-import {PoolClient, QueryResult} from 'pg';
-import format from 'pg-format';
-import {pool} from "../index";
+//type imports
 import { Cube, CubeVariables, Sensor } from '../types';
+import { PoolClient, QueryResult } from 'pg';
+//other external imports
+import format from 'pg-format';
+//internal imports
+import { pool } from "../index";
 
 //Base tables
 const createSensorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_types (name CHAR(64) PRIMARY KEY, push_rate NUMERIC NOT NULL, active BOOLEAN NOT NULL)";
@@ -38,7 +41,7 @@ const deleteCubeActuatorsQuery: string = "DELETE FROM cube_actuators WHERE cube_
 //Persist sensor data
 const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
 
-export function setupDB(): Promise<[void, void | QueryResult]> {
+export function setupCubeDB(): Promise<[void, void | QueryResult]> {
 
     let createSensorTypesTableRes: Promise<QueryResult> = pool.query(createSensorTypesTableQuery);
     let createActuatorTypesTableRes: Promise<QueryResult> = pool.query(createActuatorTypesTableQuery);

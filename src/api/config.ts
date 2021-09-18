@@ -1,6 +1,10 @@
-import express, { Router, Request, Response } from "express";
+//type imports
+import { Router, Request, Response } from "express";
 import { Sensor } from "../types";
-import { addActuatorType, addSensorType, deactivateActuatorType, deactivateSensorType, getActuatorTypes, getSensorTypes, updateSensorTypePushRate } from "../utils/db_utils";
+//express imports
+import express from "express";
+//internal imports
+import { addActuatorType, addSensorType, deactivateActuatorType, deactivateSensorType, getActuatorTypes, getSensorTypes, updateSensorTypePushRate } from "../utils/db_cube_utils";
 
 //Export the router
 export var router: Router = express.Router();
