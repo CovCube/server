@@ -1,5 +1,5 @@
 //type imports
-import { User, Token } from "../types";
+import { BarebonesUser, User, Token } from "../types";
 import { NextFunction, Request, Response } from "express";
 //passport imports
 import passport from "passport";
@@ -54,7 +54,7 @@ export async function setupPassport():Promise<void> {
 
     }));
 
-    passport.serializeUser((user, done) => {
+    passport.serializeUser((user: BarebonesUser, done) => {
         done(null, user.id);
     });
 
