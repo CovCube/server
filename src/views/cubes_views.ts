@@ -7,6 +7,7 @@ import express from "express";
 //other external imports
 import ip from "ip";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 //internal imports
 import { addCube, getActuatorTypes, getCubes, getCubeWithId, getSensorTypes, updateCubeWithId } from "../utils/db_cube_utils";
 import { cleanSensorsArray, compareCubes } from "../utils/general_utils";
@@ -37,15 +38,15 @@ router.post('/', (req: Request, res: Response) => {
     let location: string = req.body['location'];
 
     let serverIP: string = ip.address();
-    let id: string = '';
+    let id: string = uuidv4();
 
     let data = {
         'adress': serverIP,
-        'id': id,
+        'uuid': id,
         'location': location
     }
 
-    axios.post(targetIP, data)
+    axios.post("http://"+targetIP, data)
         .then((response: AxiosResponse) => {
             let sensors = cleanSensorsArray(response.data['sensors']);
             let actuators = response.data['actuators'];
