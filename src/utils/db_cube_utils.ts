@@ -205,8 +205,16 @@ export function addCube(cubeId: string, location: string, sensors: Array<string>
     })
 }
 
-export function persistSensorData(sensorType: string, cubeId: string, timestamp: string, data: string): Promise<void | QueryResult> {
-    return pool.query(persistSensorDataQuery, [sensorType, cubeId, timestamp, data])
+export function persistSensorData(sensorType: string, cubeId: string, timestamp: string, data: string): Promise<QueryResult> {
+    return new Promise((resolve, reject) => {
+        pool.query(persistSensorDataQuery, [sensorType, cubeId, timestamp, data])
+            .then((res: QueryResult) => {
+                resolve(res);
+            })
+            .catch((err: Error) => {
+                reject(err);
+            });
+    });
 }
 
 export function getCubes(): Promise<Array<Cube>> {
