@@ -1,5 +1,5 @@
 //type imports
-import { Cube, CubeVariables } from '../types';
+import { Cube, CubeVariables, Sensor } from '../types';
 import { PoolClient, QueryResult } from 'pg';
 import { AxiosResponse } from "axios";
 //other external imports
@@ -15,7 +15,7 @@ import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 //Base tables
 const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID PRIMARY KEY, location CHAR(255) NOT NULL)";
 //Junction tables
-const createCubeSensorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_sensors (cube_id UUID NOT NULL, sensor_type CHAR(64) NOT NULL, PRIMARY KEY (cube_id, sensor_type), FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY (sensor_type) REFERENCES sensor_types (name) ON DELETE CASCADE)";
+const createCubeSensorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_sensors (cube_id UUID NOT NULL, sensor_type CHAR(64) NOT NULL, scan_interval number NOT NULL, PRIMARY KEY (cube_id, sensor_type), FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY (sensor_type) REFERENCES sensor_types (name) ON DELETE CASCADE)";
 const createCubeActuatorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_actuators (cube_id UUID NOT NULL, actuator_type CHAR(64) NOT NULL, PRIMARY KEY (cube_id, actuator_type), FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY (actuator_type) REFERENCES actuator_types (name) ON DELETE CASCADE)";
 
 //Manage cubes
@@ -26,7 +26,7 @@ const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE id=%L';
 const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
 //Manage cube sensors/actuators
 const getCubeSensorsWithIdQuery: string = 'SELECT * FROM cube_sensors WHERE cube_id=$1';
-const addCubeSensorsQuery: string = "INSERT INTO cube_sensors (cube_id, sensor_type) VALUES ($1, $2)";
+const addCubeSensorsQuery: string = "INSERT INTO cube_sensors (cube_id, sensor_type, scan_interval) VALUES ($1, $2, $3)";
 const deleteCubeSensorsQuery: string = "DELETE FROM cube_sensors WHERE cube_id=$1 AND sensor_type=$2"
 const getCubeActuatorsWithIdQuery: string = 'SELECT * FROM cube_actuators WHERE cube_id=$1';
 const addCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type) VALUES ($1, $2)";
@@ -69,51 +69,43 @@ export function getCubes(): Promise<Array<Cube>> {
 }
 
 export function getCubeWithId(cubeId: string): Promise<Cube> {
-    return new Promise((resolve, reject) => {
-        let cube: Cube;
+    return new Promise(async (resolve, reject) => {
 
-        pool
-            .query(getCubeWithIdQuery, [cubeId])
-            .then((res: QueryResult) => {
+        try {
 
-                if (res.rows.length == 0) {
-                    reject(new Error("no cube with specified id found"));
-                }
+        let res: QueryResult = await pool.query(getCubeWithIdQuery, [cubeId]);
 
-                cube= res.rows[0];
-                cube.location = cube.location.trim();
+        if (res.rows.length == 0) {
+            reject(new Error("no cube with specified id found"));
+        }
 
-                return;
-            })
-            .then(() => {
-                return getCubeSensors(cubeId);
-            })
-            .then((sensors: Array<string>) => {
-                cube.sensors = sensors;
-            })
-            .then(() => {
-                return getCubeActuators(cubeId);
-            })
-            .then((actuators: Array<string>) => {
-                cube.actuators = actuators;
-            })
-            .then (() => {
-                resolve(cube);
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
+        let cube: Cube = res.rows[0];
+        cube.location = cube.location.trim();
+
+        let sensors: Array<Sensor> = await getCubeSensors(cubeId);
+        cube.sensors = sensors;
+
+        let actuators: Array<string> = await getCubeActuators(cubeId);
+        cube.actuators = actuators;
+
+    	resolve(cube);
+        } catch(err) {
+            reject(err);
+        };
     });
 }
 
-async function getCubeSensors(cubeId: string): Promise<Array<string>> {
+async function getCubeSensors(cubeId: string): Promise<Array<Sensor>> {
     return new Promise((resolve, reject) => {
-        let sensors: Array<string> = [];
+        let sensors: Array<Sensor> = [];
 
         pool.query(getCubeSensorsWithIdQuery, [cubeId])
             .then((res) => {
-                res.rows.forEach((value) => {
-                    sensors.push(value.sensor_type.trim());
+                res.rows.forEach((sensor) => {
+                    sensors.push({
+                        type: sensor.sensor_type.trim(),
+                        scanInterval: parseInt(sensor.scanInterval)
+                    });
                 })
 
                 resolve(sensors)
@@ -157,47 +149,46 @@ export async function addCube(targetIP: string, location: string): Promise<void>
     //Send config data to cube
     let response: AxiosResponse = await axios.post("http://"+targetIP, data)
     //Get cube sensors and actuators
-    let sensors: string[] = cleanSensorsArray(response.data['sensors']);
-    let actuators: string[] = response.data['actuators']; 
+    let sensors: Array<Sensor> = response.data['sensors'];
+    let actuators: Array<string> = response.data['actuators']; 
 
     //Persist cube
     return persistCube(id, location, sensors, actuators);
 }
 
-export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
-    return new Promise((resolve, reject) => {
+export function persistCube(cubeId: string, location: string, sensors: Array<Sensor>, actuators: Array<string>): Promise<void> {
+    return new Promise(async (resolve, reject) => {
 
-        pool.connect()
-            .then(async (client: PoolClient) => {
-                await client.query(addCubeQuery, [cubeId, location]);
+        try {
+            //Get client
+            let client = await pool.connect()
 
-                return client;
+            //Add cube
+            await client.query(addCubeQuery, [cubeId, location]);
+
+            //Add sensors
+            sensors.forEach(async (sensor: Sensor) => {
+                await client.query(addCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval])
+                            .catch((err: Error) => {
+                                reject(err);
+                            });
             })
-            .then((client: PoolClient) => {
-                sensors.forEach(async (value: string) => {
-                    await client.query(addCubeSensorsQuery, [cubeId, value])
-                                .catch((err: Error) => {
-                                    reject(err);
-                                });
-                })
-                
-                return client;
-            })
-            .then(async (client: PoolClient) => {
-                actuators.forEach(async (value: string) => {
-                    await client.query(addCubeActuatorsQuery, [cubeId, value])
-                                .catch((err: Error) => {
-                                    reject(err);
-                                });
-                });
-            })
-            .then(async () => {
-                await subscribeCubeMQTTTopic(cubeId, 2);
-                resolve();
-            })
-            .catch((err: Error) => {
-                reject(err);
+
+            //Add actuators
+            actuators.forEach(async (value: string) => {
+                await client.query(addCubeActuatorsQuery, [cubeId, value])
+                            .catch((err: Error) => {
+                                reject(err);
+                            });
             });
+
+            //Subscribe to cube topic
+            await subscribeCubeMQTTTopic(cubeId, 2);
+
+            resolve();
+        } catch(err) {
+            reject(err);
+        };
     });
 }
 
