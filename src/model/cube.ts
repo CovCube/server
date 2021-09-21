@@ -5,9 +5,6 @@ import { PoolClient, QueryResult } from 'pg';
 import format from 'pg-format';
 //internal imports
 import { pool } from "../index";
-import { createSensorTypesTable } from './sensor';
-import { createActuatorTypesTable } from './actuator';
-import { createSensorDataTable } from './sensor_data';
 import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
 //Base tables
