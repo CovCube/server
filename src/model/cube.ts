@@ -30,31 +30,18 @@ const getCubeActuatorsWithIdQuery: string = 'SELECT * FROM cube_actuators WHERE 
 const addCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type) VALUES ($1, $2)";
 const deleteCubeActuatorsQuery: string = "DELETE FROM cube_actuators WHERE cube_id=$1 AND actuator_type=$2"
 
-export function setupCubeDB(): Promise<[void, void | QueryResult]> {
+export async function createCubeTables(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await pool.query(createCubesTableQuery);
+            await pool.query(createCubeSensorsTableQuery);
+            await pool.query(createCubeActuatorsTableQuery);
 
-    let createSensorTypesTableRes: Promise<void> = createSensorTypesTable();
-    let createActuatorTypesTableRes: Promise<void> = createActuatorTypesTable();
-    let createCubesTableRes: Promise<QueryResult> = pool.query(createCubesTableQuery);
-
-    //Wait for base table creation
-    let junctionTableRes = Promise.all([createSensorTypesTableRes, createActuatorTypesTableRes, createCubesTableRes])
-        .then(() => {
-            //Create junction tables
-            pool.query(createCubeSensorsTableQuery);
-            pool.query(createCubeActuatorsTableQuery);
-        }).catch((err) => {
-            console.log(err.stack);
-        });
-            
-    //Create sensor_data table, when cube table is created
-    let sensorDataTableRes = createCubesTableRes
-        .then(() => {
-            return createSensorDataTable();
-        }).catch((err) => {
-            console.log(err.stack);
-        });
-
-    return Promise.all([junctionTableRes, sensorDataTableRes]);
+            resolve();
+        } catch(err) {
+            reject(err);
+        }
+    });
 }
 
 export function getCubes(): Promise<Array<Cube>> {

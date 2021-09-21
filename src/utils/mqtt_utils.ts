@@ -1,37 +1,50 @@
 //type imports
-import { ISubscriptionMap, IPublishPacket, ISubscriptionGrant } from "mqtt";
+import { MqttClient, ISubscriptionMap, IPublishPacket, ISubscriptionGrant } from "mqtt";
 import { Cube } from "../types";
+//external imports
+import mqtt from "mqtt";
 //internal imports
-import { mqttClient as mqtt } from "../index";
 import { getCubes } from "../model/cube";
 import { getTimestamp } from "./general_utils";
 import { persistSensorData } from "../model/sensor_data";
 
+var mqttClient: MqttClient;
+
 export async function setupMQTT(): Promise<void> {
     return new Promise(async (resolve, reject) => {
-        //Set event listeners
-        mqtt.on('reconnect', () => logMQTTEvent('Reconnect'));
-        mqtt.on('close', () => logMQTTEvent('Close'));
-        mqtt.on('disconnect', () => logMQTTEvent('Disconnect'));
-        mqtt.on('offline', () => logMQTTEvent('Offline'));
-        mqtt.on('error', (error) => logMQTTEvent('Error', [error]));
-        mqtt.on('end', () => logMQTTEvent('End'));
-        mqtt.on('packetsend', () => logMQTTEvent('Packetsend'));
-        mqtt.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
-        mqtt.on('message', handleMQTTMessage);
-        
-        try {
-            //Subscribe to topic of existing cubes
-            let cubes: Cube[] = await getCubes();
+        //Get broker address
+        let mqttUrl: string = process.env.MQTTURL || 'test.mosquitto.org';
+        let mqttPort: number = parseInt(process.env.MQTTPORT || '1883');
+        //Connect to broker
+        mqttClient = mqtt.connect('mqtt://'+mqttUrl, {port: mqttPort});
 
-            cubes.forEach(async (cube: Cube) => {
-                await subscribeCubeMQTTTopic(cube.id, 2);
-            });
+        mqttClient.on('connect', async function() {
+            console.log('Connected to MQTT server.');
 
-            resolve();
-        } catch(err) {
-            console.log(err);
-        }
+            //Set event listeners
+            mqttClient.on('reconnect', () => logMQTTEvent('Reconnect'));
+            mqttClient.on('close', () => logMQTTEvent('Close'));
+            mqttClient.on('disconnect', () => logMQTTEvent('Disconnect'));
+            mqttClient.on('offline', () => logMQTTEvent('Offline'));
+            mqttClient.on('error', (error) => logMQTTEvent('Error', [error]));
+            mqttClient.on('end', () => logMQTTEvent('End'));
+            mqttClient.on('packetsend', () => logMQTTEvent('Packetsend'));
+            mqttClient.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
+            mqttClient.on('message', handleMQTTMessage);
+            
+            try {
+                //Subscribe to topic of existing cubes
+                let cubes: Cube[] = await getCubes();
+
+                cubes.forEach(async (cube: Cube) => {
+                    await subscribeCubeMQTTTopic(cube.id, 2);
+                });
+
+                resolve();
+            } catch(err) {
+                console.log(err);
+            }
+        });
     });
 }
 
@@ -46,7 +59,7 @@ export async function subscribeCubeMQTTTopic(cubeId: string, qos: 0 | 1 | 2): Pr
 function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
     return new Promise((resolve, reject) => {
         //Subscribe to topics
-        mqtt.subscribe(topics, function(err: Error, granted: ISubscriptionGrant[]) {
+        mqttClient.subscribe(topics, function(err: Error, granted: ISubscriptionGrant[]) {
             if(err) {
                 console.log(err);
                 reject(err);

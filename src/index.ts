@@ -1,6 +1,5 @@
 //type imports
 import { Express } from "express";
-import { Client as MQTTClient } from "mqtt";
 //base imports
 import express from "express";
 import hbs from 'hbs';
@@ -13,10 +12,13 @@ import dotenv from "dotenv";
 import passport from "passport";
 //pg imports
 import { Pool } from "pg";
-//mqtt imports
-import mqtt from "mqtt";
 //internal imports
-import { setupCubeDB } from "./model/cube";
+import { createSensorTypesTable } from "./model/sensor";
+import { createActuatorTypesTable } from "./model/actuator";
+import { createCubeTables } from "./model/cube";
+import { createSensorDataTable } from "./model/sensor_data";
+import { createUserTable } from "./model/user";
+import { createTokensTable } from "./model/token";
 import { setupPassport } from "./utils/passport_utils";
 import { setupMQTT } from "./utils/mqtt_utils";
 import { router as viewRoutes } from "./views/views";
@@ -28,21 +30,8 @@ dotenv.config();
 //Connect to database
 export const pool: Pool = new Pool();
 
-//Setup cube database
-setupCubeDB();
-
-//Setup passport
-setupPassport();
-
-//Connect to MQTT broker
-let mqttUrl: string = process.env.MQTTURL || 'test.mosquitto.org';
-let mqttPort: number = parseInt(process.env.MQTTPORT || '1883');
-export const mqttClient: MQTTClient = mqtt.connect('mqtt://'+mqttUrl, {port: mqttPort});
-
-mqttClient.on('connect', function() {
-    console.log('Connected to MQTT server.');
-    setupMQTT();
-});
+//Setup database, passport and mqtt broker connection
+setupServer();
 
 //Create express app
 const PORT: number = parseInt(process.env.PORT || '3000');
@@ -77,3 +66,22 @@ app.use('/api', apiRoutes);
 
 //Start server
 app.listen(PORT, () => console.log(`Running on port: ${PORT}`));
+
+async function setupServer() {
+    
+    try {
+        //Setup cube database
+        await createSensorTypesTable();
+        await createActuatorTypesTable();
+        await createCubeTables();
+        await createSensorDataTable();
+        //Setup passport
+        await createUserTable();
+        await createTokensTable();
+        setupPassport();
+        //setup mqtt
+        setupMQTT();
+    } catch(err) {
+        console.log(err);
+    }
+}

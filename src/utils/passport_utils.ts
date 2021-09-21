@@ -13,8 +13,7 @@ import { createTokensTable, getTokenByToken } from "../model/token";
 
 export async function setupPassport():Promise<void> {
 
-    await createUserTable();
-
+    //Use local strategy (username, password)
     passport.use(new LocalStrategy((username, password, done) => {
         getUserByUsername(username)
             .then(async (user: null | User) => {
@@ -35,8 +34,7 @@ export async function setupPassport():Promise<void> {
             });
     }));
 
-    await createTokensTable();
-
+    //Use httpbearer strategy (token)
     passport.use(new HttpBearerStrategy((token, done) => {
         getTokenByToken(token)
             .then(async (tokenObj: null | Token) => {
@@ -54,10 +52,12 @@ export async function setupPassport():Promise<void> {
 
     }));
 
+    //Get id from user
     passport.serializeUser((user: BarebonesUser, done) => {
         done(null, user.id);
     });
 
+    //Get user from id
     passport.deserializeUser(async (id: string, done) => {
 
         getUserById(id)
