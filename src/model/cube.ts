@@ -274,9 +274,3 @@ export function deleteCubeWithId(cubeId: string): Promise<void> {
             });
     });
 }
-
-export function getTimestamp(): string {
-    let time: Date = new Date();
-
-    return `${time.getUTCFullYear()}-${time.getUTCMonth()}-${time.getUTCDate()} ${time.getUTCHours()}:${time.getUTCMinutes()}:${time.getUTCSeconds()}-0`;
-}
