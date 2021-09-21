@@ -5,27 +5,17 @@ import { PoolClient, QueryResult } from 'pg';
 import format from 'pg-format';
 //internal imports
 import { pool } from "../index";
+import { createSensorTypesTable } from './sensor';
+import { createActuatorTypesTable } from './actuator';
+import { createSensorDataTable } from './sensor_data';
 import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
 //Base tables
-const createSensorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_types (name CHAR(64) PRIMARY KEY, scan_interval NUMERIC NOT NULL, active BOOLEAN NOT NULL)";
-const createActuatorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS actuator_types (name CHAR(64) PRIMARY KEY, active BOOLEAN NOT NULL)";
 const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID PRIMARY KEY, location CHAR(255) NOT NULL)";
 //Junction tables
 const createCubeSensorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_sensors (cube_id UUID NOT NULL, sensor_type CHAR(64) NOT NULL, PRIMARY KEY (cube_id, sensor_type), FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY (sensor_type) REFERENCES sensor_types (name) ON DELETE CASCADE)";
 const createCubeActuatorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_actuators (cube_id UUID NOT NULL, actuator_type CHAR(64) NOT NULL, PRIMARY KEY (cube_id, actuator_type), FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY (actuator_type) REFERENCES actuator_types (name) ON DELETE CASCADE)";
-//sensor data tables
-const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL PRIMARY KEY, sensor_type CHAR(64) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, FOREIGN KEY(cube_id) REFERENCES cubes(id) ON DELETE CASCADE, FOREIGN KEY(sensor_type) REFERENCES sensor_types(name) ON DELETE CASCADE)";
 
-//Manage sensors
-const getSensorTypesQuery: string = 'SELECT * FROM sensor_types';
-const getSensorTypeWithNameQuery: string = 'SELECT * FROM sensor_types WHERE name= $1';
-const addSensorTypeQuery: string = "INSERT INTO sensor_types (name, scan_interval, active) VALUES ($1, $2, TRUE)";
-const updateSensorTypePushRateQuery: string = "UPDATE sensor_types SET scan_interval= $2 WHERE name= $1";
-const deactivateSensorTypeQuery: string = "UPDATE sensor_types SET active= FALSE WHERE name= $1";
-const getActuatorTypesQuery: string = 'SELECT * FROM actuator_types';
-const addActuatorTypeQuery: string = "INSERT INTO actuator_types (name, active) VALUES ($1, TRUE)";
-const deactivateActuatorTypeQuery: string = "UPDATE actuator_types SET active= FALSE WHERE name= $1";
 //Manage cubes
 const getCubesQuery: string = 'SELECT * FROM cubes';
 const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
@@ -39,13 +29,11 @@ const deleteCubeSensorsQuery: string = "DELETE FROM cube_sensors WHERE cube_id=$
 const getCubeActuatorsWithIdQuery: string = 'SELECT * FROM cube_actuators WHERE cube_id=$1';
 const addCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type) VALUES ($1, $2)";
 const deleteCubeActuatorsQuery: string = "DELETE FROM cube_actuators WHERE cube_id=$1 AND actuator_type=$2"
-//Persist sensor data
-const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
 
 export function setupCubeDB(): Promise<[void, void | QueryResult]> {
 
-    let createSensorTypesTableRes: Promise<QueryResult> = pool.query(createSensorTypesTableQuery);
-    let createActuatorTypesTableRes: Promise<QueryResult> = pool.query(createActuatorTypesTableQuery);
+    let createSensorTypesTableRes: Promise<void> = createSensorTypesTable();
+    let createActuatorTypesTableRes: Promise<void> = createActuatorTypesTable();
     let createCubesTableRes: Promise<QueryResult> = pool.query(createCubesTableQuery);
 
     //Wait for base table creation
@@ -61,114 +49,12 @@ export function setupCubeDB(): Promise<[void, void | QueryResult]> {
     //Create sensor_data table, when cube table is created
     let sensorDataTableRes = createCubesTableRes
         .then(() => {
-            return pool.query(createSensorDataTableQuery);
+            return createSensorDataTable();
         }).catch((err) => {
             console.log(err.stack);
         });
 
     return Promise.all([junctionTableRes, sensorDataTableRes]);
-}
-
-export function getSensorTypes(): Promise<Array<Sensor>>  {
-    return new Promise((resolve, reject) => {
-        pool.query(getSensorTypesQuery)
-            .then((res) => {
-                let sensor_types: Array<Sensor> = [];
-
-                res.rows.forEach((value) => {
-                    sensor_types.push({
-                        type: value.name.trim(),
-                        scanInterval: parseInt(value.scan_interval)
-                    })
-                })
-
-                resolve(sensor_types);
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
-}
-
-export function addSensorType(sensor_type: string, scan_interval: number): Promise<void>  {
-    return new Promise((resolve, reject) => {
-        pool.query(addSensorTypeQuery, [sensor_type, scan_interval])
-            .then(() => {
-                resolve()
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
-}
-
-export function updateSensorTypePushRate(sensor_type: string, scan_interval: number): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-        await pool.query(getSensorTypeWithNameQuery, [sensor_type])
-                    .catch((err: Error) => reject(new Error("no sensor type with specified name found")));
-
-        pool.query(updateSensorTypePushRateQuery, [sensor_type, scan_interval])
-            .then(() => {
-                resolve()
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
-}
-
-export function deactivateSensorType(sensor_type: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-        pool.query(deactivateSensorTypeQuery, [sensor_type])
-            .then(() => {
-                resolve()
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
-}
-
-export function getActuatorTypes(): Promise<Array<string>>  {
-    return new Promise((resolve, reject) => {
-        pool.query(getActuatorTypesQuery)
-            .then((res) => {
-                let sensor_types: Array<string> = [];
-
-                res.rows.forEach((value) => {
-                    sensor_types.push(value.name.trim());
-                })
-
-                resolve(sensor_types);
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
-}
-
-export function addActuatorType(actuator_type: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-        pool.query(addActuatorTypeQuery, [actuator_type])
-            .then(() => {
-                resolve();
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
-}
-
-export function deactivateActuatorType(actuator_type: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-        pool.query(deactivateActuatorTypeQuery, [actuator_type])
-            .then(() => {
-                resolve();
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
 }
 
 export function addCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
@@ -206,18 +92,6 @@ export function addCube(cubeId: string, location: string, sensors: Array<string>
                 reject(err);
             })
     })
-}
-
-export function persistSensorData(sensorType: string, cubeId: string, timestamp: string, data: string): Promise<QueryResult> {
-    return new Promise((resolve, reject) => {
-        pool.query(persistSensorDataQuery, [sensorType, cubeId, timestamp, data])
-            .then((res: QueryResult) => {
-                resolve(res);
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
 }
 
 export function getCubes(): Promise<Array<Cube>> {
