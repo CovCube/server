@@ -57,43 +57,6 @@ export function setupCubeDB(): Promise<[void, void | QueryResult]> {
     return Promise.all([junctionTableRes, sensorDataTableRes]);
 }
 
-export function addCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
-    return new Promise((resolve, reject) => {
-
-        pool.connect()
-            .then(async (client: PoolClient) => {
-                await client.query(addCubeQuery, [cubeId, location]);
-
-                return client;
-            })
-            .then((client: PoolClient) => {
-                sensors.forEach(async (value: string) => {
-                    await client.query(addCubeSensorsQuery, [cubeId, value])
-                                .catch((err: Error) => {
-                                    reject(err);
-                                });
-                })
-                
-                return client;
-            })
-            .then(async (client: PoolClient) => {
-                actuators.forEach(async (value: string) => {
-                    await client.query(addCubeActuatorsQuery, [cubeId, value])
-                                .catch((err: Error) => {
-                                    reject(err);
-                                });
-                });
-            })
-            .then(async () => {
-                await subscribeCubeMQTTTopic(cubeId, 2);
-                resolve();
-            })
-            .catch((err: Error) => {
-                reject(err);
-            })
-    })
-}
-
 export function getCubes(): Promise<Array<Cube>> {
     return new Promise((resolve, reject) => {
         pool
@@ -109,42 +72,6 @@ export function getCubes(): Promise<Array<Cube>> {
                 })
 
                 resolve(cubes);
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
-}
-
-async function getCubeSensors(cubeId: string): Promise<Array<string>> {
-    return new Promise((resolve, reject) => {
-        let sensors: Array<string> = [];
-
-        pool.query(getCubeSensorsWithIdQuery, [cubeId])
-            .then((res) => {
-                res.rows.forEach((value) => {
-                    sensors.push(value.sensor_type.trim());
-                })
-
-                resolve(sensors)
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
-}
-
-async function getCubeActuators(cubeId: string): Promise<Array<string>> {
-    return new Promise((resolve, reject) => {
-        let actuators: Array<string> = [];
-
-        pool.query(getCubeActuatorsWithIdQuery, [cubeId])
-            .then((res) => {
-                res.rows.forEach((value) => {
-                    actuators.push(value.actuator_type.trim());
-                })
-
-                resolve(actuators)
             })
             .catch((err: Error) => {
                 reject(err);
@@ -188,6 +115,79 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
                 reject(err);
             });
     });
+}
+
+async function getCubeSensors(cubeId: string): Promise<Array<string>> {
+    return new Promise((resolve, reject) => {
+        let sensors: Array<string> = [];
+
+        pool.query(getCubeSensorsWithIdQuery, [cubeId])
+            .then((res) => {
+                res.rows.forEach((value) => {
+                    sensors.push(value.sensor_type.trim());
+                })
+
+                resolve(sensors)
+            })
+            .catch((err: Error) => {
+                reject(err);
+            });
+    });
+}
+
+async function getCubeActuators(cubeId: string): Promise<Array<string>> {
+    return new Promise((resolve, reject) => {
+        let actuators: Array<string> = [];
+
+        pool.query(getCubeActuatorsWithIdQuery, [cubeId])
+            .then((res) => {
+                res.rows.forEach((value) => {
+                    actuators.push(value.actuator_type.trim());
+                })
+
+                resolve(actuators)
+            })
+            .catch((err: Error) => {
+                reject(err);
+            });
+    });
+}
+
+export function addCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
+    return new Promise((resolve, reject) => {
+
+        pool.connect()
+            .then(async (client: PoolClient) => {
+                await client.query(addCubeQuery, [cubeId, location]);
+
+                return client;
+            })
+            .then((client: PoolClient) => {
+                sensors.forEach(async (value: string) => {
+                    await client.query(addCubeSensorsQuery, [cubeId, value])
+                                .catch((err: Error) => {
+                                    reject(err);
+                                });
+                })
+                
+                return client;
+            })
+            .then(async (client: PoolClient) => {
+                actuators.forEach(async (value: string) => {
+                    await client.query(addCubeActuatorsQuery, [cubeId, value])
+                                .catch((err: Error) => {
+                                    reject(err);
+                                });
+                });
+            })
+            .then(async () => {
+                await subscribeCubeMQTTTopic(cubeId, 2);
+                resolve();
+            })
+            .catch((err: Error) => {
+                reject(err);
+            })
+    })
 }
 
 export function updateCubeWithId(cubeId: string, variables: CubeVariables): Promise<Cube> {
