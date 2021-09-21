@@ -79,7 +79,10 @@ function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: I
 }
 
 function handleSensorData(topic: Array<string>, message: string): void {
-    persistSensorData(topic[1], topic[2], getTimestamp(), message);
+    persistSensorData(topic[1], topic[2], getTimestamp(), message)
+        .catch((err: Error) => {
+            console.log(err.stack);
+        });
 }
 
 function handleInitMessage(topic: Array<string>, message: string): void {
