@@ -91,9 +91,6 @@ function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: I
         case 'sensor':
             handleSensorData(topic, message);
             break;
-        case 'init':
-            handleInitMessage(topic, message);
-            break;
         default:
             console.log('Unrecognizes topic: ' + topicString);
     }
@@ -104,8 +101,4 @@ function handleSensorData(topic: Array<string>, message: string): void {
         .catch((err: Error) => {
             console.log(err.stack);
         });
-}
-
-function handleInitMessage(topic: Array<string>, message: string): void {
-
 }
