@@ -1,5 +1,5 @@
 //type imports
-import { Cube, CubeVariables, Sensor } from '../types';
+import { Cube, CubeVariables } from '../types';
 import { PoolClient, QueryResult } from 'pg';
 //other external imports
 import format from 'pg-format';
