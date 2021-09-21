@@ -1,31 +1,38 @@
 //type imports
 import { ISubscriptionMap, IPublishPacket, ISubscriptionGrant } from "mqtt";
+import { Cube } from "../types";
 //internal imports
 import { mqttClient as mqtt } from "../index";
+import { getCubes } from "../model/cube";
 import { getTimestamp } from "./general_utils";
 import { persistSensorData } from "../model/sensor_data";
 
-//TODO: Look if topics can be subscribed by cube or via .env
-const startTopics: ISubscriptionMap = {
-    'sensor/+/+/test/test': {qos: 2},
-    'init/#': {qos: 2},
-}
+export async function setupMQTT(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        //Set event listeners
+        mqtt.on('reconnect', () => logMQTTEvent('Reconnect'));
+        mqtt.on('close', () => logMQTTEvent('Close'));
+        mqtt.on('disconnect', () => logMQTTEvent('Disconnect'));
+        mqtt.on('offline', () => logMQTTEvent('Offline'));
+        mqtt.on('error', (error) => logMQTTEvent('Error', [error]));
+        mqtt.on('end', () => logMQTTEvent('End'));
+        mqtt.on('packetsend', () => logMQTTEvent('Packetsend'));
+        mqtt.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
+        mqtt.on('message', handleMQTTMessage);
+        
+        try {
+            //Subscribe to topic of existing cubes
+            let cubes: Cube[] = await getCubes();
 
-export function setupMQTT(): void {
+            cubes.forEach(async (cube: Cube) => {
+                await subscribeCubeMQTTTopic(cube.id, 2);
+            });
 
-    //Set event listeners
-    mqtt.on('reconnect', () => logMQTTEvent('Reconnect'));
-    mqtt.on('close', () => logMQTTEvent('Close'));
-    mqtt.on('disconnect', () => logMQTTEvent('Disconnect'));
-    mqtt.on('offline', () => logMQTTEvent('Offline'));
-    mqtt.on('error', (error) => logMQTTEvent('Error', [error]));
-    mqtt.on('end', () => logMQTTEvent('End'));
-    mqtt.on('packetsend', () => logMQTTEvent('Packetsend'));
-    mqtt.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
-    mqtt.on('message', handleMQTTMessage);
-
-    //Subscribe to start topics
-    subscribeMQTTTopics(startTopics);
+            resolve();
+        } catch(err) {
+            console.log(err);
+        }
+    });
 }
 
 export async function subscribeCubeMQTTTopic(cubeId: string, qos: 0 | 1 | 2): Promise<void> {
