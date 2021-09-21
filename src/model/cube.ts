@@ -1,10 +1,15 @@
 //type imports
 import { Cube, CubeVariables } from '../types';
 import { PoolClient, QueryResult } from 'pg';
+import { AxiosResponse } from "axios";
 //other external imports
 import format from 'pg-format';
+import ip from "ip";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 //internal imports
 import { pool } from "../index";
+import { cleanSensorsArray } from "../utils/general_utils";
 import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
 //Base tables
@@ -137,7 +142,29 @@ async function getCubeActuators(cubeId: string): Promise<Array<string>> {
     });
 }
 
-export function addCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
+export async function addCube(targetIP: string, location: string): Promise<void> {
+    //Get own ip address
+    let serverIP: string = ip.address();
+    //Generate random id for cube
+    let id: string = uuidv4();
+
+    let data = {
+        'adress': serverIP,
+        'uuid': id,
+        'location': location
+    }
+
+    //Send config data to cube
+    let response: AxiosResponse = await axios.post("http://"+targetIP, data)
+    //Get cube sensors and actuators
+    let sensors: string[] = cleanSensorsArray(response.data['sensors']);
+    let actuators: string[] = response.data['actuators']; 
+
+    //Persist cube
+    return persistCube(id, location, sensors, actuators);
+}
+
+export function persistCube(cubeId: string, location: string, sensors: Array<string>, actuators: Array<string>): Promise<void> {
     return new Promise((resolve, reject) => {
 
         pool.connect()
@@ -170,8 +197,8 @@ export function addCube(cubeId: string, location: string, sensors: Array<string>
             })
             .catch((err: Error) => {
                 reject(err);
-            })
-    })
+            });
+    });
 }
 
 export function updateCubeWithId(cubeId: string, variables: CubeVariables): Promise<Cube> {

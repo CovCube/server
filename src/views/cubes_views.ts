@@ -1,24 +1,20 @@
 //type imports
-import { Router, Request, Response, response } from "express";
-import { AxiosResponse } from "axios";
+import { Router, Request, Response } from "express";
 import { Cube, CubeDetailDataObject, Sensor } from "../types";
 //express imports
 import express from "express";
-//other external imports
-import ip from "ip";
-import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
 //internal imports
 import { addCube, getCubes, getCubeWithId, updateCubeWithId } from "../model/cube";
 import { getSensorTypes } from "../model/sensor";
 import { getActuatorTypes } from "../model/actuator";
-import { cleanSensorsArray, compareCubes } from "../utils/general_utils";
+import { compareCubes } from "../utils/general_utils";
 import { authenticateUser } from "../utils/passport_utils";
 
 export var router: Router = express.Router();
 
 router.use(authenticateUser);
 
+//Get cubes
 router.get('/',  (req: Request, res:Response) => {
     getCubes()
         .then((cubes: Array<Cube>) => {
@@ -35,26 +31,12 @@ router.get('/',  (req: Request, res:Response) => {
         });
 });
 
+//Add cube
 router.post('/', (req: Request, res: Response) => {
     let targetIP: string = req.body['ip'];
     let location: string = req.body['location'];
 
-    let serverIP: string = ip.address();
-    let id: string = uuidv4();
-
-    let data = {
-        'adress': serverIP,
-        'uuid': id,
-        'location': location
-    }
-
-    axios.post("http://"+targetIP, data)
-        .then((response: AxiosResponse) => {
-            let sensors = cleanSensorsArray(response.data['sensors']);
-            let actuators = response.data['actuators'];
-
-            return addCube(id, location, sensors, actuators);
-        })
+    addCube(targetIP, location)
         .then(() => {
             res.redirect(303, '/cubes');
         })
@@ -64,11 +46,13 @@ router.post('/', (req: Request, res: Response) => {
         });
 })
 
+//Get cube with cubeId
 router.get('/:cubeId',  (req, res) => {
 
     getCubeWithIdView(req, res);
 });
 
+//Update cube with cubeId
 router.post('/:cubeId',  async (req, res) => {
 
     let cubeId: string = req.params['cubeId'];
@@ -79,6 +63,7 @@ router.post('/:cubeId',  async (req, res) => {
     getCubeWithIdView(req, res);
 });
 
+//Return cube detail view
 function getCubeWithIdView (req: Request, res: Response): void {
 
     let cubeId: string = req.params['cubeId'];

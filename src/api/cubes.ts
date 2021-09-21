@@ -48,12 +48,10 @@ router.get('/:cubeId', function(req: Request, res: Response) {
 //Add cube
 router.post('/', function(req: Request, res: Response) {
 
-    let cubeId: string = req.body['id'];
+    let targetIP: string = req.body['targetIP'];
     let location: string = req.body['location'];
-    let sensors: Array<string> = req.body['sensors'];
-    let actuators: Array<string> = req.body['actuators'];
 
-    addCube(cubeId, location, sensors, actuators)
+    addCube(targetIP, location)
         .then(() => {
             res.sendStatus(201);
         })
