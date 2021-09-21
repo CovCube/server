@@ -9,6 +9,7 @@ import { deleteCubeWithId, getCubes, getCubeWithId, addCube, updateCubeWithId } 
 //Export the router
 export var router: Router = express.Router();
 
+//Get cubes
 router.get('/', function(req: Request, res: Response) {
     getCubes()
         .then((cubes: Array<Cube>) => {
@@ -22,6 +23,29 @@ router.get('/', function(req: Request, res: Response) {
         });
 });
 
+//Get cube with cubeId
+router.get('/:cubeId', function(req: Request, res: Response) {
+
+    let cubeId: string = req.params['cubeId'];
+
+    getCubeWithId(cubeId)
+        .then((cube: Cube) => {
+            res.status(200).send(cube);
+        })
+        .catch ((e: Error) => {
+            console.log(e.stack);
+            
+            switch (e.message) {
+                case 'no cube with specified id found':
+                    res.status(404).send("cubeId not found");
+                    break;
+                default:
+                    res.status(501).send("database error");
+            }
+        });
+});
+
+//Add cube
 router.post('/', function(req: Request, res: Response) {
 
     let cubeId: string = req.body['id'];
@@ -46,27 +70,7 @@ router.post('/', function(req: Request, res: Response) {
         });
 });
 
-router.get('/:cubeId', function(req: Request, res: Response) {
-
-    let cubeId: string = req.params['cubeId'];
-
-    getCubeWithId(cubeId)
-        .then((cube: Cube) => {
-            res.status(200).send(cube);
-        })
-        .catch ((e: Error) => {
-            console.log(e.stack);
-            
-            switch (e.message) {
-                case 'no cube with specified id found':
-                    res.status(404).send("cubeId not found");
-                    break;
-                default:
-                    res.status(501).send("database error");
-            }
-        });
-});
-
+//Update cube with cubeId
 router.put('/:cubeId', function(req: Request, res: Response) {
 
     let cubeId: string = req.params['cubeId'];
@@ -89,6 +93,7 @@ router.put('/:cubeId', function(req: Request, res: Response) {
         });
 });
 
+//Delete cube with cubeId
 router.delete('/:cubeId', function(req: Request, res: Response) {
     
     let cubeId: string = req.params['cubeId'];
