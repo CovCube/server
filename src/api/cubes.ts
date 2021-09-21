@@ -4,7 +4,7 @@ import { Cube, CubeVariables } from "../types";
 //express imports
 import express from "express";
 //internal imports
-import { deleteCubeWithId, getCubes, getCubeWithId, addCube, updateCubeWithId } from "../model/db_cube_utils";
+import { deleteCubeWithId, getCubes, getCubeWithId, addCube, updateCubeWithId } from "../model/cube";
 
 //Export the router
 export var router: Router = express.Router();

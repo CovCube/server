@@ -16,7 +16,7 @@ import { Pool } from "pg";
 //mqtt imports
 import mqtt from "mqtt";
 //internal imports
-import { setupCubeDB } from "./model/db_cube_utils";
+import { setupCubeDB } from "./model/cube";
 import { setupPassport } from "./utils/passport_utils";
 import { setupMQTT } from "./utils/mqtt_utils";
 import { router as viewRoutes } from "./views/views";

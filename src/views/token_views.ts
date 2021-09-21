@@ -5,7 +5,7 @@ import { Token } from "../types";
 import express from "express";
 //internal imports
 import { authenticateUser } from "../utils/passport_utils";
-import { getTokens, getTokenByToken, deleteToken, addToken } from "../model/db_token_utils";
+import { getTokens, getTokenByToken, deleteToken, addToken } from "../model/token";
 
 export var router: Router = express.Router();
 
