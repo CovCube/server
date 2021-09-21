@@ -4,7 +4,6 @@ import { Express } from "express";
 import express from "express";
 import hbs from 'hbs';
 import path from 'path';
-import bodyParser from "body-parser";
 //middleware imports
 import session from 'express-session';
 import helmet from "helmet";
@@ -55,8 +54,8 @@ app.use(session({
     //Because of cookie banner
     saveUninitialized: false
 }))
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
