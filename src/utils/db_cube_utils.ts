@@ -5,6 +5,7 @@ import { PoolClient, QueryResult } from 'pg';
 import format from 'pg-format';
 //internal imports
 import { pool } from "../index";
+import { subscribeCubeMQTTTopic } from './mqtt_utils';
 
 //Base tables
 const createSensorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_types (name CHAR(64) PRIMARY KEY, scan_interval NUMERIC NOT NULL, active BOOLEAN NOT NULL)";
@@ -195,9 +196,11 @@ export function addCube(cubeId: string, location: string, sensors: Array<string>
                                 .catch((err: Error) => {
                                     reject(err);
                                 });
+                });
             })
-
-            resolve()
+            .then(async () => {
+                await subscribeCubeMQTTTopic(cubeId, 2);
+                resolve();
             })
             .catch((err: Error) => {
                 reject(err);

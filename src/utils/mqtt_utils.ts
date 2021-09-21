@@ -5,7 +5,7 @@ import { mqttClient as mqtt } from "../index";
 import { getTimestamp, persistSensorData } from "./db_cube_utils";
 
 //TODO: Look if topics can be subscribed by cube or via .env
-const topics: ISubscriptionMap = {
+const startTopics: ISubscriptionMap = {
     'sensor/+/+/test/test': {qos: 2},
     'init/#': {qos: 2},
 }
@@ -23,17 +23,35 @@ export function setupMQTT(): void {
     mqtt.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
     mqtt.on('message', handleMQTTMessage);
 
-    //Subscribe to topics
-    mqtt.subscribe(topics, function(err: Error, granted: ISubscriptionGrant[]) {
-        if(err) {
-            console.log(err);
-        }
+    //Subscribe to start topics
+    subscribeMQTTTopics(startTopics);
+}
 
-        if (granted) {
-            granted.forEach(function(value: ISubscriptionGrant) {
-                console.log(`Subscribed to ${value.topic} with QoS level ${value.qos}.`);
-            })
-        }
+export async function subscribeCubeMQTTTopic(cubeId: string, qos: 0 | 1 | 2): Promise<void> {
+    let topics: ISubscriptionMap = {};
+    let topic: string = 'sensor/+/'+cubeId+'/#';
+    topics[topic] = {'qos': qos};
+
+    return subscribeMQTTTopics(topics);
+}
+
+function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
+    return new Promise((resolve, reject) => {
+        //Subscribe to topics
+        mqtt.subscribe(topics, function(err: Error, granted: ISubscriptionGrant[]) {
+            if(err) {
+                console.log(err);
+                reject(err);
+            }
+
+            if (granted) {
+                granted.forEach(function(value: ISubscriptionGrant) {
+                    console.log(`Subscribed to ${value.topic} with QoS level ${value.qos}.`);
+                })
+
+                resolve();
+            }
+        });
     });
 }
 
