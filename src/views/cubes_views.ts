@@ -9,7 +9,9 @@ import ip from "ip";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 //internal imports
-import { addCube, getActuatorTypes, getCubes, getCubeWithId, getSensorTypes, updateCubeWithId } from "../model/cube";
+import { addCube, getCubes, getCubeWithId, updateCubeWithId } from "../model/cube";
+import { getSensorTypes } from "../model/sensor";
+import { getActuatorTypes } from "../model/actuator";
 import { cleanSensorsArray, compareCubes } from "../utils/general_utils";
 import { authenticateUser } from "../utils/passport_utils";
 
