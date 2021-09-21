@@ -5,7 +5,7 @@ import { User } from "../types";
 import express from "express";
 //internal imports
 import { authenticateUser } from "../utils/passport_utils";
-import { getUsers, getUserById, deleteUser, updateUser, addUser } from "../utils/db_user_utils";
+import { getUsers, getUserById, deleteUser, updateUser, addUser } from "../model/db_user_utils";
 
 export var router: Router = express.Router();
 

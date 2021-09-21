@@ -2,7 +2,7 @@
 import { ISubscriptionMap, IPublishPacket, ISubscriptionGrant } from "mqtt";
 //internal imports
 import { mqttClient as mqtt } from "../index";
-import { getTimestamp, persistSensorData } from "./db_cube_utils";
+import { getTimestamp, persistSensorData } from "../model/db_cube_utils";
 
 //TODO: Look if topics can be subscribed by cube or via .env
 const startTopics: ISubscriptionMap = {

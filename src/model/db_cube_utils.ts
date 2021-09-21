@@ -5,7 +5,7 @@ import { PoolClient, QueryResult } from 'pg';
 import format from 'pg-format';
 //internal imports
 import { pool } from "../index";
-import { subscribeCubeMQTTTopic } from './mqtt_utils';
+import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
 //Base tables
 const createSensorTypesTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_types (name CHAR(64) PRIMARY KEY, scan_interval NUMERIC NOT NULL, active BOOLEAN NOT NULL)";
