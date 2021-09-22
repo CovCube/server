@@ -5,14 +5,19 @@ export function compareCubes(a: Cube, b:Cube):number {
     return a.location.localeCompare(b.location, undefined, {numeric: true});
 }
 
-export function getSensorValuesFromString(sensors_string: string): Array<Sensor> {
-    let string_array: Array<string> = sensors_string.split(',');
+export function getSensorArrayFromString(sensors_string: string): Array<Sensor> {
+    let end;
+    let sensors: Array<Sensor> = [];
 
-    string_array.forEach((sensor_string: string) => {
-        sensor_string = sensor_string.substring(1);
-        sensor_string = sensor_string.slice(0, -1);
-        let sensor_string_array = sensor_string.split(',');
-    });
+    while (end != -1) {
+        let index: number = sensors_string.indexOf('},');
+        sensors.push(JSON.parse(sensors_string.substring(0, index+1)));
+        sensors_string = sensors_string.slice(index+2);
+        console.log(sensors);
+        console.log(sensors_string);
+    }
+
+    return sensors;
 }
 
 export function cleanSensorsArray(sensors: Array<Sensor>): Array<Sensor> {
