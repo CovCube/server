@@ -195,43 +195,35 @@ export function persistCube(cubeId: string, location: string, sensors: Array<Sen
 export function updateCubeWithId(cubeId: string, variables: CubeVariables): Promise<Cube> {
     return new Promise(async (resolve, reject) => {
 
-        await pool.query(getCubeWithIdQuery, [cubeId])
+        //Get current cube config
+        let current_cube: Cube = await pool.query(getCubeWithIdQuery, [cubeId])
                     .catch((err: Error) => reject(new Error("no cube with specified id found")));
+        //Update cube location
+        await pool.query(format(updateCubeWithIdQuery, 'location', variables.location, cubeId));
 
-        let cube_sensors: Array<string>;
-        let cube_actuators: Array<string>;
+        let new_sensors = variables.sensors.split(',');
 
-        pool.query(format(updateCubeWithIdQuery, 'location', variables.location, cubeId))
-            .then(() => {
-                return Promise.all([getCubeSensors(cubeId), getCubeActuators(cubeId)]);
-            })
-            .then((values) => {
-                cube_sensors = values[0];
-                cube_actuators = values[1];
-            })
-            .then(() => {
-                let sensors = variables.sensors.split(',');
+        cube_sensors.forEach(async (sensor: Sensor) => {
+            let type = sensor.type.trim();
+            //If sensor is empty, skip the rest
+            //TODO: Check this?
+            if (!sensor) return;
 
-                sensors.forEach(async (value) => {
-                    value = value.trim();
-                    //If value is empty, skip the rest
-                    if (!value) return;
-
-                    //Add sensor if not already existent
-                    if (!cube_sensors.includes(value)) {
-                        await pool.query(addCubeSensorsQuery, [cubeId, value]);
-                    } else {
-                        //Remove sensor from array of existing sensors, to later remove the remaining sensors in the array
-                        let index = cube_sensors.indexOf(value);
-                        cube_sensors.splice(index, 1);
-                    }
-                });
+            //Add sensor if not already existent
+            if (!cube_sensors.includes(value)) {
+                await pool.query(addCubeSensorsQuery, [cubeId, value]);
+            } else {
+                //Remove sensor from array of existing sensors, to later remove the remaining sensors in the array
+                let index = cube_sensors.indexOf(value);
+                cube_sensors.splice(index, 1);
+            }
+        });
 
                 //Remove sensors from cube, that aren't in the update
                 cube_sensors.forEach(async (value) => {
                     await pool.query(deleteCubeSensorsQuery, [cubeId, value]);
                 });
-            })
+        
             .then(() => {
                 let actuators = variables.actuators.split(',');
 
