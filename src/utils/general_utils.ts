@@ -22,6 +22,26 @@ export function findSensorIndex(sensor: Sensor) {
     return sensor.type == this.type;
 }
 
+export function getCubeSensorEndpointObject(sensors: Array<Sensor>) {
+    let object: Object = {};
+
+
+    sensors.forEach((sensor) => {
+        console.log(sensor);
+        Object.defineProperty(object, sensor.type, {
+            value: {
+                "scanInterval": sensor.scanInterval,
+            },
+            writable: true,
+            enumerable: true,
+            configurable: true
+        });
+        console.log(object);
+    });
+
+    return object;
+}
+
 export function getTimestamp(): string {
     let time: Date = new Date();
 

@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 //internal imports
 import { pool } from "../index";
 import { checkIfSensorTypesExist } from './sensor';
-import { findSensorIndex, getSensorTypesArray } from "../utils/general_utils";
+import { findSensorIndex, getCubeSensorEndpointObject, getSensorTypesArray } from "../utils/general_utils";
 import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
 //Base tables
@@ -199,8 +199,7 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
     return new Promise(async (resolve, reject) => {
         try {
             //Check if cube exists
-            await pool.query(getCubeWithIdQuery, [cubeId])
-                        .catch((err: Error) => reject(new Error("no cube with specified id found")));
+            let cube: Cube = await getCubeWithId(cubeId);
             //Update cube location
             await pool.query(format(updateCubeWithIdQuery, 'location', variables.location, cubeId));
 
@@ -221,8 +220,12 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
                 //Update scan interval, if it was changed
                 let sensors_index = old_sensors.findIndex(findSensorIndex,sensor);
                 if (old_sensors[sensors_index].scanInterval != sensor.scanInterval) {
+                    //Persist to database
                     await pool.query(updateCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval]);
-                    //TODO: Actually change the scan interval in the real cube
+                    //Send to cube
+                    let data = getCubeSensorEndpointObject(new_sensors);
+                    console.log(data);
+                    await axios.post("http://"+cube.ip+"/sensor", data);
                 }
             });
 
