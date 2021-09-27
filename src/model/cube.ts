@@ -27,6 +27,7 @@ const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
 //Manage cube sensors/actuators
 const getCubeSensorsWithIdQuery: string = 'SELECT * FROM cube_sensors WHERE cube_id=$1';
 const addCubeSensorsQuery: string = "INSERT INTO cube_sensors (cube_id, sensor_type, scan_interval) VALUES ($1, $2, $3)";
+const updateCubeSensorsQuery: string = "UPDATE cube_sensors SET scan_interval=$3 WHERE cube_id=$1 AND sensor_type=$2";
 const deleteCubeSensorsQuery: string = "DELETE FROM cube_sensors WHERE cube_id=$1 AND sensor_type=$2"
 const getCubeActuatorsWithIdQuery: string = 'SELECT * FROM cube_actuators WHERE cube_id=$1';
 const addCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type) VALUES ($1, $2)";
@@ -214,11 +215,15 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
                     await pool.query(addCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval]);
                 } else {
                     //Remove sensor from array of existing sensors, to later remove the remaining sensors in the array
-                    let index = old_sensor_types.indexOf(sensor.type);
-                    old_sensor_types.splice(index, 1);
-                }
+                    let types_index = old_sensor_types.indexOf(sensor.type);
+                    old_sensor_types.splice(types_index, 1);
 
-                //TODO: Add check for updated scan interval
+                    //Update scan interval, if it was changed
+                    let sensors_index = old_sensors.indexOf(sensor);
+                    if (old_sensors[sensors_index].scanInterval != sensor.scanInterval) {
+                        await pool.query(updateCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval]);
+                    }
+                }
             });
 
             //Remove sensors from cube, that aren't in the update
