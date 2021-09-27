@@ -9,6 +9,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 //internal imports
 import { pool } from "../index";
+import { checkIfSensorTypesExist } from './sensor';
 import { getSensorArrayFromString, getSensorTypesArray } from "../utils/general_utils";
 import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
@@ -164,7 +165,10 @@ function persistCube(cubeId: string, location: string, sensors: Array<Sensor>, a
             //Add cube
             await client.query(addCubeQuery, [cubeId, location]);
 
-            //Add sensors
+            //Make sure all sensor_types already exist
+            await checkIfSensorTypesExist(sensors);
+
+            //Add sensors to cube
             sensors.forEach(async (sensor: Sensor) => {
                 await client.query(addCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval])
                             .catch((err: Error) => {
@@ -172,7 +176,7 @@ function persistCube(cubeId: string, location: string, sensors: Array<Sensor>, a
                             });
             })
 
-            //Add actuators
+            //Add actuators to cube
             actuators.forEach(async (value: string) => {
                 await client.query(addCubeActuatorsQuery, [cubeId, value])
                             .catch((err: Error) => {
