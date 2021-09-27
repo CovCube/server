@@ -1,6 +1,7 @@
 :root {
     --main-color: #7383bf;
     --contrast-color: #272D2D;
+    --window-color: #F4F4F4;
     --bg-color: #FFFCFF;
     
     --shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
