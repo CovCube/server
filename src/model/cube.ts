@@ -14,7 +14,7 @@ import { findSensorIndex, getSensorTypesArray } from "../utils/general_utils";
 import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
 //Base tables
-const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID PRIMARY KEY, location CHAR(255) NOT NULL)";
+const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID PRIMARY KEY, ip CHAR(15), location CHAR(255) NOT NULL)";
 //Junction tables
 const createCubeSensorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_sensors (cube_id UUID NOT NULL, sensor_type CHAR(64) NOT NULL, scan_interval NUMERIC NOT NULL, PRIMARY KEY (cube_id, sensor_type), FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY (sensor_type) REFERENCES sensor_types (name) ON DELETE CASCADE)";
 const createCubeActuatorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_actuators (cube_id UUID NOT NULL, actuator_type CHAR(64) NOT NULL, PRIMARY KEY (cube_id, actuator_type), FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE, FOREIGN KEY (actuator_type) REFERENCES actuator_types (name) ON DELETE CASCADE)";
@@ -22,7 +22,7 @@ const createCubeActuatorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_a
 //Manage cubes
 const getCubesQuery: string = 'SELECT * FROM cubes';
 const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
-const addCubeQuery: string = "INSERT INTO cubes (id, location) VALUES ($1, $2)";
+const addCubeQuery: string = "INSERT INTO cubes (id, ip, location) VALUES ($1, $2, $3)";
 const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE id=%L';
 const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
 //Manage cube sensors/actuators
@@ -79,6 +79,7 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
             }
 
             let cube: Cube = res.rows[0];
+            cube.ip = cube.ip.trim();
             cube.location = cube.location.trim();
 
             let sensors: Array<Sensor> = await getCubeSensors(cubeId);
@@ -152,10 +153,10 @@ export async function addCube(targetIP: string, location: string): Promise<void>
     let actuators: Array<string> = response.data['actuators']; 
 
     //Persist cube
-    return persistCube(id, location, sensors, actuators);
+    return persistCube(id, targetIP, location, sensors, actuators);
 }
 
-function persistCube(cubeId: string, location: string, sensors: Array<Sensor>, actuators: Array<string>): Promise<void> {
+function persistCube(cubeId: string, ip: string, location: string, sensors: Array<Sensor>, actuators: Array<string>): Promise<void> {
     return new Promise(async (resolve, reject) => {
 
         try {
@@ -163,7 +164,7 @@ function persistCube(cubeId: string, location: string, sensors: Array<Sensor>, a
             let client = await pool.connect()
 
             //Add cube
-            await client.query(addCubeQuery, [cubeId, location]);
+            await client.query(addCubeQuery, [cubeId, ip, location]);
 
             //Make sure all sensor_types already exist
             await checkIfSensorTypesExist(sensors);
