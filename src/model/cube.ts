@@ -9,7 +9,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 //internal imports
 import { pool } from "../index";
-import { getSensorArrayFromString, makeSensorTypesArray } from "../utils/general_utils";
+import { getSensorArrayFromString, getSensorTypesArray } from "../utils/general_utils";
 import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
 //Base tables
@@ -200,7 +200,7 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
             await pool.query(format(updateCubeWithIdQuery, 'location', variables.location, cubeId));
 
             let old_sensors: Array<Sensor> = await getCubeSensors(cubeId);
-            let old_sensor_types: Array<string> = makeSensorTypesArray(old_sensors);
+            let old_sensor_types: Array<string> = getSensorTypesArray(old_sensors);
             let new_sensors: Array<Sensor> = getSensorArrayFromString(variables.sensors);
 
             new_sensors.forEach(async (sensor: Sensor) => {
