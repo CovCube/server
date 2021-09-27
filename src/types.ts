@@ -7,7 +7,7 @@ export interface Cube {
 
 export interface CubeVariables {
     location: string,
-    sensors: string,
+    sensors: Array<Sensor>,
     actuators: string
 }
 

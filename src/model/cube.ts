@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 //internal imports
 import { pool } from "../index";
 import { checkIfSensorTypesExist } from './sensor';
-import { getSensorArrayFromString, getSensorTypesArray } from "../utils/general_utils";
+import { findSensorIndex, getSensorTypesArray } from "../utils/general_utils";
 import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
 //Base tables
@@ -205,7 +205,7 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 
             let old_sensors: Array<Sensor> = await getCubeSensors(cubeId);
             let old_sensor_types: Array<string> = getSensorTypesArray(old_sensors);
-            let new_sensors: Array<Sensor> = getSensorArrayFromString(variables.sensors);
+            let new_sensors: Array<Sensor> = variables.sensors;
 
             new_sensors.forEach(async (sensor: Sensor) => {
                 //If sensor is empty, skip the rest
@@ -218,9 +218,10 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
                 } 
 
                 //Update scan interval, if it was changed
-                let sensors_index = old_sensors.indexOf(sensor);
+                let sensors_index = old_sensors.findIndex(findSensorIndex,sensor);
                 if (old_sensors[sensors_index].scanInterval != sensor.scanInterval) {
                     await pool.query(updateCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval]);
+                    //TODO: Actually change the scan interval in the real cube
                 }
             });
 

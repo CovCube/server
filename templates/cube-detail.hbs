@@ -21,11 +21,17 @@
                 <table id="sensors">
                     <thead>
                         <th>Sensor</th>
+                        <th>Scan Interval</th>
                     </thead>
                     {{#each cube.sensors}}
                         <tr id="sensor_row_{{this}}">
-                            <input type="hidden" value="{{this}}">
-                            <td>{{this.type}}</td>
+                            <td>
+                                {{this.type}}
+                                <input type="hidden" name="sensors[{{@index}}][type]" value="{{this.type}}">
+                            </td>
+                            <td> 
+                                <input type="number" name="sensors[{{@index}}][scanInterval]" value="{{this.scanInterval}}">
+                            </td>
                         </tr>
                     {{/each}}
                 </table>
@@ -35,7 +41,7 @@
                     </thead>
                     {{#each cube.actuators}}
                         <tr id="actuator_row_{{this}}">
-                            <input type="hidden" value="{{this}}">
+                            <input type="hidden" name="actuators" value="{{this}}">
                             <td>{{this}}</td>
                         </tr>
                     {{/each}}

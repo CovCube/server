@@ -5,21 +5,6 @@ export function compareCubes(a: Cube, b:Cube):number {
     return a.location.localeCompare(b.location, undefined, {numeric: true});
 }
 
-export function getSensorArrayFromString(sensors_string: string): Array<Sensor> {
-    let end;
-    let sensors: Array<Sensor> = [];
-
-    while (end != -1) {
-        let index: number = sensors_string.indexOf('},');
-        sensors.push(JSON.parse(sensors_string.substring(0, index+1)));
-        sensors_string = sensors_string.slice(index+2);
-        console.log(sensors);
-        console.log(sensors_string);
-    }
-
-    return sensors;
-}
-
 export function getSensorTypesArray(sensors: Array<Sensor>): Array<string> {
     let sensorTypes: Array<string> = [];
 
@@ -29,6 +14,12 @@ export function getSensorTypesArray(sensors: Array<Sensor>): Array<string> {
     });
 
     return sensorTypes;
+}
+
+export function findSensorIndex(sensor: Sensor) {
+    //this is the sensor whose index in the array is supposed to be found
+    //@ts-ignore
+    return sensor.type == this.type;
 }
 
 export function getTimestamp(): string {
