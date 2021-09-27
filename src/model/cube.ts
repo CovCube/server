@@ -255,6 +255,7 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 
 export function deleteCubeWithId(cubeId: string): Promise<void> {
     return new Promise((resolve, reject) => {
+        //TODO: Also delete cube sensors and cube actuators
         pool
             .query(deleteCubeWithIdQuery, [cubeId])
             .then((res: QueryResult) => {
