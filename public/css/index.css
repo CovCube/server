@@ -1,60 +1,58 @@
 :root {
     --main-color: #7383bf;
     --contrast-color: #272D2D;
-    --window-color: #F4F4F4;
+    --window-color: #f9f9f9;
     --bg-color: #FFFCFF;
     
     --shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+    
+    box-sizing: border-box;
 }
 
 header, footer {
     background-color: var(--bg-color);
 }
 
-header {
-    height: 6.5vh;
+header {    
     margin-bottom: 1vh;
+    padding: 1vh 1vw;
 
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-end;
     
     background-color: var(--window-color);
     box-shadow: var(--shadow);
 }
 
-header div {
-    height: 100%;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    margin-right: 30px;
-}
-
 header img {
-    height: 75%;
+    height: 5.5vh;
     width: auto;
 
-    margin: 0 1vw;
+    margin-right: 1vw;
 }
 
-header p {
-    font-size: 2em;
+header div {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+}
 
-    height: min-content;
+header span {
     margin: 0;
+    margin-right: 2.5vw;
+
+    font-size: 2em;
 }
 
 header a {
+    height: min-content;
+    margin: 0;
+    margin-right: 1vw;
+    
     font-size: 1.5em;
     color: black;
     text-decoration: none;
-
-    height: min-content;
-    margin: 0;
-    margin-right: 20px;
 }
 
 header a:visited {
@@ -70,6 +68,15 @@ header a:hover {
 header a:active {
     color: black;
     text-decoration: none;
+}
+
+header #logout {    
+    margin-left: auto;
+    margin-right: 0;
+}
+
+header #logout a {
+    margin-right: 0;
 }
 
 #content {
