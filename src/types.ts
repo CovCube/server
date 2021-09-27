@@ -19,9 +19,7 @@ export interface Sensor {
 
 export interface CubeDetailDataObject {
     title: string,
-    cube: Cube,
-    additional_sensors: Array<Sensor>,
-    additional_actuators: Array<string>
+    cube: Cube
 }
 
 export interface BarebonesUser extends Express.User {
