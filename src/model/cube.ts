@@ -208,10 +208,6 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
             let new_sensors: Array<Sensor> = variables.sensors;
 
             new_sensors.forEach(async (sensor: Sensor) => {
-                //If sensor is empty, skip the rest
-                //TODO: Do we need to check this?
-                if (!sensor) return;
-
                 //Check if sensor exists for this cube
                 if (!old_sensor_types.includes(sensor.type)) {
                     throw(new Error("sensor_type does not exist on this cube"));
