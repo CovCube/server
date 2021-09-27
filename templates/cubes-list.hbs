@@ -18,6 +18,7 @@
                     <th>Location</th>
                     <th>Id</th>
                     <th></th>
+                    <th></th>
                 </thead>
                 {{#each cubes}}
                     <tr>
@@ -26,6 +27,11 @@
                         <td>
                             <a href="cubes/{{this.id}}">
                                 <img src="/static/img/edit-regular.svg" height="20px" alt="Edit">
+                            </a>
+                        </td>
+                        <td>
+                            <a href="cubes/delete/{{this.id}}">
+                                <img src="/static/img/minus-solid.svg" height="20px" alt="Delete">
                             </a>
                         </td>
                     </tr>

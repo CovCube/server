@@ -4,7 +4,7 @@ import { Cube, CubeDetailDataObject, Sensor } from "../types";
 //express imports
 import express from "express";
 //internal imports
-import { addCube, getCubes, getCubeWithId, updateCubeWithId } from "../model/cube";
+import { addCube, deleteCubeWithId, getCubes, getCubeWithId, updateCubeWithId } from "../model/cube";
 import { compareCubes, getSensorTypesArray } from "../utils/general_utils";
 import { authenticateUser } from "../utils/passport_utils";
 
@@ -59,6 +59,16 @@ router.post('/:cubeId',  async (req, res) => {
     await updateCubeWithId(cubeId, variables);
     
     getCubeWithIdView(req, res);
+});
+
+//Delete cube with cubeId
+router.get('/delete/:cubeId',  async (req, res) => {
+
+    let cubeId: string = req.params['cubeId'];
+
+    await deleteCubeWithId(cubeId);
+    
+    res.redirect(303, '/cubes');
 });
 
 //Return cube detail view

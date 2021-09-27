@@ -233,13 +233,12 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 
 export function deleteCubeWithId(cubeId: string): Promise<void> {
     return new Promise((resolve, reject) => {
-        pool
-            .query(deleteCubeWithIdQuery, [cubeId])
-            .then((res: QueryResult) => {
-                resolve();
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
+        try {
+            pool.query(deleteCubeWithIdQuery, [cubeId]);
+
+            resolve();
+        } catch(err) {
+            reject(err);
+        };
     });
 }
