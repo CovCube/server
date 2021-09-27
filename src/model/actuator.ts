@@ -38,18 +38,6 @@ export function getActuatorTypes(): Promise<Array<string>>  {
     });
 }
 
-export function addActuatorType(actuator_type: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-        pool.query(addActuatorTypeQuery, [actuator_type])
-            .then(() => {
-                resolve();
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
-    });
-}
-
 export function deactivateActuatorType(actuator_type: string): Promise<void> {
     return new Promise((resolve, reject) => {
         pool.query(deactivateActuatorTypeQuery, [actuator_type])

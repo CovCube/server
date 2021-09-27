@@ -40,7 +40,7 @@ export function getSensorTypes(): Promise<Array<string>>  {
     });
 }
 
-export function addSensorType(sensor_type: string): Promise<void>  {
+function addSensorType(sensor_type: string): Promise<void>  {
     return new Promise((resolve, reject) => {
         pool.query(addSensorTypeQuery, [sensor_type])
             .then(() => {
@@ -51,21 +51,6 @@ export function addSensorType(sensor_type: string): Promise<void>  {
             });
     });
 }
-
-// export function updateSensorTypeScanInterval(sensor_type: string, scan_interval: number): Promise<void> {
-//     return new Promise(async (resolve, reject) => {
-//         await pool.query(getSensorTypeWithNameQuery, [sensor_type])
-//                     .catch((err: Error) => reject(new Error("no sensor type with specified type found")));
-
-//         pool.query(updateSensorTypeScanIntervalQuery, [sensor_type, scan_interval])
-//             .then(() => {
-//                 resolve()
-//             })
-//             .catch((err: Error) => {
-//                 reject(err);
-//             });
-//     });
-// }
 
 export function deactivateSensorType(sensor_type: string): Promise<void> {
     return new Promise((resolve, reject) => {
