@@ -103,7 +103,7 @@ async function getCubeSensors(cubeId: string): Promise<Array<Sensor>> {
                 res.rows.forEach((sensor) => {
                     sensors.push({
                         type: sensor.sensor_type.trim(),
-                        scanInterval: parseInt(sensor.scanInterval)
+                        scanInterval: parseInt(sensor.scan_interval)
                     });
                 })
 
