@@ -25,7 +25,7 @@
                     {{#each cube.sensors}}
                         <tr id="sensor_row_{{this}}">
                             <input type="hidden" value="{{this}}">
-                            <td>{{this}}</td>
+                            <td>{{this.type}}</td>
                         </tr>
                     {{/each}}
                 </table>
