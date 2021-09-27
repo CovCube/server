@@ -28,10 +28,8 @@ const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
 const getCubeSensorsWithIdQuery: string = 'SELECT * FROM cube_sensors WHERE cube_id=$1';
 const addCubeSensorsQuery: string = "INSERT INTO cube_sensors (cube_id, sensor_type, scan_interval) VALUES ($1, $2, $3)";
 const updateCubeSensorsQuery: string = "UPDATE cube_sensors SET scan_interval=$3 WHERE cube_id=$1 AND sensor_type=$2";
-const deleteCubeSensorsQuery: string = "DELETE FROM cube_sensors WHERE cube_id=$1 AND sensor_type=$2"
 const getCubeActuatorsWithIdQuery: string = 'SELECT * FROM cube_actuators WHERE cube_id=$1';
 const addCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type) VALUES ($1, $2)";
-const deleteCubeActuatorsQuery: string = "DELETE FROM cube_actuators WHERE cube_id=$1 AND actuator_type=$2"
 
 export async function createCubeTables(): Promise<void> {
     return new Promise(async (resolve, reject) => {
@@ -210,48 +208,16 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
                 //TODO: Do we need to check this?
                 if (!sensor) return;
 
-                //Add sensor if not already existent
+                //Check if sensor exists for this cube
                 if (!old_sensor_types.includes(sensor.type)) {
-                    await pool.query(addCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval]);
-                } else {
-                    //Remove sensor from array of existing sensors, to later remove the remaining sensors in the array
-                    let types_index = old_sensor_types.indexOf(sensor.type);
-                    old_sensor_types.splice(types_index, 1);
+                    throw(new Error("sensor_type does not exist on this cube"));
+                } 
 
-                    //Update scan interval, if it was changed
-                    let sensors_index = old_sensors.indexOf(sensor);
-                    if (old_sensors[sensors_index].scanInterval != sensor.scanInterval) {
-                        await pool.query(updateCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval]);
-                    }
+                //Update scan interval, if it was changed
+                let sensors_index = old_sensors.indexOf(sensor);
+                if (old_sensors[sensors_index].scanInterval != sensor.scanInterval) {
+                    await pool.query(updateCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval]);
                 }
-            });
-
-            //Remove sensors from cube, that aren't in the update
-            old_sensor_types.forEach(async (type) => {
-                await pool.query(deleteCubeSensorsQuery, [cubeId, type]);
-            });
-
-            let old_actuators: Array<string> = await getCubeActuators(cubeId);
-            let new_actuators: Array<string> = variables.actuators.split(',');
-
-            new_actuators.forEach(async (actuator) => {
-                //If value is empty, skip the rest
-                //TODO: Do we need to check this?
-                if (!actuator) return;
-
-                //Add actuator if not already existent
-                if (!old_actuators.includes(actuator)) {
-                    await pool.query(addCubeActuatorsQuery, [cubeId, actuator]);
-                } else {
-                    //Remove actuator from array of existing actuators, to later remove the remaining actuators in the array
-                    let index = old_actuators.indexOf(actuator);
-                    old_actuators.splice(index, 1);
-                }
-            });
-
-            //Remove actuators from cube, that aren't in the update
-            old_actuators.forEach(async (actuator) => {
-                await pool.query(deleteCubeActuatorsQuery, [cubeId, actuator]);
             });
 
             resolve(getCubeWithId(cubeId));
