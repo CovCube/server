@@ -20,17 +20,6 @@ export function getSensorArrayFromString(sensors_string: string): Array<Sensor> 
     return sensors;
 }
 
-export function cleanSensorsArray(sensors: Array<Sensor>): Array<Sensor> {
-    let ret: Array<Sensor> = [];
-
-    sensors.forEach(sensor => {
-        sensor.type = sensor.type.trim();
-        ret.push(sensor);
-    });
-
-    return ret;
-}
-
 export function makeSensorTypesArray(sensors: Array<Sensor>): Array<string> {
     let sensorTypes: Array<string> = [];
 

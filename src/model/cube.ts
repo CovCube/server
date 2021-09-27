@@ -9,7 +9,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 //internal imports
 import { pool } from "../index";
-import { cleanSensorsArray, getSensorArrayFromString, makeSensorTypesArray } from "../utils/general_utils";
+import { getSensorArrayFromString, makeSensorTypesArray } from "../utils/general_utils";
 import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
 //Base tables
