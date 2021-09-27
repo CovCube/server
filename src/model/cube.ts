@@ -155,7 +155,7 @@ export async function addCube(targetIP: string, location: string): Promise<void>
     return persistCube(id, location, sensors, actuators);
 }
 
-export function persistCube(cubeId: string, location: string, sensors: Array<Sensor>, actuators: Array<string>): Promise<void> {
+function persistCube(cubeId: string, location: string, sensors: Array<Sensor>, actuators: Array<string>): Promise<void> {
     return new Promise(async (resolve, reject) => {
 
         try {
