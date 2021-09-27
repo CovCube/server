@@ -1,6 +1,6 @@
 //type imports
 import { Cube, CubeVariables, Sensor } from '../types';
-import { PoolClient, QueryResult } from 'pg';
+import { QueryResult } from 'pg';
 import { AxiosResponse } from "axios";
 //other external imports
 import format from 'pg-format';
