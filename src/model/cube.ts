@@ -72,23 +72,22 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
     return new Promise(async (resolve, reject) => {
 
         try {
-
             let res: QueryResult = await pool.query(getCubeWithIdQuery, [cubeId]);
 
-        if (res.rows.length == 0) {
-            reject(new Error("no cube with specified id found"));
-        }
+            if (res.rows.length == 0) {
+                reject(new Error("no cube with specified id found"));
+            }
 
-        let cube: Cube = res.rows[0];
-        cube.location = cube.location.trim();
+            let cube: Cube = res.rows[0];
+            cube.location = cube.location.trim();
 
-        let sensors: Array<Sensor> = await getCubeSensors(cubeId);
-        cube.sensors = sensors;
+            let sensors: Array<Sensor> = await getCubeSensors(cubeId);
+            cube.sensors = sensors;
 
-        let actuators: Array<string> = await getCubeActuators(cubeId);
-        cube.actuators = actuators;
+            let actuators: Array<string> = await getCubeActuators(cubeId);
+            cube.actuators = actuators;
 
-    	resolve(cube);
+            resolve(cube);
         } catch(err) {
             reject(err);
         };
