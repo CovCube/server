@@ -1,5 +1,3 @@
-//type imports
-import { QueryResult } from 'pg';
 //internal imports
 import { pool } from "../index";
 
@@ -9,25 +7,25 @@ const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_da
 const persistSensorDataQuery: string = "INSERT INTO sensor_data (sensor_type, cube_id, timestamp, data) VALUES ($1, $2, $3, $4)";
 
 export function createSensorDataTable(): Promise<void> {
-    return new Promise((resolve, reject) => {
-        pool.query(createSensorDataTableQuery)
-            .then(() => {
-                resolve();
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
+    return new Promise(async (resolve, reject) => {
+        try {
+            await pool.query(createSensorDataTableQuery);
+
+            resolve();
+        } catch(err) {
+            reject(err);
+        }
     });
 }
 
-export function persistSensorData(sensorType: string, cubeId: string, timestamp: string, data: string): Promise<QueryResult> {
-    return new Promise((resolve, reject) => {
-        pool.query(persistSensorDataQuery, [sensorType, cubeId, timestamp, data])
-            .then((res: QueryResult) => {
-                resolve(res);
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
+export function persistSensorData(sensorType: string, cubeId: string, timestamp: string, data: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await pool.query(persistSensorDataQuery, [sensorType, cubeId, timestamp, data]);
+
+            resolve();
+        } catch (err) {
+            reject(err);
+        }
     });
 }
