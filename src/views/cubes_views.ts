@@ -5,9 +5,7 @@ import { Cube, CubeDetailDataObject, Sensor } from "../types";
 import express from "express";
 //internal imports
 import { addCube, getCubes, getCubeWithId, updateCubeWithId } from "../model/cube";
-import { getSensorTypes } from "../model/sensor";
-import { getActuatorTypes } from "../model/actuator";
-import { compareCubes } from "../utils/general_utils";
+import { compareCubes, getSensorTypesArray } from "../utils/general_utils";
 import { authenticateUser } from "../utils/passport_utils";
 
 export var router: Router = express.Router();
@@ -68,22 +66,12 @@ function getCubeWithIdView (req: Request, res: Response): void {
 
     let cubeId: string = req.params['cubeId'];
 
-    Promise.all([getCubeWithId(cubeId), getSensorTypes(), getActuatorTypes()])
-        .then((values: Array<any>) => {
-
-            let cube: Cube = values[0];
-            let additional_sensors = values[1].filter((sensor: Sensor) => {
-                return !cube.sensors.includes(sensor.type.trim())
-            });
-            let additional_actuators = values[2].filter((actuator: string) => {
-                return !cube.actuators.includes(actuator.trim())
-            });
+    getCubeWithId(cubeId)
+        .then((cube: Cube) => {
             
             let data: CubeDetailDataObject = {
                 'title': 'Cube',
-                'cube':  cube,
-                'additional_sensors': additional_sensors,
-                'additional_actuators': additional_actuators
+                'cube':  cube
             }
 
             res.render('cube-detail', data);

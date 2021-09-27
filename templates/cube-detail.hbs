@@ -21,69 +21,30 @@
                 <table id="sensors">
                     <thead>
                         <th>Sensor</th>
-                        <th></th>
+                        <th>Scan Interval</th>
                     </thead>
-                    <input type="hidden" id="original_sensors_input" value="{{cube.sensors}}">
-                    <input type="hidden" name="sensors" id="sensors_input" value="{{cube.sensors}}">
                     {{#each cube.sensors}}
                         <tr id="sensor_row_{{this}}">
-                            <input type="hidden" value="{{this}}">
-                            <td>{{this}}</td>
                             <td>
-                                <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                                {{this.type}}
+                                <input type="hidden" name="sensors[{{@index}}][type]" value="{{this.type}}">
+                            </td>
+                            <td> 
+                                <input type="number" name="sensors[{{@index}}][scanInterval]" value="{{this.scanInterval}}">
                             </td>
                         </tr>
                     {{/each}}
-                    {{#if additional_sensors}}
-                        <tr class="add-item" id="additional_sensors_row">
-                    {{else}}
-                        <tr class="add-item" id="additional_sensors_row" style="display: none;">
-                    {{/if}}
-                            <td>
-                                <select id="additional_sensors_select">
-                                    {{#each additional_sensors}}
-                                        <option value="{{this.name}}" id="add-sensor-{{this.name}}">{{this.name}}</option>
-                                    {{/each}}
-                                </select>
-                            </td>
-                            <td>
-                                <img class="icon-add" id="add-sensor-button" src="/static/img/plus-solid.svg" height="20px" alt="Add">
-                            </td>
-                        </tr>
-                    
                 </table>
                 <table id="actuators">
                     <thead>
                         <th colspan="2">Actuators</th>
                     </thead>
-                    <input type="hidden" id="original_actuators_input" value="{{cube.actuators}}">
-                    <input type="hidden" name="actuators" id="actuators_input" value="{{cube.actuators}}">
                     {{#each cube.actuators}}
                         <tr id="actuator_row_{{this}}">
-                            <input type="hidden" value="{{this}}">
+                            <input type="hidden" name="actuators" value="{{this}}">
                             <td>{{this}}</td>
-                            <td>
-                                <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
-                            </td>
                         </tr>
                     {{/each}}
-                    {{#if additional_actuators}}
-                        <tr class="add-item" id="additional_actuators_row">
-                    {{else}}
-                        <tr class="add-item" id="additional_actuators_row" style="display: none;">
-                    {{/if}}
-                            <td>
-                                <select id="additional_actuators_select">
-                                    {{#each additional_actuators}}
-                                        <option value="{{this}}" id="add-actuator-{{this}}">{{this}}</option>
-                                    {{/each}}
-                                </select>
-                            </td>
-                            <td>
-                                <img class="icon-add" id="add-actuator-button" src="/static/img/plus-solid.svg" height="20px" alt="Add">
-                            </td>
-                        </tr>
-                    
                 </table>
             </div>
             <div id="buttons">
@@ -98,7 +59,5 @@
 
     {{!Add footer}}
     {{> footer}}
-
-    <script src="/static/js/cube-detail.js"></script>
 </body>
 </html>

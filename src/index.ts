@@ -12,8 +12,6 @@ import passport from "passport";
 //pg imports
 import { Pool } from "pg";
 //internal imports
-import { createSensorTypesTable } from "./model/sensor";
-import { createActuatorTypesTable } from "./model/actuator";
 import { createCubeTables } from "./model/cube";
 import { createSensorDataTable } from "./model/sensor_data";
 import { createUserTable } from "./model/user";
@@ -70,8 +68,6 @@ async function setupServer() {
     
     try {
         //Setup cube database
-        await createSensorTypesTable();
-        await createActuatorTypesTable();
         await createCubeTables();
         await createSensorDataTable();
         //Setup passport

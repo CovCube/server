@@ -1,13 +1,14 @@
 export interface Cube {
     id: string,
+    ip: string,
     location: string,
-    sensors: Array<string>,
+    sensors: Array<Sensor>,
     actuators: Array<string>
 }
 
 export interface CubeVariables {
     location: string,
-    sensors: string,
+    sensors: Array<Sensor>,
     actuators: string
 }
 
@@ -18,9 +19,7 @@ export interface Sensor {
 
 export interface CubeDetailDataObject {
     title: string,
-    cube: Cube,
-    additional_sensors: Array<Sensor>,
-    additional_actuators: Array<string>
+    cube: Cube
 }
 
 export interface BarebonesUser extends Express.User {
