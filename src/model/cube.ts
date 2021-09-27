@@ -202,6 +202,9 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
             let cube: Cube = await getCubeWithId(cubeId);
             //Update cube location
             await pool.query(format(updateCubeWithIdQuery, 'location', variables.location, cubeId));
+            await axios.post("http://"+cube.ip, {
+                "location": variables.location
+            });
 
             let old_sensors: Array<Sensor> = await getCubeSensors(cubeId);
             let old_sensor_types: Array<string> = getSensorTypesArray(old_sensors);
