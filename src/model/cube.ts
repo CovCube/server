@@ -73,7 +73,7 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
 
         try {
 
-        let res: QueryResult = await pool.query(getCubeWithIdQuery, [cubeId]);
+            let res: QueryResult = await pool.query(getCubeWithIdQuery, [cubeId]);
 
         if (res.rows.length == 0) {
             reject(new Error("no cube with specified id found"));
