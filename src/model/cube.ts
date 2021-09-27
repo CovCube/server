@@ -193,63 +193,66 @@ function persistCube(cubeId: string, location: string, sensors: Array<Sensor>, a
 
 export function updateCubeWithId(cubeId: string, variables: CubeVariables): Promise<Cube> {
     return new Promise(async (resolve, reject) => {
+        try {
+            //Check if cube exists
+            await pool.query(getCubeWithIdQuery, [cubeId])
+                        .catch((err: Error) => reject(new Error("no cube with specified id found")));
+            //Update cube location
+            await pool.query(format(updateCubeWithIdQuery, 'location', variables.location, cubeId));
 
-        //Check if cube exists
-        await pool.query(getCubeWithIdQuery, [cubeId])
-                    .catch((err: Error) => reject(new Error("no cube with specified id found")));
-        //Update cube location
-        await pool.query(format(updateCubeWithIdQuery, 'location', variables.location, cubeId));
+            let old_sensors: Array<Sensor> = await getCubeSensors(cubeId);
+            let old_sensor_types: Array<string> = makeSensorTypesArray(old_sensors);
+            let new_sensors: Array<Sensor> = getSensorArrayFromString(variables.sensors);
 
-        let old_sensors: Array<Sensor> = await getCubeSensors(cubeId);
-        let old_sensor_types: Array<string> = makeSensorTypesArray(old_sensors);
-        let new_sensors: Array<Sensor> = getSensorArrayFromString(variables.sensors);
+            new_sensors.forEach(async (sensor: Sensor) => {
+                //If sensor is empty, skip the rest
+                //TODO: Do we need to check this?
+                if (!sensor) return;
 
-        new_sensors.forEach(async (sensor: Sensor) => {
-            //If sensor is empty, skip the rest
-            //TODO: Do we need to check this?
-            if (!sensor) return;
+                //Add sensor if not already existent
+                if (!old_sensor_types.includes(sensor.type)) {
+                    await pool.query(addCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval]);
+                } else {
+                    //Remove sensor from array of existing sensors, to later remove the remaining sensors in the array
+                    let index = old_sensor_types.indexOf(sensor.type);
+                    old_sensor_types.splice(index, 1);
+                }
 
-            //Add sensor if not already existent
-            if (!old_sensor_types.includes(sensor.type)) {
-                await pool.query(addCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval]);
-            } else {
-                //Remove sensor from array of existing sensors, to later remove the remaining sensors in the array
-                let index = old_sensor_types.indexOf(sensor.type);
-                old_sensor_types.splice(index, 1);
-            }
+                //TODO: Add check for updated scan interval
+            });
 
-            //TODO: Add check for updated scan interval
-        });
+            //Remove sensors from cube, that aren't in the update
+            old_sensor_types.forEach(async (type) => {
+                await pool.query(deleteCubeSensorsQuery, [cubeId, type]);
+            });
 
-        //Remove sensors from cube, that aren't in the update
-        old_sensor_types.forEach(async (type) => {
-            await pool.query(deleteCubeSensorsQuery, [cubeId, type]);
-        });
+            let old_actuators: Array<string> = await getCubeActuators(cubeId);
+            let new_actuators: Array<string> = variables.actuators.split(',');
 
-        let old_actuators: Array<string> = await getCubeActuators(cubeId);
-        let new_actuators: Array<string> = variables.actuators.split(',');
+            new_actuators.forEach(async (actuator) => {
+                //If value is empty, skip the rest
+                //TODO: Do we need to check this?
+                if (!actuator) return;
 
-        new_actuators.forEach(async (actuator) => {
-            //If value is empty, skip the rest
-            //TODO: Do we need to check this?
-            if (!actuator) return;
+                //Add actuator if not already existent
+                if (!old_actuators.includes(actuator)) {
+                    await pool.query(addCubeActuatorsQuery, [cubeId, actuator]);
+                } else {
+                    //Remove actuator from array of existing actuators, to later remove the remaining actuators in the array
+                    let index = old_actuators.indexOf(actuator);
+                    old_actuators.splice(index, 1);
+                }
+            });
 
-            //Add actuator if not already existent
-            if (!old_actuators.includes(actuator)) {
-                await pool.query(addCubeActuatorsQuery, [cubeId, actuator]);
-            } else {
-                //Remove actuator from array of existing actuators, to later remove the remaining actuators in the array
-                let index = old_actuators.indexOf(actuator);
-                old_actuators.splice(index, 1);
-            }
-        });
+            //Remove actuators from cube, that aren't in the update
+            old_actuators.forEach(async (actuator) => {
+                await pool.query(deleteCubeActuatorsQuery, [cubeId, actuator]);
+            });
 
-        //Remove actuators from cube, that aren't in the update
-        old_actuators.forEach(async (actuator) => {
-            await pool.query(deleteCubeActuatorsQuery, [cubeId, actuator]);
-        });
-
-        resolve(getCubeWithId(cubeId));
+            resolve(getCubeWithId(cubeId));
+        } catch(err) {
+            reject(err);
+        }
     });
 }
 
