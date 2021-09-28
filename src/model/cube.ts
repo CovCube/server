@@ -68,6 +68,13 @@ export function getCubes(): Promise<Array<Cube>> {
 
 export function getCubeWithId(cubeId: string): Promise<Cube> {
     return new Promise(async (resolve, reject) => {
+        //Check cubeId
+        if (cubeId === undefined) {
+            return reject("cubeId is undefined");
+        }
+        if (!uuidvalidate(cubeId)) {
+            return reject("cubeId is not a valid uuid");
+        }
 
         try {
             let res: QueryResult = await pool.query(getCubeWithIdQuery, [cubeId]);
