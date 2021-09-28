@@ -223,7 +223,6 @@ function persistCube(cubeId: string, ip: string, location: string, sensors: Arra
                     throw(new Error ("sensor scan_interval is not valid."))
                 }
 
-
                 await client.query(addCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval])
                             .catch((err: Error) => {
                                 reject(err);
