@@ -8,8 +8,8 @@ import { Strategy as HttpBearerStrategy } from "passport-http-bearer";
 //other external imports
 import bcrypt from "bcrypt";
 //internal imports
-import { createUserTable, getUserByUsername, getUserById } from "../model/user";
-import { createTokensTable, getTokenByToken } from "../model/token";
+import { getUserByUsername, getUserById } from "../model/user";
+import { getTokenByToken } from "../model/token";
 
 export async function setupPassport():Promise<void> {
 
