@@ -29,3 +29,23 @@ export function checkSensorArray(sensors: Array<Sensor>): void {
         }
     });
 }
+
+export function checkTokenValidity(token: string): void {
+    //Check if token is defined
+    if (token === undefined) {
+        throw(new Error("token is undefined"));
+    }
+    //Check length
+    if (token.length != 32) {
+        throw(new Error("token has to have length of 32"));
+    }
+
+    //Create uuid from token
+    let uuid: string = token.slice(0, 8) + "-" + token.slice(8, 12)
+                        + "-" + token.slice(12, 16) + "-" + token.slice(16, 20)
+                        + "-" + token.slice(20, 32);
+    //check if valid uuid
+    if (!uuidvalidate(uuid)) {
+        throw(new Error("token structure is not valid"));
+    }
+}

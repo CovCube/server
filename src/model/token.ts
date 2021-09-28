@@ -5,6 +5,7 @@ import { QueryResult } from "pg";
 import { v4 as uuidv4, validate as uuidvalidate } from "uuid";
 //internal imports
 import { pool } from "..";
+import { checkTokenValidity } from "../utils/input_check_utils";
 
 //Token table
 const createTokensTableQuery: string = "CREATE TABLE IF NOT EXISTS tokens (token CHAR(32) PRIMARY KEY, owner CHAR(64) NOT NULL)";
@@ -37,16 +38,14 @@ export function getTokens(): Promise<Array<Token>> {
 
 export function getTokenByToken(token: string): Promise<Token> {
     return new Promise(async (resolve, reject) => {
+        //Check token
         try {
-            //Check if token is defined
-            if (token === undefined) {
-                return reject("token is undefined");
-            }
-            //check if token is valid uuid
-            if (!checkTokenValidity(token)) {
-                return reject("not a valid token");
-            }
+            checkTokenValidity(token);
+        } catch(err) {
+            reject(err);
+        }
 
+        try {
             let res = await pool.query(getTokenByTokenQuery, [token]);
 
             //If there is no token object, return nothing
@@ -77,15 +76,13 @@ export function addToken(owner: string): Promise<Token> {
 
 export function deleteToken(token: Token): Promise<void> {
     return new Promise(async (resolve, reject) => {
-        //Check if token is defined
-        if (token === undefined) {
-            return reject("token is undefined");
+        //Check token
+        try {
+            checkTokenValidity(token.token);
+        } catch(err) {
+            reject(err);
         }
-        //check if token is valid uuid
-        if (!checkTokenValidity(token.token)) {
-            return reject("not a valid token");
-        }
-
+        
         try {
             await pool.query(deleteTokenQuery, [token.token]);
 
@@ -94,18 +91,4 @@ export function deleteToken(token: Token): Promise<void> {
             return reject(err);
         }
     });
-}
-
-function checkTokenValidity(token: string) {
-    //Check length
-    if (token.length != 32) {
-        return false;
-    }
-
-    //Create uuid from token
-    let uuid: string = token.slice(0, 8) + "-" + token.slice(8, 12)
-                        + "-" + token.slice(12, 16) + "-" + token.slice(16, 20)
-                        + "-" + token.slice(20, 32);
-    //check if valid uuid
-    return uuidvalidate(uuid);
 }
