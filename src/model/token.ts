@@ -2,7 +2,7 @@
 import { Token } from "../types";
 import { QueryResult } from "pg";
 //other external imports
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4, validate as uuidvalidate } from "uuid";
 //internal imports
 import { pool } from "..";
 
@@ -38,6 +38,15 @@ export function getTokens(): Promise<Array<Token>> {
 export function getTokenByToken(token: string): Promise<null | Token> {
     return new Promise(async (resolve, reject) => {
         try {
+            //Check if token is defined
+            if (token === undefined) {
+                reject("token is undefined");
+            }
+            //check if token is valid uuid
+            if (!checkTokenValidity(token)) {
+                reject("not a valid token");
+            }
+
             let res = await pool.query(getTokenByTokenQuery, [token]);
 
             //If there is no token object, return nothing
@@ -70,6 +79,15 @@ export function addToken(owner: string): Promise<Token> {
 
 export function deleteToken(token: Token): Promise<void> {
     return new Promise((resolve, reject) => {
+        //Check if token is defined
+        if (token === undefined) {
+            reject("token is undefined");
+        }
+        //check if token is valid uuid
+        if (!checkTokenValidity(token.token)) {
+            reject("not a valid token");
+        }
+
         pool.query(deleteTokenQuery, [token.token])
             .then((res: QueryResult) => {
                 resolve();
@@ -78,4 +96,18 @@ export function deleteToken(token: Token): Promise<void> {
                 reject(err);
             });
     });
+}
+
+function checkTokenValidity(token: string) {
+    //Check length
+    if (token.length != 32) {
+        return false;
+    }
+
+    //Create uuid from token
+    let uuid: string = token.slice(0, 8) + "-" + token.slice(8, 12)
+                        + "-" + token.slice(12, 16) + "-" + token.slice(16, 20)
+                        + "-" + token.slice(20, 32);
+    //check if valid uuid
+    return uuidvalidate(uuid);
 }
