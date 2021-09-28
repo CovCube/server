@@ -130,6 +130,9 @@ export function updateUser(inputUser: User): Promise<User> {
         if (inputUser.id === undefined || !inputUser.id.trim()) {
             return reject("user id is undefined or empty");
         }
+        if (!uuidvalidate(inputUser.id)) {
+            return reject("id is not a valid uuid");
+        }
         if (inputUser.name === undefined || !inputUser.name.trim()) {
             return reject("user name is undefined or empty");
         }
@@ -174,6 +177,9 @@ export function deleteUser(user: User): Promise<void> {
         }
         if (user.id === undefined || !user.id.trim()) {
             return reject("user id is undefined or empty");
+        }
+        if (!uuidvalidate(user.id)) {
+            return reject("id is not a valid uuid");
         }
 
         try {
