@@ -63,6 +63,11 @@ export function getTokenByToken(token: string): Promise<Token> {
 
 export function addToken(owner: string): Promise<Token> {
     return new Promise(async (resolve, reject) => {
+        //check owner
+        if (owner === undefined || !owner.trim()) {
+            reject("owner is undefined or empty");
+        }
+
         let token: string = uuidv4().trim().split('-').join('');
         
         try {
