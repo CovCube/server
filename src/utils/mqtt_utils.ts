@@ -5,7 +5,6 @@ import { Cube } from "../types";
 import mqtt from "mqtt";
 //internal imports
 import { getCubes } from "../model/cube";
-import { getTimestamp } from "./general_utils";
 import { persistSensorData } from "../model/sensor_data";
 
 var mqttClient: MqttClient;
@@ -97,7 +96,7 @@ function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: I
 }
 
 function handleSensorData(topic: Array<string>, message: string): void {
-    persistSensorData(topic[1], topic[2], getTimestamp(), message)
+    persistSensorData(topic[1], topic[2], message)
         .catch((err: Error) => {
             console.log(err.stack);
         });

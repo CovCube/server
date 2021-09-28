@@ -1,5 +1,6 @@
 //internal imports
 import { pool } from "../index";
+import { getTimestamp } from "../utils/general_utils";
 
 //sensor data tables
 const createSensorDataTableQuery: string = "CREATE TABLE IF NOT EXISTS sensor_data (id SERIAL PRIMARY KEY, sensor_type CHAR(64) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, FOREIGN KEY(cube_id) REFERENCES cubes(id) ON DELETE CASCADE)";
@@ -18,9 +19,10 @@ export function createSensorDataTable(): Promise<void> {
     });
 }
 
-export function persistSensorData(sensorType: string, cubeId: string, timestamp: string, data: string): Promise<void> {
+export function persistSensorData(sensorType: string, cubeId: string, data: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
         try {
+            let timestamp = getTimestamp();
             await pool.query(persistSensorDataQuery, [sensorType, cubeId, timestamp, data]);
 
             resolve();
