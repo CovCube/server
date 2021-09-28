@@ -101,8 +101,8 @@ export function addUser(name: string, password: string): Promise<void> {
             return reject("username is undefined or empty");
         }
         //check password
-        if (password === undefined || !password.trim()) {
-            return reject("password is undefined or empty");
+        if (!checkPasswordValidity(password)) {
+            return reject("password is not valid");
         }
 
         //Create id from the username
