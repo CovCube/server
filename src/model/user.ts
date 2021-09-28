@@ -3,7 +3,7 @@ import { User } from "../types";
 import { QueryResult } from "pg";
 //other external imports
 import bcrypt from "bcrypt";
-import { v5 as uuidv5 } from "uuid";
+import { v5 as uuidv5, validate as uuidvalidate } from "uuid";
 //internal imports
 import { pool } from "..";
 import { checkPassword } from "../utils/passport_utils";
@@ -44,6 +44,12 @@ export function getUsers(): Promise<Array<User>> {
 
 export function getUserByUsername(username: string): Promise<null | User> {
     return new Promise(async (resolve, reject) => {
+
+        //Check username
+        if (username === undefined || !username.trim()) {
+            reject("username is undefined or empty");
+        }
+
         try {
             let res = await pool.query(getUserWithUsernameQuery, [username]);
 
@@ -60,14 +66,23 @@ export function getUserByUsername(username: string): Promise<null | User> {
     });
 }
 
-export function getUserById(id: string): Promise<null | User> {
+export function getUserById(id: string): Promise<User> {
     return new Promise(async (resolve, reject) => {
+
+        //check id
+        if (id === undefined || !id.trim()) {
+            reject("id is undefined or empty");
+        }
+        if (!uuidvalidate(id)) {
+            reject("id is not a valid uuid");
+        }
+
         try {
             let res = await pool.query(getUserWithIdQuery, [id]);
 
             //If there is no user, return nothing
             if (!res.rows) {
-                resolve(null);
+                reject("user does not exist");
             }
 
             //Return user
@@ -80,21 +95,48 @@ export function getUserById(id: string): Promise<null | User> {
 
 export function addUser(name: string, password: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
+
+        //check name
+        if (name === undefined || !name.trim()) {
+            reject("username is undefined or empty");
+        }
+        //check password
+        if (password === undefined || !password.trim()) {
+            reject("password is undefined or empty");
+        }
+
+        //Create id from the username
         let id: string = uuidv5(name, uuidNamespace);
+        //Hash the password
         let hashed_password: string = await bcrypt.hash(password, saltRounds);
         
-        pool.query(addUserQuery, [id, name, hashed_password])
-            .then(() => {
-                resolve();
-            })
-            .catch((err: Error)=> {
-                reject(err);
-            });
+        try {
+            await pool.query(addUserQuery, [id, name, hashed_password])
+
+            resolve();
+        } catch (err) {
+            reject(err);
+        };
     });
 }
 
 export function updateUser(inputUser: User): Promise<User> {
     return new Promise(async (resolve, reject) => {
+
+        //Check input
+        if (inputUser === undefined) {
+            reject("inputUser is undefined");
+        }
+        if (inputUser.id === undefined || !inputUser.id.trim()) {
+            reject("user id is undefined or empty");
+        }
+        if (inputUser.name === undefined || !inputUser.name.trim()) {
+            reject("user name is undefined or empty");
+        }
+        if (inputUser.password === undefined || !inputUser.password.trim()) {
+            reject("user password is undefined or empty");
+        }
+
         try {
             //Get user with id from database
             let oldUser: User = await getUserById(inputUser.id);
@@ -122,6 +164,14 @@ export function updateUser(inputUser: User): Promise<User> {
 
 export function deleteUser(user: User): Promise<void> {
     return new Promise(async (resolve, reject) => {
+
+        //Check input
+        if (user === undefined) {
+            reject("inputUser is undefined");
+        }
+        if (user.id === undefined || !user.id.trim()) {
+            reject("user id is undefined or empty");
+        }
 
         try {
             await pool.query(deleteUserQuery, [user.id]);
