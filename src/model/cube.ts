@@ -6,9 +6,10 @@ import { AxiosResponse } from "axios";
 import format from 'pg-format';
 import ip from "ip";
 import axios from "axios";
-import { v4 as uuidv4, validate as uuidvalidate } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 //internal imports
 import { pool } from "../index";
+import { checkCubeId, checkSensorArray } from '../utils/input_check_utils';
 import { findSensorIndex, getCubeSensorEndpointObject, getSensorTypesArray } from "../utils/general_utils";
 import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
@@ -69,11 +70,10 @@ export function getCubes(): Promise<Array<Cube>> {
 export function getCubeWithId(cubeId: string): Promise<Cube> {
     return new Promise(async (resolve, reject) => {
         //Check cubeId
-        if (cubeId === undefined) {
-            return reject("cubeId is undefined");
-        }
-        if (!uuidvalidate(cubeId)) {
-            return reject("cubeId is not a valid uuid");
+        try {
+            checkCubeId(cubeId);
+        } catch(err) {
+            return reject(err);
         }
 
         try {
@@ -103,11 +103,10 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
 async function getCubeSensors(cubeId: string): Promise<Array<Sensor>> {
     return new Promise(async (resolve, reject) => {
         //Check cubeId
-        if (cubeId === undefined) {
-            return reject("cubeId is undefined");
-        }
-        if (!uuidvalidate(cubeId)) {
-            return reject("cubeId is not a valid uuid");
+        try {
+            checkCubeId(cubeId);
+        } catch(err) {
+            return reject(err);
         }
 
         try {
@@ -131,11 +130,10 @@ async function getCubeSensors(cubeId: string): Promise<Array<Sensor>> {
 async function getCubeActuators(cubeId: string): Promise<Array<string>> {
     return new Promise(async (resolve, reject) => {
         //Check cubeId
-        if (cubeId === undefined) {
-            return reject("cubeId is undefined");
-        }
-        if (!uuidvalidate(cubeId)) {
-            return reject("cubeId is not a valid uuid");
+        try {
+            checkCubeId(cubeId);
+        } catch(err) {
+            return reject(err);
         }
         
         try {
@@ -186,25 +184,22 @@ export async function addCube(targetIP: string, location: string): Promise<void>
 function persistCube(cubeId: string, ip: string, location: string, sensors: Array<Sensor>, actuators: Array<string>): Promise<void> {
     return new Promise(async (resolve, reject) => {
         //Check input
-        if (cubeId === undefined) {
-            return reject("cubeId is undefined");
+        try {
+            checkCubeId(cubeId);
+            if (ip === undefined || !ip.trim()) {
+                throw(new Error("ip is undefined or empty"));
+            }
+            if (location === undefined || !location.trim()) {
+                throw(new Error("location is undefined or empty"));
+            }
+            checkSensorArray(sensors);
+            if (actuators === undefined || actuators.length == 0) {
+                throw(new Error("actuators array is undefined or empty"));
+            }
+        } catch(err) {
+            return reject(err);
         }
-        if (!uuidvalidate(cubeId)) {
-            return reject("cubeId is not a valid uuid");
-        }
-        if (ip === undefined || !ip.trim()) {
-            return reject("ip is undefined or empty");
-        }
-        if (location === undefined || !location.trim()) {
-            return reject("location is undefined or empty");
-        }
-        if (sensors === undefined || sensors.length == 0) {
-            return reject("sensors array is undefined or empty");
-        }
-        if (actuators === undefined || actuators.length == 0) {
-            return reject("actuators array is undefined or empty");
-        }
-
+        
         try {
             //Get client
             let client = await pool.connect()
@@ -214,15 +209,6 @@ function persistCube(cubeId: string, ip: string, location: string, sensors: Arra
 
             //Add sensors to cube
             sensors.forEach(async (sensor: Sensor) => {
-                //Check if sensor type is valid
-                if (sensor.type === undefined || !sensor.type.trim()) {
-                    throw(new Error("sensor type is not valid"));
-                }
-                //Check if sensor scan_interval is valid
-                if (!sensor.scanInterval || sensor.scanInterval <= 0) {
-                    throw(new Error ("sensor scan_interval is not valid."))
-                }
-
                 await client.query(addCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval])
                             .catch((err: Error) => {
                                 reject(err);
@@ -250,20 +236,17 @@ function persistCube(cubeId: string, ip: string, location: string, sensors: Arra
 export function updateCubeWithId(cubeId: string, variables: CubeVariables): Promise<Cube> {
     return new Promise(async (resolve, reject) => {
         //Check input
-        if (cubeId === undefined) {
-            return reject("cubeId is undefined");
-        }
-        if (!uuidvalidate(cubeId)) {
-            return reject("cubeId is not a valid uuid");
-        }
-        if (variables.location === undefined || !variables.location.trim()) {
-            return reject("location is undefined or empty");
-        }
-        if (variables.sensors === undefined || variables.sensors.length == 0) {
-            return reject("sensors array is undefined or empty");
-        }
-        if (variables.actuators === undefined || variables.actuators.length == 0) {
-            return reject("actuators array is undefined or empty");
+        try {
+            checkCubeId(cubeId);
+            if (variables.location === undefined || !variables.location.trim()) {
+                throw(new Error("location is undefined or empty"));
+            }
+            checkSensorArray(variables.sensors);
+            if (variables.actuators === undefined || variables.actuators.length == 0) {
+                throw(new Error("actuators array is undefined or empty"));
+            }
+        } catch(err) {
+            return reject(err);
         }
 
         try {
@@ -280,17 +263,9 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
             let new_sensors: Array<Sensor> = variables.sensors;
 
             new_sensors.forEach(async (sensor: Sensor) => {
-                //Check if sensor type is valid
-                if (sensor.type === undefined || !sensor.type.trim()) {
-                    throw(new Error("sensor type is not valid"));
-                }
                 //Check if sensor type exists for this cube
                 if (!old_sensor_types.includes(sensor.type)) {
                     throw(new Error("sensor type does not exist on this cube"));
-                }
-                //Check if sensor scan_interval is valid
-                if (!sensor.scanInterval || sensor.scanInterval <= 0) {
-                    throw(new Error ("sensor scan_interval is not valid."))
                 }
 
                 //Update scan interval, if it was changed
@@ -314,12 +289,7 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 export function deleteCubeWithId(cubeId: string): Promise<void> {
     return new Promise((resolve, reject) => {
         //Check cubeId
-        if (cubeId === undefined) {
-            return reject("cubeId is undefined");
-        }
-        if (!uuidvalidate(cubeId)) {
-            return reject("cubeId is not a valid uuid");
-        }
+        checkCubeId(cubeId);
 
         try {
             pool.query(deleteCubeWithIdQuery, [cubeId]);
