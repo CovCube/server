@@ -26,20 +26,19 @@ export function createUserTable(): Promise<QueryResult<any>> {
 }
 
 export function getUsers(): Promise<Array<User>> {
-    return new Promise((resolve, reject) => {
-        pool.query(getUsersQuery)
-            .then((res: QueryResult) => {
-                let users: Array<User> = res.rows;
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res: QueryResult = await pool.query(getUsersQuery);
+            let users: Array<User> = res.rows;
 
-                users.forEach(user => {
-                    user.name = user.name.trim()
-                })
-
-                resolve(users);
+            users.forEach(user => {
+                user.name = user.name.trim()
             })
-            .catch((err: Error) => {
-                reject(err);
-            });
+
+            resolve(users);
+        } catch (err) {
+            reject(err);
+        }
     });
 }
 
