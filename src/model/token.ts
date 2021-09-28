@@ -9,7 +9,7 @@ import { pool } from "..";
 //Token table
 const createTokensTableQuery: string = "CREATE TABLE IF NOT EXISTS tokens (token CHAR(32) PRIMARY KEY, owner CHAR(64) NOT NULL)";
 const getTokensQuery: string = 'SELECT * FROM tokens';
-const getTokenQuery: string = 'SELECT * FROM tokens WHERE token=$1';
+const getTokenByTokenQuery: string = 'SELECT * FROM tokens WHERE token=$1';
 const addTokenQuery: string = "INSERT INTO tokens (token, owner) VALUES ($1, $2)";
 const deleteTokenQuery: string = "DELETE FROM tokens WHERE token=$1";
 
@@ -38,7 +38,7 @@ export function getTokens(): Promise<Array<Token>> {
 export function getTokenByToken(token: string): Promise<null | Token> {
     return new Promise(async (resolve, reject) => {
         try {
-            let res = await pool.query(getTokenQuery, [token]);
+            let res = await pool.query(getTokenByTokenQuery, [token]);
 
             //If there is no token object, return nothing
             if (!res.rows) {
