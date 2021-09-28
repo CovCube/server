@@ -46,24 +46,23 @@ export async function createCubeTables(): Promise<void> {
 }
 
 export function getCubes(): Promise<Array<Cube>> {
-    return new Promise((resolve, reject) => {
-        pool
-            .query(getCubesQuery)
-            .then((res: QueryResult) => {
-                let cubes: Array<Cube> = [];
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res: QueryResult = await pool.query(getCubesQuery);
 
-                res.rows.forEach((row) => {
-                    let cube = row;
-                    cube.location = row.location.trim();
+            let cubes: Array<Cube> = [];
 
-                    cubes.push(cube);
-                })
+            res.rows.forEach((row) => {
+                let cube = row;
+                cube.location = row.location.trim();
 
-                resolve(cubes);
+                cubes.push(cube);
             })
-            .catch((err: Error) => {
-                reject(err);
-            });
+
+            resolve(cubes);
+        } catch(err) {
+            reject(err);
+        }
     });
 }
 
@@ -95,41 +94,41 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
 }
 
 async function getCubeSensors(cubeId: string): Promise<Array<Sensor>> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         let sensors: Array<Sensor> = [];
 
-        pool.query(getCubeSensorsWithIdQuery, [cubeId])
-            .then((res) => {
-                res.rows.forEach((sensor) => {
-                    sensors.push({
-                        type: sensor.sensor_type.trim(),
-                        scanInterval: parseInt(sensor.scan_interval)
-                    });
-                })
+        try {
+            let res: QueryResult = await pool.query(getCubeSensorsWithIdQuery, [cubeId]);
 
-                resolve(sensors)
+            res.rows.forEach((sensor) => {
+                sensors.push({
+                    type: sensor.sensor_type.trim(),
+                    scanInterval: parseInt(sensor.scan_interval)
+                });
             })
-            .catch((err: Error) => {
-                reject(err);
-            });
+
+            resolve(sensors)
+        } catch(err) {
+            reject(err);
+        }
     });
 }
 
 async function getCubeActuators(cubeId: string): Promise<Array<string>> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         let actuators: Array<string> = [];
 
-        pool.query(getCubeActuatorsWithIdQuery, [cubeId])
-            .then((res) => {
-                res.rows.forEach((value) => {
-                    actuators.push(value.actuator_type.trim());
-                })
+        try {
+            let res: QueryResult = await pool.query(getCubeActuatorsWithIdQuery, [cubeId]);
 
-                resolve(actuators)
+            res.rows.forEach((value) => {
+                actuators.push(value.actuator_type.trim());
             })
-            .catch((err: Error) => {
-                reject(err);
-            });
+
+            resolve(actuators)
+        } catch(err) {
+            reject(err);
+        }
     });
 }
 
