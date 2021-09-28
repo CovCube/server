@@ -35,7 +35,7 @@ export function getTokens(): Promise<Array<Token>> {
     });
 }
 
-export function getTokenByToken(token: string): Promise<null | Token> {
+export function getTokenByToken(token: string): Promise<Token> {
     return new Promise(async (resolve, reject) => {
         try {
             //Check if token is defined
@@ -51,7 +51,7 @@ export function getTokenByToken(token: string): Promise<null | Token> {
 
             //If there is no token object, return nothing
             if (!res.rows) {
-                return resolve(null);
+                return reject("no token object with this token found");
             }
 
             //Return token object
