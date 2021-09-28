@@ -42,7 +42,7 @@ export function getUsers(): Promise<Array<User>> {
     });
 }
 
-export function getUserByUsername(username: string): Promise<null | User> {
+export function getUserByUsername(username: string): Promise<User> {
     return new Promise(async (resolve, reject) => {
 
         //Check username
@@ -55,7 +55,7 @@ export function getUserByUsername(username: string): Promise<null | User> {
 
             //If there is no user, return nothing
             if (!res.rows) {
-                return resolve(null);
+                return reject("no user found");
             }
 
             //Return user
