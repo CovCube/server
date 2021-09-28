@@ -122,13 +122,14 @@ export function updateUser(inputUser: User): Promise<User> {
 }
 
 export function deleteUser(user: User): Promise<void> {
-    return new Promise((resolve, reject) => {
-        pool.query(deleteUserQuery, [user.id])
-            .then((res: QueryResult) => {
-                resolve();
-            })
-            .catch((err: Error) => {
-                reject(err);
-            });
+    return new Promise(async (resolve, reject) => {
+
+        try {
+            await pool.query(deleteUserQuery, [user.id]);
+
+            resolve();
+        } catch (err) {
+            reject(err);
+        }
     });
 }
