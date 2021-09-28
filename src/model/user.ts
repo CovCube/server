@@ -96,29 +96,27 @@ export function addUser(name: string, password: string): Promise<void> {
 
 export function updateUser(inputUser: User): Promise<User> {
     return new Promise(async (resolve, reject) => {
-        let oldUser: User | null = await getUserById(inputUser.id);
-
-        if (!oldUser) {
-            reject("User does not exist");
-        } else {
+        try {
+            //Get user with id from database
+            let oldUser: User = await getUserById(inputUser.id);
             let updatedUser: User = oldUser;
 
+            //Check if name has changed
             if (oldUser.name != inputUser.name) {
                 updatedUser.name = inputUser.name;
             }
-            
+
+            //Check if password has changed
             let passwordCheck = await checkPassword(oldUser, inputUser.password);
             if (inputUser.password && !passwordCheck) {
                 updatedUser.password = await bcrypt.hash(inputUser.password, saltRounds);
             }
-
-            pool.query(updateUserQuery, [updatedUser.id, updatedUser.name, updatedUser.password])
-                .then((res: QueryResult) => {
-                    resolve(updatedUser);
-                })
-                .catch((err: Error) => {
-                    reject(err);
-                });
+            //Commit new user data
+            await pool.query(updateUserQuery, [updatedUser.id, updatedUser.name, updatedUser.password])
+            
+            resolve(updatedUser);
+        } catch (err) {
+            reject(err);
         }
     });
 }
