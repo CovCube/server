@@ -21,6 +21,21 @@ export function createSensorDataTable(): Promise<void> {
 
 export function persistSensorData(sensorType: string, cubeId: string, data: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
+
+        //Check parameters
+        if (sensorType === undefined) {
+            reject("sensorType is undefined");
+        }
+        if (cubeId === undefined) {
+            reject("cubeId is undefined");
+        }
+        if (data === undefined) {
+            reject("data is undefined");
+        }
+        if (!data.trim()) {
+            reject("data is empty");
+        }
+
         try {
             let timestamp = getTimestamp();
             await pool.query(persistSensorDataQuery, [sensorType, cubeId, timestamp, data]);
