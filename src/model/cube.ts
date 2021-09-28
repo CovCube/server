@@ -38,9 +38,9 @@ export async function createCubeTables(): Promise<void> {
             await pool.query(createCubeSensorsTableQuery);
             await pool.query(createCubeActuatorsTableQuery);
 
-            resolve();
+            return resolve();
         } catch(err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
@@ -59,9 +59,9 @@ export function getCubes(): Promise<Array<Cube>> {
                 cubes.push(cube);
             })
 
-            resolve(cubes);
+            return resolve(cubes);
         } catch(err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
@@ -93,9 +93,9 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
             let actuators: Array<string> = await getCubeActuators(cubeId);
             cube.actuators = actuators;
 
-            resolve(cube);
+            return resolve(cube);
         } catch(err) {
-            reject(err);
+            return reject(err);
         };
     });
 }
@@ -121,9 +121,9 @@ async function getCubeSensors(cubeId: string): Promise<Array<Sensor>> {
                 });
             })
 
-            resolve(sensors)
+            return resolve(sensors)
         } catch(err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
@@ -146,9 +146,9 @@ async function getCubeActuators(cubeId: string): Promise<Array<string>> {
                 actuators.push(value.actuator_type.trim());
             })
 
-            resolve(actuators)
+            return resolve(actuators)
         } catch(err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
@@ -231,9 +231,9 @@ function persistCube(cubeId: string, ip: string, location: string, sensors: Arra
             //Subscribe to cube topic
             await subscribeCubeMQTTTopic(cubeId, 2);
 
-            resolve();
+            return resolve();
         } catch(err) {
-            reject(err);
+            return reject(err);
         };
     });
 }
@@ -287,9 +287,9 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
                 }
             });
 
-            resolve(getCubeWithId(cubeId));
+            return resolve(getCubeWithId(cubeId));
         } catch(err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
@@ -307,9 +307,9 @@ export function deleteCubeWithId(cubeId: string): Promise<void> {
         try {
             pool.query(deleteCubeWithIdQuery, [cubeId]);
 
-            resolve();
+            return resolve();
         } catch(err) {
-            reject(err);
+            return reject(err);
         };
     });
 }
