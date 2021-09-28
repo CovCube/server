@@ -27,10 +27,10 @@ export function getTokens(): Promise<Array<Token>> {
                     token.owner = token.owner.trim()
                 })
 
-                resolve(tokens);
+                return resolve(tokens);
             })
             .catch((err: Error) => {
-                reject(err);
+                return reject(err);
             });
     });
 }
@@ -40,24 +40,24 @@ export function getTokenByToken(token: string): Promise<null | Token> {
         try {
             //Check if token is defined
             if (token === undefined) {
-                reject("token is undefined");
+                return reject("token is undefined");
             }
             //check if token is valid uuid
             if (!checkTokenValidity(token)) {
-                reject("not a valid token");
+                return reject("not a valid token");
             }
 
             let res = await pool.query(getTokenByTokenQuery, [token]);
 
             //If there is no token object, return nothing
             if (!res.rows) {
-                resolve(null);
+                return resolve(null);
             }
 
             //Return token object
-            resolve(res.rows[0]);
+            return resolve(res.rows[0]);
         } catch(err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
@@ -69,10 +69,10 @@ export function addToken(owner: string): Promise<Token> {
         pool.query(addTokenQuery, [token, owner])
             .then((res: QueryResult) => {
                 console.log(res.rows);
-                resolve(res.rows[0]);
+                return resolve(res.rows[0]);
             })
             .catch((err: Error)=> {
-                reject(err);
+                return reject(err);
             });
     });
 }
@@ -81,19 +81,19 @@ export function deleteToken(token: Token): Promise<void> {
     return new Promise((resolve, reject) => {
         //Check if token is defined
         if (token === undefined) {
-            reject("token is undefined");
+            return reject("token is undefined");
         }
         //check if token is valid uuid
         if (!checkTokenValidity(token.token)) {
-            reject("not a valid token");
+            return reject("not a valid token");
         }
 
         pool.query(deleteTokenQuery, [token.token])
             .then((res: QueryResult) => {
-                resolve();
+                return resolve();
             })
             .catch((err: Error) => {
-                reject(err);
+                return reject(err);
             });
     });
 }
