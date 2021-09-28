@@ -35,9 +35,9 @@ export function getUsers(): Promise<Array<User>> {
                 user.name = user.name.trim()
             })
 
-            resolve(users);
+            return resolve(users);
         } catch (err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
@@ -47,7 +47,7 @@ export function getUserByUsername(username: string): Promise<null | User> {
 
         //Check username
         if (username === undefined || !username.trim()) {
-            reject("username is undefined or empty");
+            return reject("username is undefined or empty");
         }
 
         try {
@@ -55,13 +55,13 @@ export function getUserByUsername(username: string): Promise<null | User> {
 
             //If there is no user, return nothing
             if (!res.rows) {
-                resolve(null);
+                return resolve(null);
             }
 
             //Return user
-            resolve(res.rows[0]);
+            return resolve(res.rows[0]);
         } catch(err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
@@ -71,10 +71,10 @@ export function getUserById(id: string): Promise<User> {
 
         //check id
         if (id === undefined || !id.trim()) {
-            reject("id is undefined or empty");
+            return reject("id is undefined or empty");
         }
         if (!uuidvalidate(id)) {
-            reject("id is not a valid uuid");
+            return reject("id is not a valid uuid");
         }
 
         try {
@@ -82,13 +82,13 @@ export function getUserById(id: string): Promise<User> {
 
             //If there is no user, return nothing
             if (!res.rows) {
-                reject("user does not exist");
+                return reject("user does not exist");
             }
 
             //Return user
-            resolve(res.rows[0]);
+            return resolve(res.rows[0]);
         } catch(err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
@@ -98,11 +98,11 @@ export function addUser(name: string, password: string): Promise<void> {
 
         //check name
         if (name === undefined || !name.trim()) {
-            reject("username is undefined or empty");
+            return reject("username is undefined or empty");
         }
         //check password
         if (password === undefined || !password.trim()) {
-            reject("password is undefined or empty");
+            return reject("password is undefined or empty");
         }
 
         //Create id from the username
@@ -113,9 +113,9 @@ export function addUser(name: string, password: string): Promise<void> {
         try {
             await pool.query(addUserQuery, [id, name, hashed_password])
 
-            resolve();
+            return resolve();
         } catch (err) {
-            reject(err);
+            return reject(err);
         };
     });
 }
@@ -125,16 +125,16 @@ export function updateUser(inputUser: User): Promise<User> {
 
         //Check input
         if (inputUser === undefined) {
-            reject("inputUser is undefined");
+            return reject("inputUser is undefined");
         }
         if (inputUser.id === undefined || !inputUser.id.trim()) {
-            reject("user id is undefined or empty");
+            return reject("user id is undefined or empty");
         }
         if (inputUser.name === undefined || !inputUser.name.trim()) {
-            reject("user name is undefined or empty");
+            return reject("user name is undefined or empty");
         }
         if (inputUser.password === undefined || !inputUser.password.trim()) {
-            reject("user password is undefined or empty");
+            return reject("user password is undefined or empty");
         }
 
         try {
@@ -155,9 +155,9 @@ export function updateUser(inputUser: User): Promise<User> {
             //Commit new user data
             await pool.query(updateUserQuery, [updatedUser.id, updatedUser.name, updatedUser.password])
             
-            resolve(updatedUser);
+            return resolve(updatedUser);
         } catch (err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
@@ -167,18 +167,18 @@ export function deleteUser(user: User): Promise<void> {
 
         //Check input
         if (user === undefined) {
-            reject("inputUser is undefined");
+            return reject("inputUser is undefined");
         }
         if (user.id === undefined || !user.id.trim()) {
-            reject("user id is undefined or empty");
+            return reject("user id is undefined or empty");
         }
 
         try {
             await pool.query(deleteUserQuery, [user.id]);
 
-            resolve();
+            return resolve();
         } catch (err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
