@@ -42,7 +42,7 @@ export function getTokenByToken(token: string): Promise<Token> {
         try {
             checkTokenValidity(token);
         } catch(err) {
-            reject(err);
+            return reject(err);
         }
 
         try {
@@ -80,7 +80,7 @@ export function deleteToken(token: Token): Promise<void> {
         try {
             checkTokenValidity(token.token);
         } catch(err) {
-            reject(err);
+            return reject(err);
         }
         
         try {
