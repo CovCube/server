@@ -18,20 +18,20 @@ export function createTokensTable(): Promise<QueryResult<any>> {
 }
 
 export function getTokens(): Promise<Array<Token>> {
-    return new Promise((resolve, reject) => {
-        pool.query(getTokensQuery)
-            .then((res: QueryResult) => {
-                let tokens: Array<Token> = res.rows;
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res: QueryResult = await pool.query(getTokensQuery);
 
-                tokens.forEach(token => {
-                    token.owner = token.owner.trim()
-                })
+            let tokens: Array<Token> = res.rows;
 
-                return resolve(tokens);
+            tokens.forEach(token => {
+                token.owner = token.owner.trim()
             })
-            .catch((err: Error) => {
-                return reject(err);
-            });
+
+            return resolve(tokens);
+        } catch(err) {
+            return reject(err);
+        }
     });
 }
 
@@ -66,19 +66,17 @@ export function addToken(owner: string): Promise<Token> {
     return new Promise(async (resolve, reject) => {
         let token: string = uuidv4().trim().split('-').join('');
         
-        pool.query(addTokenQuery, [token, owner])
-            .then((res: QueryResult) => {
-                console.log(res.rows);
-                return resolve(res.rows[0]);
-            })
-            .catch((err: Error)=> {
-                return reject(err);
-            });
+        try {
+            let res: QueryResult = await pool.query(addTokenQuery, [token, owner]);
+            return resolve(res.rows[0]);
+        } catch(err) {
+            return reject(err);
+        }
     });
 }
 
 export function deleteToken(token: Token): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         //Check if token is defined
         if (token === undefined) {
             return reject("token is undefined");
@@ -88,13 +86,13 @@ export function deleteToken(token: Token): Promise<void> {
             return reject("not a valid token");
         }
 
-        pool.query(deleteTokenQuery, [token.token])
-            .then((res: QueryResult) => {
-                return resolve();
-            })
-            .catch((err: Error) => {
-                return reject(err);
-            });
+        try {
+            await pool.query(deleteTokenQuery, [token.token]);
+
+            return resolve();
+        } catch(err) {
+            return reject(err);
+        }
     });
 }
 
