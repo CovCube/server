@@ -6,7 +6,7 @@ import { AxiosResponse } from "axios";
 import format from 'pg-format';
 import ip from "ip";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4, validate as uuidvalidate } from "uuid";
 //internal imports
 import { pool } from "../index";
 import { findSensorIndex, getCubeSensorEndpointObject, getSensorTypesArray } from "../utils/general_utils";
@@ -95,9 +95,16 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
 
 async function getCubeSensors(cubeId: string): Promise<Array<Sensor>> {
     return new Promise(async (resolve, reject) => {
-        let sensors: Array<Sensor> = [];
+        //Check cubeId
+        if (cubeId === undefined) {
+            return reject("cubeId is undefined");
+        }
+        if (!uuidvalidate(cubeId)) {
+            return reject("cubeId is not a valid uuid");
+        }
 
         try {
+            let sensors: Array<Sensor> = [];
             let res: QueryResult = await pool.query(getCubeSensorsWithIdQuery, [cubeId]);
 
             res.rows.forEach((sensor) => {
@@ -116,9 +123,16 @@ async function getCubeSensors(cubeId: string): Promise<Array<Sensor>> {
 
 async function getCubeActuators(cubeId: string): Promise<Array<string>> {
     return new Promise(async (resolve, reject) => {
-        let actuators: Array<string> = [];
-
+        //Check cubeId
+        if (cubeId === undefined) {
+            return reject("cubeId is undefined");
+        }
+        if (!uuidvalidate(cubeId)) {
+            return reject("cubeId is not a valid uuid");
+        }
+        
         try {
+            let actuators: Array<string> = [];
             let res: QueryResult = await pool.query(getCubeActuatorsWithIdQuery, [cubeId]);
 
             res.rows.forEach((value) => {
@@ -133,6 +147,14 @@ async function getCubeActuators(cubeId: string): Promise<Array<string>> {
 }
 
 export async function addCube(targetIP: string, location: string): Promise<void> {
+    //Check input
+    if (targetIP === undefined || !targetIP.trim()) {
+        return Promise.reject("targetIP is undefined or empty");
+    }
+    if (location === undefined || !location.trim()) {
+        return Promise.reject("location is undefined or empty");
+    }
+
     //Get own ip address
     let serverIP: string = ip.address();
     //Generate random id for cube
@@ -156,6 +178,25 @@ export async function addCube(targetIP: string, location: string): Promise<void>
 
 function persistCube(cubeId: string, ip: string, location: string, sensors: Array<Sensor>, actuators: Array<string>): Promise<void> {
     return new Promise(async (resolve, reject) => {
+        //Check input
+        if (cubeId === undefined) {
+            return reject("cubeId is undefined");
+        }
+        if (!uuidvalidate(cubeId)) {
+            return reject("cubeId is not a valid uuid");
+        }
+        if (ip === undefined || !ip.trim()) {
+            return reject("ip is undefined or empty");
+        }
+        if (location === undefined || !location.trim()) {
+            return reject("location is undefined or empty");
+        }
+        if (sensors === undefined || sensors.length == 0) {
+            return reject("sensors array is undefined or empty");
+        }
+        if (actuators === undefined || actuators.length == 0) {
+            return reject("actuators array is undefined or empty");
+        }
 
         try {
             //Get client
@@ -192,6 +233,23 @@ function persistCube(cubeId: string, ip: string, location: string, sensors: Arra
 
 export function updateCubeWithId(cubeId: string, variables: CubeVariables): Promise<Cube> {
     return new Promise(async (resolve, reject) => {
+        //Check input
+        if (cubeId === undefined) {
+            return reject("cubeId is undefined");
+        }
+        if (!uuidvalidate(cubeId)) {
+            return reject("cubeId is not a valid uuid");
+        }
+        if (variables.location === undefined || !variables.location.trim()) {
+            return reject("location is undefined or empty");
+        }
+        if (variables.sensors === undefined || variables.sensors.length == 0) {
+            return reject("sensors array is undefined or empty");
+        }
+        if (variables.actuators === undefined || variables.actuators.length == 0) {
+            return reject("actuators array is undefined or empty");
+        }
+
         try {
             //Check if cube exists
             let cube: Cube = await getCubeWithId(cubeId);
@@ -232,6 +290,14 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 
 export function deleteCubeWithId(cubeId: string): Promise<void> {
     return new Promise((resolve, reject) => {
+        //Check cubeId
+        if (cubeId === undefined) {
+            return reject("cubeId is undefined");
+        }
+        if (!uuidvalidate(cubeId)) {
+            return reject("cubeId is not a valid uuid");
+        }
+
         try {
             pool.query(deleteCubeWithIdQuery, [cubeId]);
 
