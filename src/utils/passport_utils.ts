@@ -88,6 +88,11 @@ export async function comparePassword(user: User, password: string): Promise<boo
 }
 
 export function checkPasswordValidity(password: string): boolean {
+
+    //Check if password is undefined
+    if (password === undefined) {
+        return false;
+    }
     //Check if password empty or only spaces
     if (!password.trim()) {
         return false;
