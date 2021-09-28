@@ -283,7 +283,6 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
                     await pool.query(updateCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval]);
                     //Send to cube
                     let data = getCubeSensorEndpointObject(new_sensors);
-                    console.log(data);
                     await axios.post("http://"+cube.ip+"/sensor", data);
                 }
             });
