@@ -122,7 +122,7 @@ export function addUser(name: string, password: string): Promise<void> {
 
 export function updateUser(inputUser: User): Promise<User> {
     return new Promise(async (resolve, reject) => {
-
+        console.log(inputUser);
         //Check input
         if (inputUser === undefined) {
             return reject("inputUser is undefined");
@@ -133,8 +133,8 @@ export function updateUser(inputUser: User): Promise<User> {
         if (inputUser.name === undefined || !inputUser.name.trim()) {
             return reject("user name is undefined or empty");
         }
-        if (inputUser.password === undefined || !inputUser.password.trim()) {
-            return reject("user password is undefined or empty");
+        if (inputUser.password === undefined) {
+            return reject("user password is undefined");
         }
 
         try {
@@ -147,9 +147,9 @@ export function updateUser(inputUser: User): Promise<User> {
                 updatedUser.name = inputUser.name;
             }
 
-            //Check if password has changed
+            //Check if password has changed or is empty
             let passwordCheck = await checkPassword(oldUser, inputUser.password);
-            if (inputUser.password && !passwordCheck) {
+            if (inputUser.password.trim() && !passwordCheck) {
                 updatedUser.password = await bcrypt.hash(inputUser.password, saltRounds);
             }
             //Commit new user data
