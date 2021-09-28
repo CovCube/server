@@ -214,6 +214,16 @@ function persistCube(cubeId: string, ip: string, location: string, sensors: Arra
 
             //Add sensors to cube
             sensors.forEach(async (sensor: Sensor) => {
+                //Check if sensor type is valid
+                if (sensor.type === undefined || !sensor.type.trim()) {
+                    throw(new Error("sensor type is not valid"));
+                }
+                //Check if sensor scan_interval is valid
+                if (!sensor.scanInterval || sensor.scanInterval <= 0) {
+                    throw(new Error ("sensor scan_interval is not valid."))
+                }
+
+
                 await client.query(addCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval])
                             .catch((err: Error) => {
                                 reject(err);
@@ -271,10 +281,18 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
             let new_sensors: Array<Sensor> = variables.sensors;
 
             new_sensors.forEach(async (sensor: Sensor) => {
-                //Check if sensor exists for this cube
+                //Check if sensor type is valid
+                if (sensor.type === undefined || !sensor.type.trim()) {
+                    throw(new Error("sensor type is not valid"));
+                }
+                //Check if sensor type exists for this cube
                 if (!old_sensor_types.includes(sensor.type)) {
-                    throw(new Error("sensor_type does not exist on this cube"));
-                } 
+                    throw(new Error("sensor type does not exist on this cube"));
+                }
+                //Check if sensor scan_interval is valid
+                if (!sensor.scanInterval || sensor.scanInterval <= 0) {
+                    throw(new Error ("sensor scan_interval is not valid."))
+                }
 
                 //Update scan interval, if it was changed
                 let sensors_index = old_sensors.findIndex(findSensorIndex,sensor);
