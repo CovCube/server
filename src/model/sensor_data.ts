@@ -12,9 +12,9 @@ export function createSensorDataTable(): Promise<void> {
         try {
             await pool.query(createSensorDataTableQuery);
 
-            resolve();
+            return resolve();
         } catch(err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
@@ -24,25 +24,25 @@ export function persistSensorData(sensorType: string, cubeId: string, data: stri
 
         //Check parameters
         if (sensorType === undefined) {
-            reject("sensorType is undefined");
+            return reject("sensorType is undefined");
         }
         if (cubeId === undefined) {
-            reject("cubeId is undefined");
+            return reject("cubeId is undefined");
         }
         if (data === undefined) {
-            reject("data is undefined");
+            return reject("data is undefined");
         }
         if (!data.trim()) {
-            reject("data is empty");
+            return reject("data is empty");
         }
 
         try {
             let timestamp = getTimestamp();
             await pool.query(persistSensorDataQuery, [sensorType, cubeId, timestamp, data]);
 
-            resolve();
+            return resolve();
         } catch (err) {
-            reject(err);
+            return reject(err);
         }
     });
 }
