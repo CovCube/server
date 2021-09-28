@@ -22,7 +22,7 @@ export async function setupPassport():Promise<void> {
                     return done(null, false, {message: 'Nutzer existiert nicht'});
                 }
                 //check if correct password is provided
-                let passCheck = await checkPassword(user, password);
+                let passCheck = await comparePassword(user, password);
                 if (!passCheck) {
                     return done(null, false, {message: 'Passwort ist inkorrekt'});
                 }
@@ -83,6 +83,6 @@ export function authenticateUser(req: Request, res: Response, next: NextFunction
     res.redirect(303, '/login');
 }
 
-export async function checkPassword(user: User, password: string): Promise<boolean> {
+export async function comparePassword(user: User, password: string): Promise<boolean> {
     return await bcrypt.compare(password, user.password);
 }

@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import { v5 as uuidv5, validate as uuidvalidate } from "uuid";
 //internal imports
 import { pool } from "..";
-import { checkPassword } from "../utils/passport_utils";
+import { comparePassword } from "../utils/passport_utils";
 
 //User table
 const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(32) NOT NULL)";
@@ -148,7 +148,7 @@ export function updateUser(inputUser: User): Promise<User> {
             }
 
             //Check if password has changed or is empty
-            let passwordCheck = await checkPassword(oldUser, inputUser.password);
+            let passwordCheck = await comparePassword(oldUser, inputUser.password);
             if (inputUser.password.trim() && !passwordCheck) {
                 updatedUser.password = await bcrypt.hash(inputUser.password, saltRounds);
             }
