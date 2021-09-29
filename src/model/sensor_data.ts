@@ -73,7 +73,7 @@ export function persistSensorData(sensorType: string, cubeId: string, data: stri
         }
 
         try {
-            let timestamp = getTimestamp();
+            let timestamp = getTimestamp(new Date());
 
             //Check which sensor type
             switch (sensorType) {
