@@ -3,7 +3,7 @@ import { Sensor } from '../types';
 //external imports
 import { validate as uuidvalidate } from "uuid";
 
-export function checkCubeId(cubeId: string): void {
+export function checkCubeId(cubeId: string | undefined): void {
     //Check cubeId
     if (cubeId === undefined) {
         throw(new Error("cubeId is undefined"));
@@ -47,5 +47,13 @@ export function checkTokenValidity(token: string): void {
     //check if valid uuid
     if (!uuidvalidate(uuid)) {
         throw(new Error("token structure is not valid"));
+    }
+}
+
+export function checkTimestampValidity(timestamp: string): void {
+    let date = new Date(timestamp);
+    
+    if (date.toString() === "Invalid Date") {
+        throw(new Error("The timestamp has an incorrect format"));
     }
 }

@@ -1,8 +1,11 @@
-//internal imports
+//type imports
 import { QueryResult } from "pg";
+//external imports
+import format from 'pg-format';
+//internal imports
 import { pool } from "../index";
 import { getTimestamp } from "../utils/general_utils";
-import { checkCubeId } from "../utils/input_check_utils";
+import { checkCubeId, checkTimestampValidity } from "../utils/input_check_utils";
 
 //sensor data tables
 const createNumericDataTableQuery: string = "CREATE TABLE IF NOT EXISTS numeric_data (id SERIAL PRIMARY KEY, sensor_type CHAR(64) NOT NULL, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, FOREIGN KEY(cube_id) REFERENCES cubes(id) ON DELETE CASCADE)";
@@ -27,14 +30,95 @@ export function createSensorDataTable(): Promise<void> {
     });
 }
 
-export function getSensorData(): Promise<Array<Object>> {
+export function getSensorData(sensorType?: string, cubeId?: string, start?: string, end?: string): Promise<Array<Object>> {
     return new Promise(async (resolve, reject) => {
+        let selectors: string = "";
+        let whereAdded: boolean = false;
 
+        //Add parameters to selectors
+        if (sensorType !== undefined) {
+            //Add needed selectors
+            if (!whereAdded) {
+                selectors = selectors + " WHERE";
+                whereAdded = true;
+            } else {
+                selectors = selectors + " AND";
+            }
+            //Add selectors statement
+            selectors = format(selectors + " %I=%L","sensor_type", sensorType);
+        }
+        if (cubeId !== undefined) {
+            //Check that the id is valid
+            try {
+                checkCubeId(cubeId);
+            } catch(err) {
+                return reject(err);
+            }
+
+            //Add needed selectors
+            if (!whereAdded) {
+                selectors = selectors + " WHERE";
+                whereAdded = true;
+            } else {
+                selectors = selectors + " AND";
+            }
+            //Add selectors statement
+            selectors = format(selectors + " %I=%L","cube_id", cubeId);
+        }
+        //TODO: Fix bug with timestamptz, where comparing against a timestamptz does not factor in the timezone
+        if (start !== undefined) {
+            //Check that the timestamp is valid
+            try {
+                checkTimestampValidity(start);
+            } catch(err) {
+                return reject("start does not have the correct format");
+            }
+            //Add needed selectors
+            if (!whereAdded) {
+                selectors = selectors + " WHERE";
+                whereAdded = true;
+            } else {
+                selectors = selectors + " AND";
+            }
+            let startTimestamp: string = getTimestamp(new Date(start));
+            //Add selectors statement
+            selectors = format(selectors + " %I>=timestamp %L","timestamp", startTimestamp);
+        }
+        if (end !== undefined) {
+            //Check that the timestamp is valid
+            try {
+                checkTimestampValidity(end);
+            } catch(err) {
+                return reject("end does not have the correct format");
+            }
+            //Add needed selectors
+            if (!whereAdded) {
+                selectors = selectors + " WHERE";
+                whereAdded = true;
+            } else {
+                selectors = selectors + " AND";
+            }
+            let endTimestamp: string = getTimestamp(new Date(end));
+            //Add selectors statement
+            selectors = format(selectors + " %I<=timestamp %L","timestamp", endTimestamp);
+        }
+        //Check that start and end are in correct order
+        if (start !== undefined && end !== undefined) {
+            let startDate: Date = new Date(start);
+            let endDate: Date = new Date(end);
+            if (startDate > endDate) {
+                return reject("start date is after the end date");
+            }
+        }
+
+        console.log(selectors);
+        
         let res_rows;
         try {
-            let numeric_res: QueryResult = await pool.query(getNumericDataQuery);
-            let alphanumeric_res: QueryResult = await pool.query(getAlphanumericDataQuery);
-
+            let numeric_res: QueryResult = await pool.query(getNumericDataQuery+selectors);
+            let alphanumeric_res: QueryResult = await pool.query(getAlphanumericDataQuery+selectors);
+            console.log(numeric_res.rows);
+            console.log(alphanumeric_res.rows);
             res_rows = numeric_res.rows.concat(alphanumeric_res.rows);
         } catch(err) {
             return reject(err);
