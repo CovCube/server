@@ -4,7 +4,6 @@ import { QueryResult } from "pg";
 import format from 'pg-format';
 //internal imports
 import { pool } from "../index";
-import { getTimestamp } from "../utils/general_utils";
 import { checkCubeId, checkTimestampValidity } from "../utils/input_check_utils";
 
 //sensor data tables
@@ -65,7 +64,7 @@ export function getSensorData(sensorType?: string, cubeId?: string, start?: stri
             //Add selectors statement
             selectors = format(selectors + " %I=%L","cube_id", cubeId);
         }
-        //TODO: Fix bug with timestamptz, where comparing against a timestamptz does not factor in the timezone
+        //TODO: Fix bug with pg, where dates aren't pasted into the right timezone
         if (start !== undefined) {
             //Check that the timestamp is valid
             try {
@@ -80,7 +79,7 @@ export function getSensorData(sensorType?: string, cubeId?: string, start?: stri
             } else {
                 selectors = selectors + " AND";
             }
-            let startTimestamp: string = getTimestamp(new Date(start));
+            let startTimestamp: Date = new Date(start);
             //Add selectors statement
             selectors = format(selectors + " %I>=timestamp %L","timestamp", startTimestamp);
         }
@@ -98,7 +97,7 @@ export function getSensorData(sensorType?: string, cubeId?: string, start?: stri
             } else {
                 selectors = selectors + " AND";
             }
-            let endTimestamp: string = getTimestamp(new Date(end));
+            let endTimestamp: Date = new Date(end);
             //Add selectors statement
             selectors = format(selectors + " %I<=timestamp %L","timestamp", endTimestamp);
         }
@@ -157,7 +156,7 @@ export function persistSensorData(sensorType: string, cubeId: string, data: stri
         }
 
         try {
-            let timestamp = getTimestamp(new Date());
+            let timestamp: Date = new Date();
 
             //Check which sensor type
             switch (sensorType) {
