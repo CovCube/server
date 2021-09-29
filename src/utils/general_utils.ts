@@ -43,5 +43,6 @@ export function getCubeSensorEndpointObject(sensors: Array<Sensor>) {
 }
 
 export function getTimestamp(time: Date): string {
-    return `${time.getUTCFullYear()}-${time.getUTCMonth()}-${time.getUTCDate()} ${time.getUTCHours()}:${time.getUTCMinutes()}:${time.getUTCSeconds()}-0`;
+    console.log(time);
+    return `${time.getUTCFullYear()}-${time.getUTCMonth()+1}-${time.getUTCDate()} ${time.getUTCHours()}:${time.getUTCMinutes()}:${time.getUTCSeconds()}-0`;
 }
