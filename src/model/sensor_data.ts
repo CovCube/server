@@ -64,7 +64,6 @@ export function getSensorData(sensorType?: string, cubeId?: string, start?: stri
             //Add selectors statement
             selectors = format(selectors + " %I=%L","cube_id", cubeId);
         }
-        //TODO: Fix bug with pg, where dates aren't pasted into the right timezone
         if (start !== undefined) {
             //Check that the timestamp is valid
             try {
@@ -116,8 +115,6 @@ export function getSensorData(sensorType?: string, cubeId?: string, start?: stri
         try {
             let numeric_res: QueryResult = await pool.query(getNumericDataQuery+selectors);
             let alphanumeric_res: QueryResult = await pool.query(getAlphanumericDataQuery+selectors);
-            console.log(numeric_res.rows);
-            console.log(alphanumeric_res.rows);
             res_rows = numeric_res.rows.concat(alphanumeric_res.rows);
         } catch(err) {
             return reject(err);
@@ -134,7 +131,7 @@ export function getSensorData(sensorType?: string, cubeId?: string, start?: stri
             sensor_data.push({
                 "sensorType": row.sensor_type.trim(),
                 "cubeId": row.cube_id,
-                "timestamp": row.timestamp,
+                "timestamp": row.timestamp.toLocaleString(),
                 "data": row.data,
             });
         });
