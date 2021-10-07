@@ -27,12 +27,18 @@ export function createUserTable(): Promise<void> {
             await pool.query(createUsersTableQuery);
             let users: Array<User> = await getUsers();
 
+            //If no user is present, add an admin user
             if (users.length == 0) {
-                await addUser("admin", "admin");
+                let admin_username: string = process.env.ADMINUSERNAME || "admin";
+                let admin_password: string = process.env.ADMINPASSWORD || "admin";
+                await addUser(admin_username, admin_password);
             }
+
+            return resolve();
+        } catch(err) {
+            return reject(err);
         }
-    })
-    
+    });
 }
 
 export function getUsers(): Promise<Array<User>> {
