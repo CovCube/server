@@ -172,7 +172,7 @@ export async function addCube(targetIP: string, location: string): Promise<void>
     }
 
     //Send config data to cube
-    let response: AxiosResponse = await axios.post("http://"+targetIP, data)
+    let response: AxiosResponse = await axios.post("http://"+targetIP.trim(), data)
     //Get cube sensors and actuators
     let sensors: Array<Sensor> = response.data['sensors'];
     let actuators: Array<string> = response.data['actuators']; 
