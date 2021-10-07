@@ -21,8 +21,18 @@ const saltRounds: number = parseInt(process.env.BCRYPTSALTROUNDS || "10");
 //uuid
 const uuidNamespace: string = process.env.UUIDNAMESPACE || "976eacb6-ce9b-4eda-9d44-55c942464a38";
 
-export function createUserTable(): Promise<QueryResult<any>> {
-    return pool.query(createUsersTableQuery);
+export function createUserTable(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await pool.query(createUsersTableQuery);
+            let users: Array<User> = await getUsers();
+
+            if (users.length == 0) {
+                await addUser("admin", "admin");
+            }
+        }
+    })
+    
 }
 
 export function getUsers(): Promise<Array<User>> {
