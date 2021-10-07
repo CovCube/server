@@ -9,7 +9,7 @@ import { pool } from "..";
 import { checkPasswordValidity, comparePassword } from "../utils/passport_utils";
 
 //User table
-const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(32) NOT NULL)";
+const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(60) NOT NULL)";
 const getUsersQuery: string = 'SELECT * FROM users';
 const getUserWithIdQuery: string = 'SELECT * FROM users WHERE id=$1';
 const getUserWithUsernameQuery: string = 'SELECT * FROM users WHERE name=$1';
