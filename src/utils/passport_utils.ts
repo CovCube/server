@@ -53,7 +53,10 @@ export async function setupPassport():Promise<void> {
     }));
 
     //Get id from user
-    passport.serializeUser((user: BarebonesUser, done) => {
+    passport.serializeUser((user, done) => {
+        //Seems to be a bug in the @types/passport package
+        //Where the standard user does not have an ID, but is required to have an id in this method
+        //@ts-ignore
         done(null, user.id);
     });
 
