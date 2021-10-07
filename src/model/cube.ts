@@ -166,7 +166,7 @@ export async function addCube(targetIP: string, location: string): Promise<void>
     let id: string = uuidv4();
 
     let data = {
-        'address': serverIP.trim,
+        'address': serverIP,
         'uuid': id,
         'location': location.trim()
     }
