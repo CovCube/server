@@ -4,17 +4,14 @@
   "description": "The Cube Server of the Anti Corona Platform of TU Dresden.",
   "main": "index.js",
   "scripts": {
-    "copyfiles:public": "rimraf dist/!(public) && copyfiles \"./public/**/*.*\" \"./dist/\"",
-    "copyfiles:templates": "rimraf dist/!(templates) && copyfiles \"./templates/**/*.*\" \"./dist/\"",
-    "onchange:public": "onchange -i -k \"./public/**/*.*\" -- copyfiles \"./public/**/*.*\" \"./dist/\"",
-    "onchange:templates": "onchange -i -k \"./templates/**/*.*\" -- copyfiles \"./templates/**/*.*\" \"./dist/\"",
+    "copyfiles:public": "copyfiles \"./public/**/*.*\" \"./dist/\"",
+    "copyfiles:templates": "copyfiles \"./templates/**/*.*\" \"./dist/\"",
+    "copyfiles:env": "copyfiles \".env\" \"./dist/\"",
+    "onchange:public": "onchange -k \"./public/**/*.*\" -- npm run copyfiles:public",
+    "onchange:templates": "onchange -k \"./templates/**/*.*\" -- npm run copyfiles:templates",
     "build": "concurrently \"tsc\" \"npm:copyfiles:*\"",
-    "preserve": "npm run build",
-    "serve": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -q dist/index.js\" \"npm:onchange:*\"",
-    "prestart": "npm run build",
-    "tsc": "tsc",
-    "dev": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -q dist/index.js\"",
-    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "predev": "npm run build",
+    "dev": "concurrently \"tsc --watch\" \"npm:onchange:*\" \"nodemon -q dist/index.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -28,12 +25,9 @@
   },
   "homepage": "https://github.com/ArcticFall/cube2_server#readme",
   "dependencies": {
-    "argon2": "^0.28.2",
     "axios": "^0.21.4",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
-    "copyfiles": "^2.4.1",
-    "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
@@ -46,7 +40,6 @@
     "passport-local": "^1.0.0",
     "pg": "^8.6.0",
     "pg-format": "^1.0.4",
-    "rimraf": "^3.0.2",
     "typescript": "^4.3.5",
     "uuid": "^8.3.2"
   },
@@ -66,7 +59,7 @@
     "@types/pg-format": "^1.0.2",
     "@types/uuid": "^8.3.1",
     "concurrently": "^6.2.0",
-    "nodemon": "^2.0.9",
-    "onchange": "^7.1.0"
+    "copyfiles": "^2.4.1",
+    "nodemon": "^2.0.9"
   }
 }
