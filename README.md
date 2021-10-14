@@ -53,3 +53,28 @@ Connection to the MQTT server is established though these variables:
 MQTTURL = 'mqtt://test.mosquitto.org'
 MQTTPORT = 1883
 ```
+
+## Docker
+
+### Dockerfile
+
+The Dockerfile creates an image of the server which exposes a port, given through
+build-arg.
+The server can be modified with the server.env file. See the documentation above at [server config](#server-config).
+
+```text
+docker build --build-arg SERVER_PORT=8080 -t imagename:tag .
+```
+
+### docker-compose
+
+The docker-compose creates containers for the server and postgresql and links them up.
+
+```text
+docker-compose up
+```
+
+Environment variables for the images can be set with server.env for the node server
+and postgres.env for the database.  
+For server.env see the documentation above at [server config](#server-config).  
+For postgres.env see the documentation at [postgres config](https://github.com/docker-library/docs/blob/master/postgres/README.md#environment-variables).
