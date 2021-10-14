@@ -26,6 +26,8 @@ RUN tsc
 # Remove dev dependencies
 RUN npm prune --production
 RUN npm uninstall typescript -g
+# Remove source files
+RUN rm -r ./src
 
 # Copy the static and template files
 COPY ./public ./dist/public
