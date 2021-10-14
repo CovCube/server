@@ -6,6 +6,7 @@ services:
     restart: always
     depends_on:
       - "postgres_db"
+      - "mosquitto_broker"
     ports:
       - "8080:${PORT}"
     networks:
