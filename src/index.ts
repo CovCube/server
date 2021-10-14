@@ -24,8 +24,8 @@ import { router as apiRoutes } from "./api/api";
 //Parse environment variables
 dotenv.config();
 
-//Connect to database
-export const pool: Pool = new Pool();
+//Set databse connection variable
+export var pool: Pool;
 
 //Setup database, passport and mqtt broker connection
 setupServer();
@@ -65,6 +65,25 @@ app.use('/api', apiRoutes);
 app.listen(PORT, () => console.log(`Running on port: ${PORT}`));
 
 async function setupServer() {
+
+    //Connect to database
+    let db_connection: boolean = false;
+    while(!db_connection) {
+        try {
+            console.log("attempting database connection ...")
+            pool = new Pool();
+            await pool.query("SELECT 1")
+        } catch(e) {
+            console.log(e);
+
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            continue;
+        }
+
+        console.log("connected to database")
+        db_connection = true;
+    }
     
     try {
         //Setup cube database
