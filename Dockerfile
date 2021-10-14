@@ -32,7 +32,7 @@ RUN rm -r ./src
 # Copy the static and template files
 COPY ./public ./dist/public
 COPY ./templates ./dist/templates
-COPY .env ./dist/
+COPY server.env ./dist/
 
 EXPOSE ${SERVER_PORT}
 

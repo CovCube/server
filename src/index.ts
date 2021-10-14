@@ -22,7 +22,7 @@ import { router as viewRoutes } from "./views/views";
 import { router as apiRoutes } from "./api/api";
 
 //Parse environment variables
-dotenv.config();
+dotenv.config({ path: './server.env'});
 
 //Set databse connection variable
 export var pool: Pool;
