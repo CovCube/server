@@ -35,6 +35,5 @@ COPY ./templates ./dist/templates
 COPY .env ./dist/
 
 EXPOSE ${SERVER_PORT}
-ENV PORT ${SERVER_PORT}`~
 
 CMD ["node", "./dist/index.js"]
