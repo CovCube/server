@@ -22,7 +22,7 @@ import { router as viewRoutes } from "./views/views";
 import { router as apiRoutes } from "./api/api";
 
 //Parse environment variables
-dotenv.config({ path: './server.env'});
+dotenv.config();
 
 //Set databse connection variable
 export var pool: Pool;
@@ -35,7 +35,7 @@ const PORT: number = parseInt(process.env.PORT || '3000');
 const app: Express = express();
 
 //Register template engine
-app.set('views', './templates');
+app.set('views', __dirname+'/templates');
 app.set('view engine', 'hbs');
 //Register partials
 hbs.registerPartials(__dirname + '/templates/partials', function() {});

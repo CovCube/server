@@ -3,7 +3,7 @@
 
 ## Server config
 
-Environment variables can be specified in the server.env file in the src directory.
+Environment variables can be specified in the .env-file in the src directory.
 These are parsed when the server is started and used to configure or customize the server. Below the default values are provided for each variable.
 
 ### Environment config
