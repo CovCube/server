@@ -1,5 +1,6 @@
 version: "3.9"
 services:
+  # Config for the cube-server
   node_server:
     container_name: node_server
     build: .
@@ -7,17 +8,23 @@ services:
     depends_on:
       - "postgres_db"
       - "mosquitto_broker"
+    # Get the container port from a variable from .env-file
     ports:
       - "8080:${PORT}"
     networks:
       - "cube"
+    # Add the environment variables to the container
     env_file:
       - "./.env"
+    # Overwrite environment variables
+    # because they define the connection to the other containers
     environment:
       PGHOST: "postgres_db"
       PGPORT: "5432"
       MQTTURL: "mosquitto_broker"
       MQTTPORT: "1883"
+
+  # Config for the postgresql database
   postgres_db:
     container_name: postgres_db
     image: "postgres:latest"
@@ -28,21 +35,26 @@ services:
       - "cube"
     env_file:
       - "./postgres.env"
+
+  # Config for the MQTT broker Mosquitto
   mosquitto_broker:
     container_name: mosquitto_broker
     image: "eclipse-mosquitto:latest"
     restart: always
+    # Expose container port for access from the cube-server
     expose:
       - "1883"
+    # Expose ports to the host for communication with cubes
     ports:
       - "1884:1884"
     networks:
       - "cube"
     volumes:
+      # Get the config file
       - "./mosquitto.conf:/mosquitto/config/mosquitto.conf"
+      # Define persistence and logging location on host
       - "./mosquitto/data:/mosquitto/data"
       - "./mosquitto/log:/mosquitto/log"
-
 
 networks:
   cube:
