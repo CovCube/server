@@ -4,3 +4,5 @@ node_modules
 dist
 # Config files
 *.env
+# Mosquitto
+mosquitto
