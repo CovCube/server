@@ -76,8 +76,13 @@ docker-compose up
 
 Environment variables for the images can be set with the .env-file for the node server
 and postgres.env for the database.
+
 For the .env-file see the documentation above at [server config](#server-config).  
 For postgres.env see the documentation at [postgres config](https://github.com/docker-library/docs/blob/master/postgres/README.md#environment-variables).
+
+The variables PGHOST and PGPORT are set directly in the docker-compose file and
+override the variables in the .env-file. This is done to ensure connection to
+the postgres container.
 
 When changing the .env-files, make sure to recreate the containers or rebuild the
 images.
