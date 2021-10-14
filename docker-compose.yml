@@ -3,6 +3,7 @@ services:
   node_server:
     container_name: node_server
     build: .
+    restart: always
     depends_on:
       - "postgres_db"
     ports:
