@@ -39,19 +39,19 @@ services:
   # Config for the MQTT broker Mosquitto
   mosquitto_broker:
     container_name: mosquitto_broker
-    image: "eclipse-mosquitto:latest"
+    build: ./mosquitto
     restart: always
     # Expose container port for access from the cube-server
     expose:
       - "1883"
-    # Expose ports to the host for communication with cubes
+    # Expose ports to the host for communication with cubes & apps
     ports:
       - "1884:1884"
     networks:
       - "cube"
     volumes:
       # Get the config file
-      - "./mosquitto.conf:/mosquitto/config/mosquitto.conf"
+      - "./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf"
       # Define persistence and logging location on host
       - "./mosquitto/data:/mosquitto/data"
       - "./mosquitto/log:/mosquitto/log"
