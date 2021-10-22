@@ -68,21 +68,23 @@ docker build --build-arg SERVER_PORT=8080 -t imagename:tag .
 
 ### docker-compose
 
-The docker-compose creates containers for the server and postgresql and links them up.
+The docker-compose file creates containers for the server, postgresql and eclipse-mosquitto and links them up.
 
 ```text
 docker-compose up
 ```
 
+#### Cube-Server & PostgreSQL containers
+
 Environment variables for the images can be set with the .env-file for the node server
-and postgres.env for the database.
+and postgres.env for the database. These have to be located in the root of this repository.
 
 For the .env-file see the documentation above at [server config](#server-config).  
 For postgres.env see the documentation at [postgres config](https://github.com/docker-library/docs/blob/master/postgres/README.md#environment-variables).
 
-The variables PGHOST and PGPORT are set directly in the docker-compose file and
+The variables PGHOST, PGPORT, MQTTURL and MQTTPORT are set directly in the docker-compose file and
 override the variables in the .env-file. This is done to ensure connection to
-the postgres container.
+the PostgreSQL and Mosquitto containers.
 
 When changing the .env-files, make sure to recreate the containers or rebuild the
 images.
@@ -90,4 +92,27 @@ images.
 ```text
 docker-compose up --force-recreate
 docker-compose build --no-cache
+```
+
+#### Mosquitto container
+The Mosquitto server can be customized with the mosquitto.conf file.
+
+The configuration provided with this repository has a listener on port 1883,
+which does not need authentication. This port is exposed to the other containers
+through docker-compose, so that the node-server can communicate with the mosquitto server.
+
+It also has a listener on port 1884 with username/password authentication.
+This port is exposed to the host system through docker-compose, so that other applications
+(e.g. cubes, cube-apps) can access the server. Users and passwords can be
+preconfigured in a passwords (no file type) file.
+The file has to be located in the mosquitto directory.
+
+```text
+./mosquitto/passwords
+--------------------------------------------------------------------------------
+
+user:password
+user2:password2
+...
+
 ```
