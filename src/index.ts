@@ -94,7 +94,7 @@ async function setupServer() {
         await createTokensTable();
         setupPassport();
         //setup mqtt
-        setupMQTT();
+        await setupMQTT();
     } catch(err) {
         console.log(err);
     }

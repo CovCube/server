@@ -11,6 +11,8 @@ var mqttClient: MqttClient;
 
 export async function setupMQTT(): Promise<void> {
     return new Promise(async (resolve, reject) => {
+        console.log('attempting MQTT server connection ...');
+
         //Get broker address
         let mqttUrl: string = process.env.MQTTURL || 'test.mosquitto.org';
         let mqttPort: number = parseInt(process.env.MQTTPORT || '1883');
@@ -18,7 +20,7 @@ export async function setupMQTT(): Promise<void> {
         mqttClient = mqtt.connect('mqtt://'+mqttUrl, {port: mqttPort});
 
         mqttClient.on('connect', async function() {
-            console.log('Connected to MQTT server.');
+            console.log('connected to MQTT server');
 
             //Set event listeners
             mqttClient.on('reconnect', () => logMQTTEvent('Reconnect'));
