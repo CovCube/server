@@ -3,7 +3,7 @@ node_modules
 # typescript
 dist
 # Config files
-*.env
+**/*.env
 # Mosquitto
 mosquitto/data
 mosquitto/log
