@@ -1,5 +1,5 @@
 //type imports
-import { BarebonesUser, User, Token } from "../types";
+import { User, Token } from "../types";
 import { NextFunction, Request, Response } from "express";
 //passport imports
 import passport from "passport";

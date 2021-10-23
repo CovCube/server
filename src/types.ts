@@ -22,11 +22,8 @@ export interface CubeDetailDataObject {
     cube: Cube
 }
 
-export interface BarebonesUser extends Express.User {
-    id: string
-}
-
-export interface User extends BarebonesUser {
+export interface User extends Express.User {
+    id: string,
     name: string,
     password: string
 }
