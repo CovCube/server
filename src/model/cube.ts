@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 //internal imports
 import { pool } from "../index";
 import { checkCubeId, checkSensorArray } from '../utils/input_check_utils';
-import { findSensorIndex, getCubeSensorEndpointObject, getSensorTypesArray } from "../utils/general_utils";
+import { compareSensorTypes, getCubeSensorEndpointObject, getSensorTypesArray } from "../utils/general_utils";
 import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
 
 //Base tables
@@ -269,7 +269,7 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
                 }
 
                 //Update scan interval, if it was changed
-                let sensors_index = old_sensors.findIndex(findSensorIndex,sensor);
+                let sensors_index = old_sensors.findIndex(compareSensorTypes,sensor);
                 if (old_sensors[sensors_index].scanInterval != sensor.scanInterval) {
                     //Persist to database
                     await pool.query(updateCubeSensorsQuery, [cubeId, sensor.type, sensor.scanInterval]);

@@ -16,7 +16,7 @@ export function getSensorTypesArray(sensors: Array<Sensor>): Array<string> {
     return sensorTypes;
 }
 
-export function findSensorIndex(sensor: Sensor) {
+export function compareSensorTypes(sensor: Sensor): boolean {
     //this is the sensor whose index in the array is supposed to be found
     //@ts-ignore
     return sensor.type == this.type;
