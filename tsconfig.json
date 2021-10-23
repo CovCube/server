@@ -7,5 +7,10 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
+    },
+    "typedocOptions": {
+        "entryPoints": ["src"],
+        "entryPointStrategy": "expand",
+        "out": "docs"
     }
 }
