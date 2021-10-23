@@ -105,7 +105,7 @@ export function checkUserIdValidity(userId: string): void {
 /**
  * Check the validity of a password of a [User]{@link types.User}
  * 
- * Can not be undefined
+ * Can not be undefined\
  * Might not be allowed to be empty (depending on canBeEmpty)
  * 
  * @param canBeEmpty says if the password can be empty (default: false)
