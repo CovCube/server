@@ -123,7 +123,7 @@ export function checkPasswordValidity(password: string, canBeEmpty: boolean = fa
 }
 
 /**
- * Checks the validity of a timestamp
+ * Check the validity of a timestamp
  * 
  * Has to be formatted according to [RFC2822]{@link https://datatracker.ietf.org/doc/html/rfc2822#page-14}
  * or [ISO8601]{@link https://www.iso.org/iso-8601-date-and-time-format.html}
