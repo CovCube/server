@@ -1,3 +1,9 @@
+/**
+ * Module for authentication related util methods.
+ * 
+ * @module
+ */
+
 //type imports
 import { User, Token } from "../types";
 import { NextFunction, Request, Response } from "express";
@@ -11,9 +17,14 @@ import bcrypt from "bcrypt";
 import { getUserByUsername, getUserById } from "../model/user";
 import { getTokenByToken } from "../model/token";
 
+/**
+ * Setup the passport strategies and de-/serialization methods.
+ */
 export async function setupPassport():Promise<void> {
 
-    //Use local strategy (username, password)
+    /**
+     * Use local strategy (username, password)'
+     */
     passport.use(new LocalStrategy((username, password, done) => {
         getUserByUsername(username)
             .then(async (user: null | User) => {
@@ -34,7 +45,9 @@ export async function setupPassport():Promise<void> {
             });
     }));
 
-    //Use httpbearer strategy (token)
+    /**
+     * Use httpbearer strategy (token)
+     */
     passport.use(new HttpBearerStrategy((token, done) => {
         getTokenByToken(token)
             .then(async (tokenObj: null | Token) => {
@@ -52,7 +65,9 @@ export async function setupPassport():Promise<void> {
 
     }));
 
-    //Get id from user
+    /**
+     * Get id from user
+     */
     passport.serializeUser((user, done) => {
         //Seems to be a bug in the @types/passport package
         //Where the standard user does not have an ID, but is required to have an id in this method
@@ -60,7 +75,9 @@ export async function setupPassport():Promise<void> {
         done(null, user.id);
     });
 
-    //Get user from id
+    /**
+     * Get user from id
+     */
     passport.deserializeUser(async (id: string, done) => {
 
         getUserById(id)
@@ -77,6 +94,11 @@ export async function setupPassport():Promise<void> {
     });
 }
 
+/**
+ * Middleware to check if a user is authenticated.
+ * 
+ * If not authenticated redirect to the login page.
+ */
 export function authenticateUser(req: Request, res: Response, next: NextFunction) {
     //@ts-ignore
     if (req.isAuthenticated()) {
@@ -86,6 +108,12 @@ export function authenticateUser(req: Request, res: Response, next: NextFunction
     res.redirect(303, '/login');
 }
 
+/**
+ * Compare a [Users]{@link types.User} password with the provided password.
+ * 
+ * @param user the [User]{@link types.User} to be checked against
+ * @param password the provided password
+ */
 export async function comparePassword(user: User, password: string): Promise<boolean> {
     return await bcrypt.compare(password, user.password);
 }
