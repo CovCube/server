@@ -22,12 +22,10 @@ export function compareSensorTypes(sensor: Sensor): boolean {
     return sensor.type == this.type;
 }
 
-export function getCubeSensorEndpointObject(sensors: Array<Sensor>) {
+export function getCubeSensorEndpointObject(sensors: Array<Sensor>): Object {
     let object: Object = {};
 
-
     sensors.forEach((sensor) => {
-        console.log(sensor);
         Object.defineProperty(object, sensor.type, {
             value: {
                 "scanInterval": sensor.scanInterval,
@@ -36,7 +34,6 @@ export function getCubeSensorEndpointObject(sensors: Array<Sensor>) {
             enumerable: true,
             configurable: true
         });
-        console.log(object);
     });
 
     return object;
