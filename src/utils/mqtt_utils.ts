@@ -93,7 +93,7 @@ function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: I
             handleSensorData(topic, message);
             break;
         default:
-            console.log('Unrecognizes topic: ' + topicString);
+            console.log('Unrecognized topic: ' + topicString);
     }
 }
 
