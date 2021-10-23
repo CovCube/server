@@ -6,7 +6,8 @@ import bcrypt from "bcrypt";
 import { v5 as uuidv5, validate as uuidvalidate } from "uuid";
 //internal imports
 import { pool } from "..";
-import { checkPasswordValidity, comparePassword } from "../utils/passport_utils";
+import { comparePassword } from "../utils/passport_utils";
+import { checkUserIdValidity, checkPasswordValidity } from "../utils/input_check_utils";
 
 //User table
 const createUsersTableQuery: string = "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY, name CHAR(64) UNIQUE NOT NULL, password CHAR(60) NOT NULL)";
@@ -84,13 +85,12 @@ export function getUserByUsername(username: string): Promise<User> {
 
 export function getUserById(id: string): Promise<User> {
     return new Promise(async (resolve, reject) => {
-
+        
         //check id
-        if (id === undefined || !id.trim()) {
-            return reject("id is undefined or empty");
-        }
-        if (!uuidvalidate(id)) {
-            return reject("id is not a valid uuid");
+        try {
+            checkUserIdValidity(id);
+        } catch(e) {
+            reject(e);
         }
 
         try {
@@ -112,15 +112,17 @@ export function getUserById(id: string): Promise<User> {
 export function addUser(name: string, password: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
 
-        //check name
-        if (name === undefined || !name.trim()) {
-            return reject("username is undefined or empty");
+        try {
+            //check name
+            if (name === undefined || !name.trim()) {
+                throw(new Error("username is undefined or empty"));
+            }
+            //check password
+            checkPasswordValidity(password);
+        } catch(e) {
+            reject(e);
         }
-        //check password
-        if (!checkPasswordValidity(password)) {
-            return reject("password is not valid");
-        }
-
+        
         //Create id from the username
         let id: string = uuidv5(name, uuidNamespace);
         //Hash the password
@@ -138,22 +140,23 @@ export function addUser(name: string, password: string): Promise<void> {
 
 export function updateUser(inputUser: User): Promise<User> {
     return new Promise(async (resolve, reject) => {
-        console.log(inputUser);
+
         //Check input
-        if (inputUser === undefined) {
-            return reject("inputUser is undefined");
-        }
-        if (inputUser.id === undefined || !inputUser.id.trim()) {
-            return reject("user id is undefined or empty");
-        }
-        if (!uuidvalidate(inputUser.id)) {
-            return reject("id is not a valid uuid");
-        }
-        if (inputUser.name === undefined || !inputUser.name.trim()) {
-            return reject("user name is undefined or empty");
-        }
-        if (inputUser.password === undefined) {
-            return reject("user password is undefined");
+        try {
+            
+            if (inputUser === undefined) {
+                throw(new Error("inputUser is undefined"));
+            }
+            
+            checkUserIdValidity(inputUser.id);
+            
+            if (inputUser.name === undefined || !inputUser.name.trim()) {
+                throw(new Error("user name is undefined or empty"));
+            }
+
+            checkPasswordValidity(inputUser.password, true);
+        } catch(e) {
+            reject(e);
         }
 
         try {
@@ -166,14 +169,12 @@ export function updateUser(inputUser: User): Promise<User> {
                 updatedUser.name = inputUser.name;
             }
 
-            //Check if password is valid
-            if (checkPasswordValidity(inputUser.password)) {
-                //Check if password has changed
-                let passwordCheck = await comparePassword(oldUser, inputUser.password);
-                if (!passwordCheck) {
-                    updatedUser.password = await bcrypt.hash(inputUser.password, saltRounds);
-                }
+            //Check if password has changed
+            let passwordCheck = await comparePassword(oldUser, inputUser.password);
+            if (!passwordCheck) {
+                updatedUser.password = await bcrypt.hash(inputUser.password, saltRounds);
             }
+            
             //Commit new user data
             await pool.query(updateUserQuery, [updatedUser.id, updatedUser.name, updatedUser.password])
             
@@ -188,14 +189,15 @@ export function deleteUser(user: User): Promise<void> {
     return new Promise(async (resolve, reject) => {
 
         //Check input
-        if (user === undefined) {
-            return reject("inputUser is undefined");
-        }
-        if (user.id === undefined || !user.id.trim()) {
-            return reject("user id is undefined or empty");
-        }
-        if (!uuidvalidate(user.id)) {
-            return reject("id is not a valid uuid");
+        try {
+            
+            if (user === undefined) {
+                throw(new Error("inputUser is undefined"));
+            }
+            
+            checkUserIdValidity(user.id);
+        } catch(e) {
+            reject(e);
         }
 
         try {

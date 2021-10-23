@@ -89,17 +89,3 @@ export function authenticateUser(req: Request, res: Response, next: NextFunction
 export async function comparePassword(user: User, password: string): Promise<boolean> {
     return await bcrypt.compare(password, user.password);
 }
-
-export function checkPasswordValidity(password: string): boolean {
-
-    //Check if password is undefined
-    if (password === undefined) {
-        return false;
-    }
-    //Check if password empty or only spaces
-    if (!password.trim()) {
-        return false;
-    }
-
-    return true;
-}

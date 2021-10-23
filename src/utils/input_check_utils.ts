@@ -82,6 +82,47 @@ export function checkTokenValidity(token: string): void {
 }
 
 /**
+ * Check the validity of a user id of a [User]{@link types.User}
+ * 
+ * Can not be undefined or empty\
+ * Has to be a valid UUID
+ * 
+ * @param userId the id of a [User]{@link types.User}
+ */
+export function checkUserIdValidity(userId: string): void {
+
+    // Check if undefined or empty
+    if (userId === undefined || !userId.trim()) {
+        throw(new Error("id is undefined or empty"));
+    }
+
+    // Check if valid uuid
+    if (!uuidvalidate(userId)) {
+        throw(new Error("id is not a valid uuid"));
+    }
+}
+
+/**
+ * Check the validity of a password of a [User]{@link types.User}
+ * 
+ * Can not be undefined
+ * Might not be allowed to be empty (depending on canBeEmpty)
+ * 
+ * @param canBeEmpty says if the password can be empty (default: false)
+ */
+export function checkPasswordValidity(password: string, canBeEmpty: boolean = false): void {
+
+    //Check if password is undefined
+    if (password === undefined) {
+        throw(new Error("password is undefined"));
+    }
+    //Check if password empty or only spaces
+    if (!canBeEmpty && !password.trim()) {
+        throw(new Error("password is empty or consists only of spaces"));
+    }
+}
+
+/**
  * Checks the validity of a timestamp
  * 
  * Has to be formatted according to [RFC2822]{@link https://datatracker.ietf.org/doc/html/rfc2822#page-14}
