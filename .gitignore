@@ -1,9 +1,13 @@
+# VS Code
+.vscode
 # npm
 node_modules
 # typescript
 dist
 # Config files
 **/*.env
+# Documentation
+docs
 # Mosquitto
 mosquitto/data
 mosquitto/log
