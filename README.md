@@ -50,7 +50,7 @@ See the [postgresql documentation](https://www.postgresql.org/docs/9.1/libpq-env
 Connection to the MQTT server is established though these variables:
 
 ```text
-MQTTURL = 'mqtt://test.mosquitto.org'
+MQTTURL = 'test.mosquitto.org'
 MQTTPORT = 1883
 ```
 
