@@ -12,6 +12,12 @@ export interface CubeVariables {
     actuators: string
 }
 
+export interface App {
+    name: string,
+    address: string,
+    token: string
+}
+
 export interface Sensor {
     type: string,
     scanInterval: number

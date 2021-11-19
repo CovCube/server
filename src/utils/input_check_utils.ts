@@ -9,6 +9,9 @@ import { Sensor } from '../types';
 //external imports
 import { validate as uuidvalidate } from "uuid";
 
+// Constants
+const URL_REGEX: RegExp = /^[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
+
 /**
  * Check validity of the id of a [Cube]{@link types.Cube}
  * 
@@ -50,6 +53,27 @@ export function checkSensorArray(sensors: Array<Sensor>): void {
             throw(new Error ("sensor scan_interval is not valid."))
         }
     });
+}
+
+/**
+ * Check validity of the name of an [App]{@link types.App}
+ * 
+ * @param name of an [App]{@link types.App}
+ */
+export function checkAppName(name: string): void {
+    if (name === undefined || !name.trim()) {
+        throw new Error("name is undefined or empty");
+    }
+}
+
+export function checkAppAddress(address: string): void {
+    if (address === undefined || !address.trim()) {
+        throw new Error("address is undefined or empty");
+    }
+
+    if (!URL_REGEX.test(address)) {
+        throw new Error("address not a valid URL");
+    }
 }
 
 /**

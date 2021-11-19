@@ -19,6 +19,7 @@ import passport from "passport";
 // Internal imports
 import { createCubeTables } from "./model/cube";
 import { createSensorDataTable } from "./model/sensor_data";
+import { createAppsTable } from "./model/app";
 import { createUserTable } from "./model/user";
 import { createTokensTable } from "./model/token";
 import { setupPassport } from "./utils/passport_utils";
@@ -102,6 +103,8 @@ async function setupServer(): Promise<void> {
         // Setup cube database
         await createCubeTables();
         await createSensorDataTable();
+        // Setup app database
+        await createAppsTable();
         // Setup passport
         await createUserTable();
         await createTokensTable();
