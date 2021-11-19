@@ -4,7 +4,6 @@ import { QueryResult } from 'pg';
 import { AxiosResponse } from "axios";
 //other external imports
 import format from 'pg-format';
-import ip from "ip";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 //internal imports
@@ -160,13 +159,14 @@ export async function addCube(targetIP: string, location: string): Promise<void>
         return Promise.reject("location is undefined or empty");
     }
 
-    //Get own ip address
-    let serverIP: string = ip.address();
+    //Get mqtt server address
+    let serverAddress: string = process.env.MQTT_PUBLIC || process.env.MQTTURL || 'test.mosquitto.org';
+    let serverPort: number = parseInt(process.env.MQTT_PUBLICPORT || process.env.MQTTPORT || '1883');
     //Generate random id for cube
     let id: string = uuidv4();
 
     let data = {
-        'address': serverIP,
+        'address': serverAddress+serverPort,
         'uuid': id,
         'location': location.trim()
     }
