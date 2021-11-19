@@ -94,6 +94,9 @@ The variables PGHOST, PGPORT, MQTTURL and MQTTPORT are set directly in the docke
 override the variables in the .env-file. This is done to ensure connection to
 the PostgreSQL and Mosquitto containers.
 
+The variables MQTT_PUBLIC and MQTT_PUBLICPORT should be set in the .env file, to make
+sure cubes can connect to Mosquitto form outside the docker network.
+
 When changing the .env-files, make sure to recreate the containers or rebuild the
 images.
 
