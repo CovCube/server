@@ -94,6 +94,18 @@ table {
     border-spacing: 0 10px;
 }
 
+table colgroup col:first-child {
+    width: 20%;
+}
+
+table colgroup col:nth-child(2) {
+    width: 70%;
+}
+
+table colgroup col:nth-last-child(2), table colgroup col:last-child {
+    width: 5%;
+}
+
 table thead > tr {
     background-color: var(--main-color);
     color: #ffffff;
