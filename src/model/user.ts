@@ -48,6 +48,7 @@ export function createUserTable(): Promise<void> {
                 console.warn("created admin user with:");
                 console.log("    username: admin");
                 console.log("    password: admin");
+                console.warn("you should change the password of the admin user right away")
             }
 
             return resolve();
