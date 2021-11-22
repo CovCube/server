@@ -11,14 +11,14 @@ import { App } from "../types";
 import express from "express";
 // Internale import
 import { authenticateUser } from "../utils/passport_utils";
-import { addApp, deleteApp, getAppByName, getApps } from "../model/app";
+import { addApp, deleteApp, getApps } from "../model/app";
 
 export var router: Router = express.Router();
 // Routes
 router.use(authenticateUser);
 router.get('/',  getAppsView);
-router.post('/', addAppEndpoint);
-router.get('/delete/:name', deleteAppEndpoint);
+router.post('/', addAppView);
+router.get('/delete/:name', deleteAppView);
 
 /**
  * Renders the view of the overview of all apps
@@ -50,7 +50,7 @@ async function getAppsView(req: Request, res: Response): Promise<void> {
  * @param req 
  * @param res 
  */
-async function addAppEndpoint(req: Request, res: Response): Promise<void> {
+async function addAppView(req: Request, res: Response): Promise<void> {
 
     let name: string = req.body["name"];
     let address: string = req.body["address"];
@@ -72,12 +72,12 @@ async function addAppEndpoint(req: Request, res: Response): Promise<void> {
 /**
  * Endpoint for deleting an app
  * 
- * Reidrect to the app overview
+ * Reidrects to the app overview
  * 
  * @param req 
  * @param res 
  */
-async function deleteAppEndpoint(req: Request, res: Response): Promise<void> {
+async function deleteAppView(req: Request, res: Response): Promise<void> {
 
     let name: string = req.params["name"];
 
