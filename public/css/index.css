@@ -1,6 +1,7 @@
 :root {
     --main-color: #7383bf;
     --contrast-color: #272D2D;
+    --cancel-color: rgb(139, 6, 6);
     --window-color: #f9f9f9;
     --bg-color: #FFFCFF;
     
@@ -134,6 +135,14 @@ footer {
     color: var(--contrast-color);
 }
 
+.fa-plus:hover, .fa-edit:hover, .fa-check:hover {
+    color: var(--main-color);
+}
+
+.fa-times:hover, .fa-trash:not(.fa-disabled):hover {
+    color: var(--cancel-color);
+}
+
 .fa-button {
     cursor: pointer;
 }
@@ -152,7 +161,7 @@ input.fa-button {
     cursor: not-allowed;
 }
 
-input[type = submit], input[type = reset], input[type = button]  {
+input[type = submit]:not(.fa-button), input[type = reset]:not(.fa-button), input[type = button]:not(.fa-button) {
     cursor: pointer;
 
     background-color: var(--main-color);
@@ -167,7 +176,14 @@ input[type = submit], input[type = reset], input[type = button]  {
     padding: 0.75em 1em;
 }
 
-input[type = submit]:hover, input[type = reset]:hover, input[type = button]:hover  {
+input[type = submit]:not(.fa-button):hover, input[type = reset]:not(.fa-button):hover, input[type = button]:not(.fa-button):hover {
     background-color: var(--window-color);
+}
+
+input[type = submit]:hover, input[type = reset]:hover, input[type = button]:hover {
     color: var(--main-color);
+}
+
+input[type = text], input[type = password] {
+    padding: 0.3em;
 }
