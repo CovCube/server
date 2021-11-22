@@ -1,0 +1,62 @@
+{{!Add html-head}}
+{{#> html_head}}
+    {{!Add custom scripts}}
+    <link rel="stylesheet" href="/static/css/apps-list.css">
+{{/html_head}}
+
+<body>
+    {{!Add header}}
+    {{> header}}
+
+    {{!Fill content}}
+    <div id="content">
+    <h1>Apps</h1>
+        <table>
+            <thead>
+                <th>Name</th>
+                <th>Address</th>
+                <th></th>
+                <th></th>
+            </thead>
+            {{#each users}}
+                <tr>
+                    <td>
+                        <span>{{this.name}}</span>
+                    </td>
+                    <td>
+                        <span>{{this.address}}</span>
+                    </td>
+                    <td></td>
+                    <td>
+                        <a href="/apps/delete/{{this.name}}">
+                            <img id="{{this.name}}_delete" class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                        </a>
+                    </td>
+                </tr>
+            {{/each}}
+                <tr>
+                    <form action="/apps" method="post" id="new_app_form">
+                        <td>
+                            <input id="new_app_name_input" type="hidden" name="name" placeholder="name">
+                        </td>
+                        <td>
+                            <input id="new_app_address_input" type="hidden" name="address" placeholder="address">
+                        </td>
+                        <td>
+                            <input id="new_app_submit" type="hidden" name="submit" value="Submit" />
+                        </td>
+                        <td>
+                            <img id="new_app_add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
+                            <img id="new_app_exit" src="/static/img/minus-solid.svg" height="20px" alt="Add" style="display: none;">
+                        </td>
+                    </form>
+                </tr>
+        </table>
+    </div>
+
+    {{!Add footer}}
+    {{> footer}}
+
+    <script src="/static/js/apps-list.js"></script>
+</body>
+</html>
