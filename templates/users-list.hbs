@@ -11,58 +11,54 @@
     {{!Fill content}}
     <div id="content">
     <h1>Users</h1>
-    {{#if users}}
-        <table>
-            <thead>
-                <th>Name</th>
-                <th>Password</th>
-                <th></th>
-                <th></th>
-            </thead>
-            {{#each users}}
-                <tr>
-                    <form action="/users/{{this.id}}" method="post" id="{{this.id}}_form">
-                        <td>
-                            <span id="{{this.id}}_name_span">{{this.name}}</span>
-                            <input id="{{this.id}}_name_input" type="hidden" name="name" value="{{this.name}}" placeholder="username">
-                        </td>
-                        <td>
-                            <input id="{{this.id}}_password_input" type="hidden" name="password" placeholder="new password">
-                        </td>
-                        <td>
-                            <img id="{{this.id}}_edit" class="icon-edit" src="/static/img/edit-regular.svg" height="20px" alt="Edit">
-                            <input id="{{this.id}}_submit" type="hidden" name="submit" value="Submit" />
-                        </td>
-                        <td>
-                            <a href="/users/delete/{{this.id}}">
-                                <img id="{{this.id}}_delete" class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
-                                <input id="{{this.id}}_reset" type="hidden" name="reset" value="Reset" />
-                            </a>
-                        </td>
-                    </form>
-                </tr>
-            {{/each}}
-                <tr>
-                    <form action="/users" method="post" id="new_user_form">
-                        <td>
-                            <input id="new_user_name_input" type="hidden" name="name" placeholder="username">
-                        </td>
-                        <td>
-                            <input id="new_user_password_input" type="hidden" name="password" placeholder="password">
-                        </td>
-                        <td>
-                            <input id="new_user_submit" type="hidden" name="submit" value="Submit" />
-                        </td>
-                        <td>
-                            <img id="new_user_add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
-                            <img id="new_user_exit" src="/static/img/minus-solid.svg" height="20px" alt="Add" style="display: none;">
-                        </td>
-                    </form>
-                </tr>
-        </table>
-    {{else}}
-        <p>There aren't any users!</p>
-    {{/if}}
+    <table>
+        <thead>
+            <th>Name</th>
+            <th>Password</th>
+            <th></th>
+            <th></th>
+        </thead>
+        {{#each users}}
+            <tr>
+                <form action="/users/{{this.id}}" method="post" id="{{this.id}}_form">
+                    <td>
+                        <span id="{{this.id}}_name_span">{{this.name}}</span>
+                        <input id="{{this.id}}_name_input" type="hidden" name="name" value="{{this.name}}" placeholder="username">
+                    </td>
+                    <td>
+                        <input id="{{this.id}}_password_input" type="hidden" name="password" placeholder="new password">
+                    </td>
+                    <td>
+                        <img id="{{this.id}}_edit" class="icon-edit" src="/static/img/edit-regular.svg" height="20px" alt="Edit">
+                        <input id="{{this.id}}_submit" type="hidden" name="submit" value="Submit" />
+                    </td>
+                    <td>
+                        <a href="/users/delete/{{this.id}}">
+                            <img id="{{this.id}}_delete" class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                            <input id="{{this.id}}_reset" type="hidden" name="reset" value="Reset" />
+                        </a>
+                    </td>
+                </form>
+            </tr>
+        {{/each}}
+            <tr>
+                <form action="/users" method="post" id="new_user_form">
+                    <td>
+                        <input id="new_user_name_input" type="hidden" name="name" placeholder="username">
+                    </td>
+                    <td>
+                        <input id="new_user_password_input" type="hidden" name="password" placeholder="password">
+                    </td>
+                    <td>
+                        <input id="new_user_submit" type="hidden" name="submit" value="Submit" />
+                    </td>
+                    <td>
+                        <img id="new_user_add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
+                        <img id="new_user_exit" src="/static/img/minus-solid.svg" height="20px" alt="Add" style="display: none;">
+                    </td>
+                </form>
+            </tr>
+    </table>
     </div>
 
     {{!Add footer}}
