@@ -1,6 +1,6 @@
 //type imports
 import { Router, Request, Response } from "express";
-import { User } from "../types";
+import { User, ViewUser } from "../types";
 //express imports
 import express from "express";
 //internal imports
@@ -14,6 +14,19 @@ router.use(authenticateUser);
 router.get('/', (req: Request, res: Response) => {
     getUsers()
         .then((users) => {
+            // Remove option for an user to delete themself
+            // @ts-ignore
+            if(req.session.passport.user) {
+                users.forEach((user: ViewUser) => {
+                    // @ts-ignore
+                    if (user.id === req.session.passport.user) {
+                        user.deleteable = false;
+                    } else {
+                        user.deleteable = true;
+                    }
+                });
+            }
+
             res.render("users-list", {users: users});
         })
         .catch((e: Error) => {

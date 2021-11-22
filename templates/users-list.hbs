@@ -33,10 +33,12 @@
                             <input id="{{this.id}}_submit" type="hidden" name="submit" value="Submit" />
                         </td>
                         <td>
-                            <a href="/users/delete/{{this.id}}">
-                                <img id="{{this.id}}_delete" class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
-                                <input id="{{this.id}}_reset" type="hidden" name="reset" value="Reset" />
-                            </a>
+                            {{#if this.deleteable}}
+                                <a href="/users/delete/{{this.id}}">
+                                    <img id="{{this.id}}_delete" class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                                    <input id="{{this.id}}_reset" type="hidden" name="reset" value="Reset" />
+                                </a>                                
+                            {{/if}}
                         </td>
                     </form>
                 </tr>
