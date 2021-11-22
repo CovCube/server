@@ -4,6 +4,7 @@ import { User, ViewUser } from "../types";
 //express imports
 import express from "express";
 //internal imports
+import { Admin } from "../model/user";
 import { authenticateUser } from "../utils/passport_utils";
 import { getUsers, getUserById, deleteUser, updateUser, addUser } from "../model/user";
 
@@ -19,7 +20,7 @@ router.get('/', (req: Request, res: Response) => {
             if(req.session.passport.user) {
                 users.forEach((user: ViewUser) => {
                     // @ts-ignore
-                    if (user.id === req.session.passport.user || user.name.trim() === "admin") {
+                    if (user.id === req.session.passport.user || user.id === Admin.id) {
                         user.deleteable = false;
                     } else {
                         user.deleteable = true;
@@ -81,9 +82,8 @@ router.get('/delete/:user_id', async (req: Request, res: Response) => {
             if (user.id === req.session.passport.user) {
                 return res.status(501).send("an user can not delete themself");
             }
-            console.log(user);
             // @ts-ignore
-            if (user.name.trim() === "admin") {
+            if (user.id === Admin.id) {
                 return res.status(501).send("admin user can not be deleted");
             }
         }
