@@ -193,5 +193,8 @@ input[type = submit]:hover, input[type = reset]:hover, input[type = button]:hove
 }
 
 input[type = text], input[type = password] {
+    border: 0;
+    border-bottom: 1px solid var(--contrast-color);
+    
     padding: 0.3em;
 }
