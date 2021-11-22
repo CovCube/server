@@ -35,10 +35,10 @@
                         <td>
                             {{#if this.deleteable}}
                                 <a href="/users/delete/{{this.id}}">
-                                    <i id="{{this.id}}_delete" class="fas fa-user-minus fa-lg fa-button"></i>
+                                    <i id="{{this.id}}_delete" class="fas fa-trash fa-lg fa-button"></i>
                                 </a>
                             {{else}}
-                                <i id="{{this.id}}_delete" class="fas fa-user-minus fa-lg fa-button fa-disabled"></i>
+                                <i id="{{this.id}}_delete" class="fas fa-trash fa-lg fa-button fa-disabled"></i>
                             {{/if}}
                             <i id="{{this.id}}_cancel" class="fas fa-times fa-lg fa-button" style="display: none;"></i>
                         </td>
@@ -57,7 +57,7 @@
                             <input id="new_user_submit" class="fa-button" type="hidden" name="submit" value="&#xf00c;">
                         </td>
                         <td>
-                            <i id="new_user_add" class="fas fa-user-plus fa-lg fa-button"></i>
+                            <i id="new_user_add" class="fas fa-plus fa-lg fa-button"></i>
                             <i id="new_user_exit" class="fas fa-times fa-lg fa-button" style="display: none;"></i>
                         </td>
                     </form>
