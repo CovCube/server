@@ -19,7 +19,7 @@ router.get('/', (req: Request, res: Response) => {
             if(req.session.passport.user) {
                 users.forEach((user: ViewUser) => {
                     // @ts-ignore
-                    if (user.id === req.session.passport.user) {
+                    if (user.id === req.session.passport.user || user.name.trim() === "admin") {
                         user.deleteable = false;
                     } else {
                         user.deleteable = true;
@@ -79,7 +79,12 @@ router.get('/delete/:user_id', async (req: Request, res: Response) => {
         if(req.session.passport.user) {
             // @ts-ignore
             if (user.id === req.session.passport.user) {
-                res.status(501).send("an user can not delete themself");
+                return res.status(501).send("an user can not delete themself");
+            }
+            console.log(user);
+            // @ts-ignore
+            if (user.name.trim() === "admin") {
+                return res.status(501).send("admin user can not be deleted");
             }
         }
 
