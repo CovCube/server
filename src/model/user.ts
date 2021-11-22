@@ -45,6 +45,9 @@ export function createUserTable(): Promise<void> {
                 let admin_username: string = process.env.ADMINUSERNAME || "admin";
                 let admin_password: string = process.env.ADMINPASSWORD || "admin";
                 await addUser(admin_username, admin_password);
+                console.warn("created admin user with:");
+                console.log("    username: admin");
+                console.log("    password: admin");
             }
 
             return resolve();
