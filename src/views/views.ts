@@ -6,6 +6,7 @@ import express from "express";
 import { router as passportViewsRouter } from "./passport_views";
 import { router as cubeViewsRouter } from "./cubes_views";
 import { router as userViewsRouter } from "./user_views";
+import { router as appViewsRouter } from "./app_views";
 import { router as tokenViewsRouter } from "./token_views";
 
 //Export the router
@@ -16,4 +17,5 @@ router.use('/', passportViewsRouter)
 router.get('/', (req: Request, res: Response) => {res.redirect(303, '/cubes')})
 router.use('/cubes', cubeViewsRouter);
 router.use('/users', userViewsRouter);
+router.use('/apps', appViewsRouter);
 router.use('/tokens', tokenViewsRouter);
