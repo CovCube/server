@@ -74,6 +74,15 @@ router.get('/delete/:user_id', async (req: Request, res: Response) => {
     if(!user) {
         res.status(404).send("user does not exist");
     } else {
+        // Make sure an user can not delete themself
+        // @ts-ignore
+        if(req.session.passport.user) {
+            // @ts-ignore
+            if (user.id === req.session.passport.user) {
+                res.status(501).send("an user can not delete themself");
+            }
+        }
+
         await deleteUser(user)
                 .catch((e: Error) => {
                     console.log(e.stack);
