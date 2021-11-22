@@ -129,3 +129,25 @@ table td:last-of-type {
 
 footer {
 }
+
+.fas {
+    color: var(--contrast-color);
+}
+
+.fa-button {
+    cursor: pointer;
+}
+
+input.fa-button {
+    font-family: FontAwesome;
+    background-color: inherit;
+    border: 0;
+}
+
+.fa-disabled {
+    color: grey;
+}
+
+.fa-button.fa-disabled {
+    cursor: not-allowed;
+}

@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll(".icon-edit").forEach(element => {
+    document.querySelectorAll(".fa-edit").forEach(element => {
         element.addEventListener('click', editUserEventHandler);
     });
 
@@ -20,7 +20,27 @@ function editUserEventHandler(event) {
     document.getElementById(userId+"_password_input").type = 'password';
     //Show submit/reset buttons
     document.getElementById(userId+"_submit").type = 'submit';
-    document.getElementById(userId+"_reset").type = 'reset';
+    document.getElementById(userId+"_cancel").style.display = '';
+
+    // Add event listener to cancel button
+    document.getElementById(userId+"_cancel").addEventListener('click', cancelEditUserEventHandler);
+}
+
+function cancelEditUserEventHandler(event) {
+    let userId = event.target.id.split("_")[0];
+
+    // Hide input fields
+    document.getElementById(userId+"_name_input").type = 'hidden';
+    document.getElementById(userId+"_password_input").type = 'hidden';
+    // Hide submit/reset buttons
+    document.getElementById(userId+"_submit").type = 'hidden';
+    document.getElementById(userId+"_cancel").style.display = 'none';
+    // Show name span
+    document.getElementById(userId+"_name_span").style.display = '';
+    // Show buttons
+    document.getElementById(userId+"_edit").style.display = '';
+    document.getElementById(userId+"_delete").style.display = '';
+    
 }
 
 function addUserEventListenter(event) {
