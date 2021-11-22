@@ -84,7 +84,6 @@ export function getUsers(): Promise<Array<User>> {
         try {
             let res: QueryResult = await pool.query(getUsersQuery);
             let users: Array<User> = res.rows;
-            console.log(Admin.id);
             users.forEach(user => {
                 user.name = user.name.trim();
             });
