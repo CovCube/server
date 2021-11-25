@@ -1,12 +1,15 @@
 :root {
     --main-color: #7383bf;
     --contrast-color: #272D2D;
+    --cancel-color: rgb(139, 6, 6);
     --window-color: #f9f9f9;
     --bg-color: #FFFCFF;
     
     --shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
     
     box-sizing: border-box;
+
+    font-family: "Calibri", "Tahoma", "sans-serif";
 }
 
 header, footer {
@@ -93,6 +96,14 @@ table {
     border-spacing: 0 10px;
 }
 
+table colgroup col:first-child {
+    width: 20%;
+}
+
+table colgroup col:nth-last-child(2), table colgroup col:last-child {
+    width: 5%;
+}
+
 table thead > tr {
     background-color: var(--main-color);
     color: #ffffff;
@@ -128,4 +139,64 @@ table td:last-of-type {
 }
 
 footer {
+}
+
+.fas {
+    color: var(--contrast-color);
+}
+
+.fa-plus:hover, .fa-edit:hover, .fa-check:hover {
+    color: var(--main-color);
+}
+
+.fa-times:hover, .fa-trash:not(.fa-disabled):hover {
+    color: var(--cancel-color);
+}
+
+.fa-button {
+    cursor: pointer;
+}
+
+input.fa-button {
+    font-family: FontAwesome;
+    background-color: inherit;
+    border: 0;
+}
+
+.fa-disabled {
+    color: grey;
+}
+
+.fa-button.fa-disabled {
+    cursor: not-allowed;
+}
+
+input[type = submit]:not(.fa-button), input[type = reset]:not(.fa-button), input[type = button]:not(.fa-button) {
+    cursor: pointer;
+
+    background-color: var(--main-color);
+    color: var(--bg-color);
+    transition: background-color 300ms, color 150ms;
+    border: 0;
+    border-radius: 3px;
+    box-shadow: 0px 3px 5px 0px lightgrey;
+
+    font-weight: bold;
+
+    padding: 0.75em 1em;
+}
+
+input[type = submit]:not(.fa-button):hover, input[type = reset]:not(.fa-button):hover, input[type = button]:not(.fa-button):hover {
+    background-color: var(--window-color);
+}
+
+input[type = submit]:hover, input[type = reset]:hover, input[type = button]:hover {
+    color: var(--main-color);
+}
+
+input[type = text], input[type = password] {
+    border: 0;
+    border-bottom: 1px solid var(--contrast-color);
+    
+    padding: 0.3em;
 }

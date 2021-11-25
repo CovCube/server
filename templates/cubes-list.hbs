@@ -5,8 +5,8 @@
 {{/html_head}}
 
 <body>
-    {{!Add header}}
-    {{> header}}
+    {{!Add navbar}}
+    {{> navbar}}
 
     {{!Fill content}}
     <div id="content">
@@ -15,6 +15,12 @@
     
         {{#if cubes}}
             <table>
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                </colgroup>
                 <thead>
                     <th>Location</th>
                     <th>Id</th>
@@ -27,12 +33,12 @@
                         <td>{{this.id}}</td>
                         <td>
                             <a href="cubes/{{this.id}}">
-                                <img src="/static/img/edit-regular.svg" height="20px" alt="Edit">
+                                <i class="fas fa-edit fa-lg fa-button"></i>
                             </a>
                         </td>
                         <td>
                             <a href="cubes/delete/{{this.id}}">
-                                <img src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                                <i class="fas fa-trash fa-lg fa-button"></i>
                             </a>
                         </td>
                     </tr>
@@ -44,6 +50,12 @@
 
         <h1>Available Cubes</h1>
         <table>
+            <colgroup>
+                <col>
+                <col>
+                <col>
+                <col>
+            </colgroup>
             <thead>
                 <th>IP-Address</th>
                 <th>Location</th>
@@ -58,8 +70,9 @@
                     <td>
                         <input id="new_cube_location_input" type="text" name="location" placeholder="location">
                     </td>
+                    <td></td>
                     <td>
-                        <input id="new_cube_submit" type="submit" name="submit" value="Submit" />
+                        <input id="new_cube_submit" class="fa-button" type="submit" name="submit" value="&#xf00c;">
                     </td>
                 </form>
             </tr>

@@ -34,6 +34,13 @@ export interface User extends Express.User {
     password: string
 }
 
+export interface ViewUser extends User {
+    id: string,
+    name: string,
+    password: string,
+    deleteable?: boolean
+}
+
 export interface Token {
     token: string,
     owner: string

@@ -49,8 +49,6 @@
     padding: 2px 5px;
 
     background-color: var(--window-color);
-    border: 0;
-    border-bottom: 1px solid var(--contrast-color);
 
     font-size: 1.1em;
 }

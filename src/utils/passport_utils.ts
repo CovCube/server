@@ -105,6 +105,10 @@ export function authenticateUser(req: Request, res: Response, next: NextFunction
         return next();
     }
 
+    if (req.baseUrl !== '') {
+        return res.redirect(303, '/login?redirect='+encodeURIComponent(req.baseUrl));
+    }
+
     res.redirect(303, '/login');
 }
 

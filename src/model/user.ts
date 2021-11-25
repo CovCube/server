@@ -23,10 +23,21 @@ const getUserWithUsernameQuery: string = 'SELECT * FROM users WHERE name=$1';
 const addUserQuery: string = "INSERT INTO users (id, name, password) VALUES ($1, $2, $3)";
 const updateUserQuery: string = "UPDATE users SET name=$2, password=$3 WHERE id=$1";
 const deleteUserQuery: string = "DELETE FROM users WHERE id=$1";
+const createAdminTableQuery: string = "CREATE TABLE IF NOT EXISTS admin (id UUID PRIMARY KEY, FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE)";
+const setAdminIdQuery: string = "INSERT INTO admin (id) VALUES ($1)";
+const getAdminIdQuery: string = "SELECT * FROM admin";
 // bcrypt
 const saltRounds: number = parseInt(process.env.BCRYPTSALTROUNDS || "10");
 // uuid
 const uuidNamespace: string = process.env.UUIDNAMESPACE || "976eacb6-ce9b-4eda-9d44-55c942464a38";
+// Set admin user id
+export class Admin {
+    static id: string;
+
+    get id(): string {
+        return this.id;
+    }
+}
 
 /**
  * Creates the necessary database tables for user management.
@@ -38,14 +49,23 @@ export function createUserTable(): Promise<void> {
     return new Promise(async (resolve, reject) => {
         try {
             await pool.query(createUsersTableQuery);
+            await pool.query(createAdminTableQuery);
             let users: Array<User> = await getUsers();
 
             // If no user is present, add an admin user
             if (users.length == 0) {
                 let admin_username: string = process.env.ADMINUSERNAME || "admin";
                 let admin_password: string = process.env.ADMINPASSWORD || "admin";
-                await addUser(admin_username, admin_password);
+                let admin: User = await addUser(admin_username, admin_password);
+                await pool.query(setAdminIdQuery, [admin.id]);
+                
+                console.warn("created admin user with:");
+                console.log("    username: admin");
+                console.log("    password: admin");
+                console.warn("you should change the password of the admin user right away")
             }
+
+            Admin.id = (await pool.query(getAdminIdQuery)).rows[0].id;
 
             return resolve();
         } catch(err) {
@@ -64,7 +84,6 @@ export function getUsers(): Promise<Array<User>> {
         try {
             let res: QueryResult = await pool.query(getUsersQuery);
             let users: Array<User> = res.rows;
-
             users.forEach(user => {
                 user.name = user.name.trim();
             });
@@ -146,7 +165,7 @@ export function getUserById(id: string): Promise<User> {
  * @returns 
  */
 
-export function addUser(name: string, password: string): Promise<void> {
+export function addUser(name: string, password: string): Promise<User> {
     return new Promise(async (resolve, reject) => {
 
         try {
@@ -168,7 +187,11 @@ export function addUser(name: string, password: string): Promise<void> {
         try {
             await pool.query(addUserQuery, [id, name, hashed_password]);
 
-            return resolve();
+            return resolve({
+                id: id,
+                name: name,
+                password: ""
+            });
         } catch (err) {
             return reject(err);
         };

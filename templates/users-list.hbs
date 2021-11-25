@@ -5,14 +5,19 @@
 {{/html_head}}
 
 <body>
-    {{!Add header}}
-    {{> header}}
+    {{!Add navbar}}
+    {{> navbar}}
 
     {{!Fill content}}
     <div id="content">
-    <h1>Users</h1>
-    {{#if users}}
+        <h1>Users</h1>
         <table>
+            <colgroup>
+                <col>
+                <col>
+                <col>
+                <col>
+            </colgroup>
             <thead>
                 <th>Name</th>
                 <th>Password</th>
@@ -30,14 +35,18 @@
                             <input id="{{this.id}}_password_input" type="hidden" name="password" placeholder="new password">
                         </td>
                         <td>
-                            <img id="{{this.id}}_edit" class="icon-edit" src="/static/img/edit-regular.svg" height="20px" alt="Edit">
-                            <input id="{{this.id}}_submit" type="hidden" name="submit" value="Submit" />
+                            <i id="{{this.id}}_edit" class="fas fa-edit fa-lg fa-button"></i>
+                            <input id="{{this.id}}_submit" class="fa-button" type="hidden" name="submit" value="&#xf00c;">
                         </td>
                         <td>
-                            <a href="/users/delete/{{this.id}}">
-                                <img id="{{this.id}}_delete" class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
-                                <input id="{{this.id}}_reset" type="hidden" name="reset" value="Reset" />
-                            </a>
+                            {{#if this.deleteable}}
+                                <a href="/users/delete/{{this.id}}">
+                                    <i id="{{this.id}}_delete" class="fas fa-trash fa-lg fa-button"></i>
+                                </a>
+                            {{else}}
+                                <i id="{{this.id}}_delete" class="fas fa-trash fa-lg fa-button fa-disabled"></i>
+                            {{/if}}
+                            <i id="{{this.id}}_cancel" class="fas fa-times fa-lg fa-button" style="display: none;"></i>
                         </td>
                     </form>
                 </tr>
@@ -51,18 +60,15 @@
                             <input id="new_user_password_input" type="hidden" name="password" placeholder="password">
                         </td>
                         <td>
-                            <input id="new_user_submit" type="hidden" name="submit" value="Submit" />
+                            <input id="new_user_submit" class="fa-button" type="hidden" name="submit" value="&#xf00c;">
                         </td>
                         <td>
-                            <img id="new_user_add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
-                            <img id="new_user_exit" src="/static/img/minus-solid.svg" height="20px" alt="Add" style="display: none;">
+                            <i id="new_user_add" class="fas fa-plus fa-lg fa-button"></i>
+                            <i id="new_user_exit" class="fas fa-times fa-lg fa-button" style="display: none;"></i>
                         </td>
                     </form>
                 </tr>
         </table>
-    {{else}}
-        <p>There aren't any users!</p>
-    {{/if}}
     </div>
 
     {{!Add footer}}

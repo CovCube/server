@@ -5,14 +5,19 @@
 {{/html_head}}
 
 <body>
-    {{!Add header}}
-    {{> header}}
+    {{!Add navbar}}
+    {{> navbar}}
 
     {{!Fill content}}
     <div id="content">
-    <h1>Tokens</h1>
-    {{#if tokens}}
+        <h1>Tokens</h1>
         <table>
+            <colgroup>
+                <col>
+                <col>
+                <col>
+                <col>
+            </colgroup>
             <thead>
                 <th>Owner</th>
                 <th>Token</th>
@@ -26,7 +31,7 @@
                     <td></td>
                     <td>
                         <a href="/tokens/delete/{{this.token}}">
-                            <img class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                            <i class="fas fa-trash fa-lg fa-button"></i>
                         </a>
                     </td>
                 </tr>
@@ -38,18 +43,15 @@
                         </td>
                         <td></td>
                         <td>
-                            <input id="new_token_submit" type="hidden" name="submit" value="Submit" />
+                            <input id="new_token_submit" class="fa-button" type="hidden" name="submit" value="&#xf00c;">
                         </td>
                         <td>
-                            <img id="new_token_add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
-                            <img id="new_token_exit" src="/static/img/minus-solid.svg" height="20px" alt="Add" style="display: none;">
+                            <i id="new_token_add" class="fas fa-plus fa-lg fa-button"></i>
+                            <i id="new_token_exit" class="fas fa-times fa-lg fa-button" style="display: none;"></i>
                         </td>
                     </form>
                 </tr>
         </table>
-    {{else}}
-        <p>There aren't any tokens!</p>
-    {{/if}}
     </div>
 
     {{!Add footer}}
