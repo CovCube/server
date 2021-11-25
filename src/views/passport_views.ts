@@ -20,10 +20,12 @@ router.get('/login', (req: Request, res:Response) => {
 router.post('/login', (req: Request, res:Response, next: NextFunction) => {
     let redirect: string = req.body['redirect'];
 
-    console.log(redirect);
+    if (redirect === undefined) {
+        redirect = '';
+    }
 
     passport.authenticate('local', {
-        successRedirect: decodeURIComponent(redirect) || '/',
+        successRedirect: decodeURIComponent(redirect),
     })(req, res, next);
 });
 
