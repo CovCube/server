@@ -18,7 +18,7 @@ header, footer {
 
 header {    
     margin-bottom: 1vh;
-    padding: 1vh 1vw;
+    padding: 1vh 1vw 0 1vw;
 
     display: flex;
     flex-direction: row;
@@ -33,15 +33,20 @@ header img {
     width: auto;
 
     margin-right: 1vw;
+    margin-bottom: 1vh;
 }
 
-header div {
+header > div {
     display: flex;
     flex-direction: row;
     align-items: flex-end;
 }
 
-header span {
+header div > * {
+    padding-bottom: 1vh;
+}
+
+header #title {
     margin: 0;
     margin-right: 2.5vw;
 
@@ -73,14 +78,90 @@ header a:active {
     text-decoration: none;
 }
 
-header #logout {    
+header .nav-right {    
     margin-left: auto;
     margin-right: 0;
 }
 
-header #logout a {
+header .nav-right a {
     margin-right: 0;
 }
+
+.dropdown {
+    position: relative;
+    width: 5em;
+
+    margin-right: 1vw;
+    padding-left: 1vw;
+    padding-right: 1vw;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    float: left;
+    left: 0;
+    width: 5em;
+    margin: 0;
+    margin-top: 1vh;
+    padding: 0.5vh 1vw 0.5vh 1vw;
+
+    visibility: hidden;
+    opacity: 0;
+    
+    transition: all 0.5s ease;
+    
+    list-style: none;
+    background-color: var(--window-color);
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    box-shadow: 0px 3px 5px 0px lightgrey;
+}
+
+.dropdown:hover .dropdown-menu,
+.dropdown:focus-within .dropdown-menu,
+.dropdown-menu:hover,
+.dropdown-menu:focus {
+
+    visibility: visible;
+    opacity: 1;
+    display: block;
+}
+
+.dropdown-item {
+    clear: both;
+    width: 100%;
+
+    margin-bottom: 1vh;
+}
+
+/* .dropdown {
+    margin-right: 1vw;
+    padding-left: 1vw;
+}
+
+.dropdown ul {
+    list-style: none;
+    margin-top: 5px;
+    padding: 0 1vw;
+    background-color: var(--main-color);
+}
+
+.dropdown li {
+    color: var(--bg-color);
+    margin-bottom: 5px;
+}
+
+.dropdown-menu {
+    display: none;
+    position: relative;
+    z-index: 1;
+    left: 1vw;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+} */
 
 #content {
     min-height: 90vh;

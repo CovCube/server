@@ -1,13 +1,22 @@
 <header>
     <img src="/static/img/cube.png" alt="Cube2-Logo">
-    <div>
-        <span>Admin-Center</span>
+    <div class="nav-left">
+        <span id="title">Admin-Center</span>
         <a href="/cubes">Cubes</a>
         <a href="/users">Users</a>
         <a href="/apps">Apps</a>
         <a href="/tokens">Tokens</a>
     </div>
-    <div id="logout" >
+    <div class="nav-right">
+        <span class="dropdown">
+            <a>Settings</a>
+            <ul  class="dropdown-menu">
+                <li class="dropdown-item"><a href="/cubes">Cubes</a></li>
+                <li class="dropdown-item"><a href="/users">Users</a></li>
+                <li class="dropdown-item"><a href="/apps">Apps</a></li>
+                <li class="dropdown-item"><a href="/tokens">Tokens</a></li>
+            </ul>
+        </span>
         <a href="/logout">Logout</a>
     </div>
 </header>
