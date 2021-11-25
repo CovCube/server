@@ -12,6 +12,12 @@
     <div id="content">
     <h1>Apps</h1>
         <table>
+            <colgroup>
+                <col>
+                <col>
+                <col>
+                <col>
+            </colgroup>
             <thead>
                 <th>Name</th>
                 <th>Address</th>
@@ -29,7 +35,7 @@
                     <td></td>
                     <td>
                         <a href="/apps/delete/{{this.name}}">
-                            <img id="{{this.name}}_delete" class="icon-delete" src="/static/img/minus-solid.svg" height="20px" alt="Delete">
+                            <i class="fas fa-trash fa-lg fa-button"></i>
                         </a>
                     </td>
                 </tr>
@@ -43,11 +49,11 @@
                             <input id="new_app_address_input" type="hidden" name="address" placeholder="address">
                         </td>
                         <td>
-                            <input id="new_app_submit" type="hidden" name="submit" value="Submit" />
+                            <input id="new_app_submit" class="fa-button" type="hidden" name="submit" value="&#xf00c;">
                         </td>
                         <td>
-                            <img id="new_app_add" src="/static/img/plus-solid.svg" height="20px" alt="Add">
-                            <img id="new_app_exit" src="/static/img/minus-solid.svg" height="20px" alt="Add" style="display: none;">
+                            <i id="new_app_add" class="fas fa-plus fa-lg fa-button"></i>
+                            <i id="new_app_exit" class="fas fa-times fa-lg fa-button" style="display: none;"></i>
                         </td>
                     </form>
                 </tr>
