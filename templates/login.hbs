@@ -11,6 +11,9 @@
             <img id="logo" src="/static/img/cube.png" alt="Cube2-Logo">
             <h1>Admin-Center</h1>
             <form action="/login" method="post">
+                {{#if redirect}}
+                    <input type="hidden" name="redirect" value="{{redirect}}">
+                {{/if}}
                 <div>
                     <label>Username:</label>
                     <input type="text" name="username"/>
