@@ -10,7 +10,7 @@ import { QueryResult } from "pg";
 // External imports
 import axios, { AxiosResponse } from "axios";
 // Internal imports
-import { pool } from "..";
+import { pool, updateHelmetCSP } from "..";
 import { checkAppName, checkAppAddress } from "../utils/input_check_utils";
 import { addToken } from "./token";
 
@@ -24,7 +24,6 @@ const deleteAppQuery: string = "DELETE FROM apps WHERE name=$1";
 // Hold global app list
 var available: Array<App>;
 
-
 /**
  * Creates the apps database
  * 
@@ -35,12 +34,15 @@ export function createAppsTable(): Promise<QueryResult<any>> {
         try {
             let res: QueryResult = await pool.query(createAppsTableQuery);
 
+            // Get existing apps & add them to global variable
             let apps: Array<App> = await getApps();
             apps.forEach((app: App) => {
                 app.token = "";
             });
-
             available = apps;
+            
+            // Update Content Security policy
+            updateHelmetCSP();
 
             return resolve(res);
         } catch(err) {
@@ -140,6 +142,9 @@ export function addApp(name: string, address: string): Promise<App> {
                 address: address.trim(),
                 token: ""
             });
+
+            // Update Content Security policy
+            updateHelmetCSP();
 
             return resolve(res.rows[0]);
         } catch(err) {
