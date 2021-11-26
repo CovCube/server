@@ -40,7 +40,7 @@ export function createAppsTable(): Promise<QueryResult<any>> {
                 app.token = "";
             });
             available = apps;
-            
+
             // Update Content Security policy
             updateHelmetCSP();
 
@@ -164,6 +164,9 @@ export function deleteApp(name: string): Promise<void> {
         
         try {
             await pool.query(deleteAppQuery, [name]);
+
+            // Update Content Security policy
+            updateHelmetCSP();
 
             return resolve();
         } catch(err) {
