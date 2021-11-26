@@ -1,5 +1,6 @@
 //type imports
 import { Request, Response, Router } from "express";
+import { App } from "../types";
 //express imports
 import express from "express";
 //internal imports
@@ -8,6 +9,7 @@ import { router as cubeViewsRouter } from "./cubes_views";
 import { router as userViewsRouter } from "./user_views";
 import { router as appViewsRouter } from "./app_views";
 import { router as tokenViewsRouter } from "./token_views";
+import { getAvailableApps } from "../model/app";
 
 //Export the router
 export var router: Router = express.Router();
@@ -19,3 +21,15 @@ router.use('/cubes', cubeViewsRouter);
 router.use('/users', userViewsRouter);
 router.use('/apps', appViewsRouter);
 router.use('/tokens', tokenViewsRouter);
+
+// Define handlebars helper for displaying app links in the navbar
+export function nav_apps() {
+    let apps: Array<App> = getAvailableApps();
+    let html: string = "";
+
+    apps.forEach((app: App) => {
+        html += "<a href=\"" + app.address + "\">" + app.name + "</a> \n";
+    })
+
+    return html;
+}

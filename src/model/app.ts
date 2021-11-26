@@ -14,7 +14,6 @@ import { pool } from "..";
 import { checkAppName, checkAppAddress } from "../utils/input_check_utils";
 import { addToken } from "./token";
 
-
 // App table
 const createAppsTableQuery: string = "CREATE TABLE IF NOT EXISTS apps (name CHAR(32) PRIMARY KEY, address VARCHAR, token CHAR(32))";
 const getAppsQuery: string = 'SELECT * FROM apps';
@@ -22,13 +21,36 @@ const getAppByNameQuery: string = 'Select * FROM apps WHERE name=$1'
 const addAppQuery: string = "INSERT INTO apps (name, address, token) VALUES ($1, $2, $3)";
 const deleteAppQuery: string = "DELETE FROM apps WHERE name=$1";
 
+// Hold global app list
+var available: Array<App>;
+
+
 /**
  * Creates the apps database
  * 
  * @returns 
  */
 export function createAppsTable(): Promise<QueryResult<any>> {
-    return pool.query(createAppsTableQuery);
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res: QueryResult = await pool.query(createAppsTableQuery);
+
+            let apps: Array<App> = await getApps();
+            apps.forEach((app: App) => {
+                app.token = "";
+            });
+
+            available = apps;
+
+            return resolve(res);
+        } catch(err) {
+            return reject(err);
+        }
+    });
+}
+
+export function getAvailableApps(): Array<App> {
+    return available;
 }
 
 /**
@@ -110,6 +132,15 @@ export function addApp(name: string, address: string): Promise<App> {
             let appToken = response.data["token"];
 
             let res: QueryResult = await pool.query(addAppQuery, [name, address, appToken]);
+
+            // Add to available apps
+            // token can be empty, because it is not necessary for the use case
+            available.push({
+                name: name.trim(),
+                address: address.trim(),
+                token: ""
+            });
+
             return resolve(res.rows[0]);
         } catch(err) {
             return reject(err);

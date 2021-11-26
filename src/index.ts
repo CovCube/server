@@ -17,6 +17,7 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import passport from "passport";
 // Internal imports
+import { nav_apps } from "./views/views";
 import { createCubeTables } from "./model/cube";
 import { createSensorDataTable } from "./model/sensor_data";
 import { createAppsTable } from "./model/app";
@@ -45,6 +46,7 @@ app.set('views', __dirname+'/templates');
 app.set('view engine', 'hbs');
 // Register partials
 hbs.registerPartials(__dirname + '/templates/partials', function() {});
+hbs.registerHelper('nav_apps', nav_apps);
 
 // Register static path
 app.use('/static', express.static(path.join(__dirname, './public')));
