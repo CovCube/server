@@ -153,6 +153,12 @@ export function addApp(name: string, address: string): Promise<App> {
     });
 }
 
+/**
+ * Removes an app
+ * 
+ * @param name of the [App]{@link types.App}
+ * @returns 
+ */
 export function deleteApp(name: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
         // Check input
