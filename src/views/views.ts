@@ -28,7 +28,8 @@ export function nav_apps() {
     let html: string = "";
 
     apps.forEach((app: App) => {
-        html += "<a href=\"" + app.address + "\">" + app.name + "</a> \n";
+        let a: string = "<a href=\"/apps/installed/" + encodeURIComponent(app.name) + "\">" + app.name + "</a>";
+        html += a + "\n";
     })
 
     return html;

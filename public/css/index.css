@@ -8,17 +8,25 @@
     --shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
     
     box-sizing: border-box;
+    width: 100vw;
+    height: 100vh;
 
     font-family: "Calibri", "Tahoma", "sans-serif";
+}
+
+body {
+    width: 100%;
+    height: 100%;
 }
 
 header, footer {
     background-color: var(--bg-color);
 }
 
-header {    
-    margin-bottom: 1vh;
-    padding: 1vh 1vw 0 1vw;
+header {
+    height: 3.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1vw 0 1vw;
 
     display: flex;
     flex-direction: row;
@@ -29,11 +37,11 @@ header {
 }
 
 header img {
-    height: 5.5vh;
+    height: 3rem;
     width: auto;
 
     margin-right: 1vw;
-    margin-bottom: 1vh;
+    margin-bottom: 0.5rem;
 }
 
 header > div {
@@ -43,7 +51,7 @@ header > div {
 }
 
 header div > * {
-    padding-bottom: 1vh;
+    padding-bottom: 0.5rem;
 }
 
 header #title {
@@ -51,6 +59,7 @@ header #title {
     margin-right: 2.5vw;
 
     font-size: 2em;
+    line-height: 1;
 }
 
 header a {
@@ -141,8 +150,9 @@ header .nav-right a {
 }
 
 #content {
-    min-height: 90vh;
     margin: 0 1vw;
+    width: 98vw;
+    height: calc(100% - 6rem);
 }
 
 table {
@@ -194,6 +204,11 @@ table td:first-of-type {
 
 table td:last-of-type {
     padding-right: 15px;
+}
+
+#content iframe {
+    width: 100%;
+    height: 100%;
 }
 
 footer {

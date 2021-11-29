@@ -1,0 +1,22 @@
+{{!Add html-head}}
+{{#> html_head}}
+    {{!Add custom scripts}}
+    <link rel="stylesheet" href="/static/css/app-iframe.css">
+{{/html_head}}
+
+<body>
+    {{!Add navbar}}
+    {{> navbar}}
+
+    {{!Fill content}}
+    <div id="content">
+       {{!-- <iframe src="{{address}}" title="App iframe" height="100%" width="100%" frameborder="0"></iframe> --}}
+
+       <iframe src="https://example.org" frameborder="0">
+       </iframe>
+    </div>
+
+    {{!Add footer}}
+    {{> footer}}
+</body>
+</html>

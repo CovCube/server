@@ -11,7 +11,7 @@ import { App } from "../types";
 import express from "express";
 // Internale import
 import { authenticateUser } from "../utils/passport_utils";
-import { addApp, deleteApp, getApps } from "../model/app";
+import { addApp, deleteApp, getAppByName, getApps } from "../model/app";
 
 export var router: Router = express.Router();
 // Routes
@@ -19,6 +19,7 @@ router.use(authenticateUser);
 router.get('/',  getAppsView);
 router.post('/', addAppView);
 router.get('/delete/:name', deleteAppView);
+router.get('/installed/:name', getAppiFrame);
 
 /**
  * Renders the view of the overview of all apps
@@ -93,4 +94,17 @@ async function deleteAppView(req: Request, res: Response): Promise<void> {
     
         res.status(501).send("view error");
     }
+}
+
+/**
+ * Renders the view for an app with an iFrame to the interface of an app
+ * 
+ * @param req 
+ * @param res 
+ */
+async function getAppiFrame(req: Request, res: Response): Promise<void> {
+    let name: string = decodeURIComponent(req.params["name"]);
+    let app: App = await getAppByName(name);
+
+    res.render('app-iframe', { address: app.address });
 }
