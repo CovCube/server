@@ -116,6 +116,7 @@ header .nav-right a {
     display: none;
     position: absolute;
     float: left;
+    top: 1.65rem;
     left: 0;
     width: 5em;
     margin: 0;
