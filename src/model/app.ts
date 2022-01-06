@@ -5,7 +5,7 @@
  */
 
 // Type imports
-import { App } from "../types";
+import { App, Token } from "../types";
 import { QueryResult } from "pg";
 // External imports
 import axios, { AxiosResponse } from "axios";
@@ -128,10 +128,10 @@ export function addApp(name: string, address: string): Promise<App> {
         }
 
         try {
-            let serverToken = await addToken("App_"+name);
+            let serverToken: Token = await addToken("App_"+name);
             // Send access token to app and get one in return
-            let response: AxiosResponse = await axios.post("http://"+address.trim(), {serverToken});
-            let appToken = response.data["token"];
+            let response: AxiosResponse = await axios.post("http://"+address.trim(), {serverToken: serverToken.token});
+            let appToken: string = response.data["token"];
 
             let res: QueryResult = await pool.query(addAppQuery, [name, address, appToken]);
 
