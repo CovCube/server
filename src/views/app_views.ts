@@ -106,5 +106,8 @@ async function getAppiFrame(req: Request, res: Response): Promise<void> {
     let name: string = decodeURIComponent(req.params["name"]);
     let app: App = await getAppByName(name);
 
-    res.render('app-iframe', { address: app.address });
+    res.render('app-iframe', { 
+        address: "http://"+app.address.trim(),
+        token: app.token,
+     });
 }
