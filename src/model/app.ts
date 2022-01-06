@@ -131,7 +131,7 @@ export function addApp(name: string, address: string): Promise<App> {
             let serverToken: Token = await addToken("App_"+name);
             // Send access token to app and get one in return
             let response: AxiosResponse = await axios.post("http://"+address.trim(), {serverToken: serverToken.token});
-            let appToken: string = response.data["token"];
+            let appToken: string = response.data["appToken"];
 
             let res: QueryResult = await pool.query(addAppQuery, [name, address, appToken]);
 
