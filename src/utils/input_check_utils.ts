@@ -72,7 +72,7 @@ export function checkAppAddress(address: string): void {
     }
 
     if (!URL_REGEX.test(address)) {
-        throw new Error("address not a valid URL");
+        //throw new Error("address not a valid URL");
     }
 }
 

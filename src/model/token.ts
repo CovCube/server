@@ -11,7 +11,7 @@ import { checkTokenValidity } from "../utils/input_check_utils";
 const createTokensTableQuery: string = "CREATE TABLE IF NOT EXISTS tokens (token CHAR(32) PRIMARY KEY, owner CHAR(64) NOT NULL)";
 const getTokensQuery: string = 'SELECT * FROM tokens';
 const getTokenByTokenQuery: string = 'SELECT * FROM tokens WHERE token=$1';
-const addTokenQuery: string = "INSERT INTO tokens (token, owner) VALUES ($1, $2)";
+const addTokenQuery: string = "INSERT INTO tokens (token, owner) VALUES ($1, $2) RETURNING *";
 const deleteTokenQuery: string = "DELETE FROM tokens WHERE token=$1";
 
 export function createTokensTable(): Promise<QueryResult<any>> {
