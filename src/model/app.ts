@@ -171,6 +171,9 @@ export function deleteApp(name: string): Promise<void> {
         try {
             await pool.query(deleteAppQuery, [name]);
 
+            // Remove from available apps
+            let index: number = available.findIndex((app: App) => app.name === name);
+            available.splice(index, 1);
             // Update Content Security policy
             updateHelmetCSP();
 
