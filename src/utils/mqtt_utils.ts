@@ -45,8 +45,8 @@ export async function setupMQTT(): Promise<void> {
             mqttClient.on('offline', () => logMQTTEvent('Offline'));
             mqttClient.on('error', (error) => logMQTTEvent('Error', [error]));
             mqttClient.on('end', () => logMQTTEvent('End'));
-            mqttClient.on('packetsend', () => logMQTTEvent('Packetsend'));
-            mqttClient.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
+            mqttClient.on('packetsend', () => {return});
+            mqttClient.on('packetreceive', (packet) => {return});
             mqttClient.on('message', handleMQTTMessage);
             
             try {
