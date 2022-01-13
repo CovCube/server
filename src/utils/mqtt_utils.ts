@@ -30,7 +30,10 @@ export async function setupMQTT(): Promise<void> {
         let mqttUrl: string = process.env.MQTTURL || 'test.mosquitto.org';
         let mqttPort: number = parseInt(process.env.MQTTPORT || '1883');
         //Connect to broker
-        mqttClient = mqtt.connect('mqtt://'+mqttUrl, {port: mqttPort});
+        mqttClient = mqtt.connect([{
+            host: 'mqtt://'+mqttUrl,
+            port: mqttPort
+        }]);
 
         mqttClient.on('connect', async function() {
             console.log('connected to MQTT server');
