@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import { pool } from "../index";
 import { checkCubeId, checkSensorArray } from '../utils/input_check_utils';
 import { compareSensorTypes, getCubeSensorEndpointObject, getSensorTypesArray } from "../utils/general_utils";
-import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
+import { subscribeCubeMQTTTopic, publishCube } from '../utils/mqtt_utils';
 
 //Base tables
 const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID PRIMARY KEY, ip CHAR(15), location CHAR(255) NOT NULL)";
@@ -225,6 +225,14 @@ function persistCube(cubeId: string, ip: string, location: string, sensors: Arra
 
             //Subscribe to cube topic
             await subscribeCubeMQTTTopic(cubeId, 2);
+            // Publish cube creation
+            publishCube("create", {
+                id: cubeId,
+                ip: "",
+                location: location,
+                sensors: sensors,
+                actuators: actuators
+            });
 
             return resolve();
         } catch(err) {
@@ -279,6 +287,15 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
                 }
             });
 
+            //Publish cube update
+            publishCube("update", {
+                id: cube.id,
+                ip: "",
+                location: variables.location,
+                sensors: variables.sensors,
+                actuators: variables.actuators
+            });
+
             return resolve(getCubeWithId(cubeId));
         } catch(err) {
             return reject(err);
@@ -293,6 +310,15 @@ export function deleteCubeWithId(cubeId: string): Promise<void> {
 
         try {
             pool.query(deleteCubeWithIdQuery, [cubeId]);
+
+            //Publish cube deletion
+            publishCube("delete", {
+                id: cubeId,
+                ip: "",
+                location: "",
+                sensors: [],
+                actuators: []
+            });
 
             return resolve();
         } catch(err) {
