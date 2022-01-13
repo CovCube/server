@@ -95,7 +95,7 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
 
             if (granted) {
                 granted.forEach(function(value: ISubscriptionGrant) {
-                    console.log(`Subscribed to ${value.topic} with QoS level ${value.qos}.`);
+                    console.log(`MQTT: Subscribed to ${value.topic} with QoS level ${value.qos}.`);
                 })
 
                 resolve();
@@ -111,7 +111,7 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
  * @param options options of that event
  */
 function logMQTTEvent(event: string, options: Array<any> = []): void {
-    console.log(`Event emitted: ${event}`);
+    console.log(`MQTT: Event emitted: ${event}`);
     //options.forEach(value => {
     //    console.log(value);
     //});
