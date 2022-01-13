@@ -5,7 +5,7 @@
  */
 
 // Type imports
-import { App, Token } from "../types";
+import { App, Cube, Token } from "../types";
 import { QueryResult } from "pg";
 // External imports
 import axios, { AxiosResponse } from "axios";
@@ -13,6 +13,7 @@ import axios, { AxiosResponse } from "axios";
 import { pool, updateHelmetCSP } from "..";
 import { checkAppName, checkAppAddress } from "../utils/input_check_utils";
 import { addToken } from "./token";
+import { getCubes } from "./cube";
 
 // App table
 const createAppsTableQuery: string = "CREATE TABLE IF NOT EXISTS apps (name CHAR(32) PRIMARY KEY, address VARCHAR, token CHAR(32))";
@@ -129,8 +130,9 @@ export function addApp(name: string, address: string): Promise<App> {
 
         try {
             let serverToken: Token = await addToken("App_"+name);
-            // Send access token to app and get one in return
-            let response: AxiosResponse = await axios.post("http://"+address.trim()+"/api/setup", {serverToken: serverToken.token});
+            let cubes: Array<Cube> = await getCubes();
+            // Send access token and registered cubes to app and get one in return
+            let response: AxiosResponse = await axios.post("http://"+address.trim()+"/api/setup", {serverToken: serverToken.token, cubes: cubes});
             let appToken: string = response.data["appToken"];
 
             let res: QueryResult = await pool.query(addAppQuery, [name, address, appToken]);
