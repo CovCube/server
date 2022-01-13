@@ -112,7 +112,7 @@ export function publishCube(event: "create" | "update" | "delete", cube: Cube) {
 }
 
 function publishMQTTMessage(topic: string, message: string, qos: QoS) {
-    console.log("MQTT: Published to "+topic)
+    console.log("MQTT: Published to " + topic)
     mqttClient.publish(topic, message, {qos});
 }
 
