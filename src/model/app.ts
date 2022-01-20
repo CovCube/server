@@ -20,7 +20,7 @@ const createAppsTableQuery: string = "CREATE TABLE IF NOT EXISTS apps (name CHAR
 const getAppsQuery: string = 'SELECT * FROM apps';
 const getAppByNameQuery: string = 'Select * FROM apps WHERE name=$1'
 const addAppQuery: string = "INSERT INTO apps (name, address, token) VALUES ($1, $2, $3)";
-const deleteAppQuery: string = "DELETE FROM apps WHERE name=$1";
+const deleteAppQuery: string = "DELETE FROM apps WHERE name=$1 RETURNING *";
 
 // Hold global app list
 var available: Array<App>;
@@ -171,7 +171,15 @@ export function deleteApp(name: string): Promise<void> {
         }
         
         try {
-            await pool.query(deleteAppQuery, [name]);
+            let res: QueryResult = await pool.query(deleteAppQuery, [name]);
+            
+            // Send reset to app
+            let app: App = res.rows[0];
+            await axios.post("http://"+app.address.trim()+"/api/reset", undefined, {
+                headers: {
+                    'Authorization': 'Bearer ' + app.token.trim(),
+                }
+            });
 
             // Remove from available apps
             let index: number = available.findIndex((app: App) => app.name === name);
