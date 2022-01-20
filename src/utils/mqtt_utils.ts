@@ -6,7 +6,7 @@
 
 //type imports
 import { MqttClient, ISubscriptionMap, IPublishPacket, ISubscriptionGrant, QoS } from "mqtt";
-import { Cube, Sensor } from "../types";
+import { BME680, Cube, Sensor } from "../types";
 //external imports
 import mqtt from "mqtt";
 //internal imports
@@ -157,8 +157,14 @@ function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: I
  * @param topic topic of the message formatted like this: sensor/sensor_type/cubeId
  */
 function handleSensorData(topic: Array<string>, message: string): void {
-    persistSensorData(topic[1], topic[2], message)
-        .catch((err: Error) => {
-            console.log(err.stack);
-        });
+    let data: Object = JSON.parse(message);
+
+    try {
+        Object.entries(data)
+            .forEach(([key, value]: [string, number]) => {
+                persistSensorData(key, topic[2], value.toString());
+            });
+    } catch (error) {
+        console.log(error);
+    }
 }
