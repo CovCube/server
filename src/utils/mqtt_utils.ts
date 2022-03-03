@@ -6,7 +6,7 @@
 
 //type imports
 import { MqttClient, ISubscriptionMap, IPublishPacket, ISubscriptionGrant, QoS } from "mqtt";
-import { BME680, Cube, Sensor } from "../types";
+import { Cube } from "../types";
 //external imports
 import mqtt from "mqtt";
 //internal imports
