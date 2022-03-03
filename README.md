@@ -82,6 +82,15 @@ The docker-compose file creates containers for the server, postgresql and eclips
 docker-compose up
 ```
 
+These environmental variables are overwritten by docker-compose, because they define connections inside the docker network. So they do not need to be provided in their .env-files:
+
+```text
+PGHOST: "postgres_db"
+PGPORT: "5432"
+MQTTURL: "mosquitto_broker"
+MQTTPORT: "1883"
+```
+
 #### Cube-Server & PostgreSQL containers
 
 Environment variables for the images can be set with the .env-file for the node server
