@@ -24,11 +24,12 @@ var mqttClient: MqttClient;
  */
 export async function setupMQTT(): Promise<void> {
     return new Promise(async (resolve, reject) => {
-        console.log('attempting MQTT server connection ...');
-
         //Get broker address
         let mqttUrl: string = process.env.MQTTURL || 'test.mosquitto.org';
         let mqttPort: number = parseInt(process.env.MQTTPORT || '1883');
+
+        console.log('attempting MQTT server connection to: ' + mqttUrl + ":" + mqttPort);
+        
         //Connect to broker
         mqttClient = mqtt.connect([{
             host: 'mqtt://'+mqttUrl,
