@@ -56,6 +56,7 @@ app.use('/static', express.static(path.join(__dirname, './public')));
 // CSP middleware needs to be axtra, so it can be replaced later
 app.use(helmet({
     contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
 }));
 app.use(helmet.contentSecurityPolicy());
 
