@@ -40,16 +40,7 @@ export async function setupMQTT(): Promise<void> {
         mqttClient.on('connect', async function() {
             console.log('connected to MQTT server');
 
-            //Set event listeners
-            mqttClient.on('reconnect', () => logMQTTEvent('Reconnect'));
-            mqttClient.on('close', () => logMQTTEvent('Close'));
-            mqttClient.on('disconnect', () => logMQTTEvent('Disconnect'));
-            mqttClient.on('offline', () => logMQTTEvent('Offline'));
-            mqttClient.on('error', (error) => logMQTTEvent('Error', [error]));
-            mqttClient.on('end', () => logMQTTEvent('End'));
-            mqttClient.on('packetsend', () => {return});
-            mqttClient.on('packetreceive', (packet) => {return});
-            mqttClient.on('message', handleMQTTMessage);
+            
             
             try {
                 //Subscribe to topic of existing cubes
@@ -64,6 +55,17 @@ export async function setupMQTT(): Promise<void> {
                 console.log(err);
             }
         });
+        
+        //Set event listeners
+        mqttClient.on('reconnect', () => logMQTTEvent('Reconnect'));
+        mqttClient.on('close', () => logMQTTEvent('Close'));
+        mqttClient.on('disconnect', () => logMQTTEvent('Disconnect'));
+        mqttClient.on('offline', () => logMQTTEvent('Offline'));
+        mqttClient.on('error', (error) => logMQTTEvent('Error', [error]));
+        mqttClient.on('end', () => logMQTTEvent('End'));
+        mqttClient.on('packetsend', () => {return});
+        mqttClient.on('packetreceive', (packet) => {return});
+        mqttClient.on('message', handleMQTTMessage);
     });
 }
 
