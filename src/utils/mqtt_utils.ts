@@ -6,7 +6,7 @@
 
 //type imports
 import { MqttClient, IClientOptions, ISubscriptionMap, IPublishPacket, ISubscriptionGrant, QoS } from "mqtt";
-import { Cube } from "../types";
+import { ActuatorData, Cube } from "../types";
 //external imports
 import mqtt from "mqtt";
 //internal imports
@@ -40,8 +40,6 @@ export async function setupMQTT(): Promise<void> {
         mqttClient.on('connect', async function() {
             console.log('connected to MQTT server');
 
-            
-            
             try {
                 //Subscribe to topic of existing cubes
                 let cubes: Cube[] = await getCubes();
@@ -111,6 +109,22 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
 export function publishCube(event: "create" | "update" | "delete", cube: Cube) {
     let topic: string = "cube/"+event;
     let message: string = JSON.stringify(cube);
+
+    publishMQTTMessage(topic, message, 2);
+}
+
+export function publishActuatorAction(location: string, cubeId: string, actuator: string, targetValue: number, timeToTarget?: number) {
+    let topic: string = `actuator/${actuator}/${cubeId}/${location}`;
+
+    let data: ActuatorData = {
+        "value": targetValue
+    }
+    if (timeToTarget !== undefined) {
+        data.time = timeToTarget;
+    }
+
+    let message: string = JSON.stringify(data);
+    console.log(message);
 
     publishMQTTMessage(topic, message, 2);
 }

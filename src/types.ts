@@ -23,6 +23,11 @@ export interface Sensor {
     scanInterval: number
 }
 
+export interface ActuatorData {
+    value: number,
+    time?: number
+}
+
 export interface CubeDetailDataObject {
     title: string,
     cube: Cube
