@@ -5,7 +5,7 @@
  */
 
 //type imports
-import { Sensor } from '../types';
+import { Actuator, Sensor } from '../types';
 //external imports
 import { validate as uuidvalidate } from "uuid";
 
@@ -33,7 +33,7 @@ export function checkCubeId(cubeId: string | undefined): void {
 /**
  * Check validity of the [Sensors]{@link types.Sensor} of a [Cube]{@link types.Cube}
  * 
- * Array can not be empty of undefined\
+ * Array can not be empty or undefined\
  * Each [Sensor]{@link types.Sensor} can not have empty or undefined sensor type or scanInterval
  * 
  * @param sensors the [Sensors]{@link types.Sensor} of a [Cube]{@link types.Cube}
@@ -52,6 +52,38 @@ export function checkSensorArray(sensors: Array<Sensor>): void {
         if (!sensor.scanInterval || sensor.scanInterval <= 0) {
             throw(new Error ("sensor scan_interval is not valid."))
         }
+    });
+}
+
+/**
+ * Check validity of the [Actuators]{@link types.Actuator} of a [Cube]{@link types.Cube}
+ * 
+ * Array can not be empty or undefined\
+ * Each [Actuator]{@link types.Actuator} can not have empty or undefined actuators type or values
+ * Each value can not have length 0.
+ * 
+ * @param sensors the [Sensors]{@link types.Sensor} of a [Cube]{@link types.Cube}
+ */
+ export function checkActuatorArray(actuators: Array<Actuator>): void {
+    if (actuators === undefined || actuators.length == 0) {
+        throw(new Error("actuators array is undefined or empty"));
+    }
+
+    actuators.forEach((actuator: Actuator) => {
+        //Check if sensor type is valid
+        if (actuator.type === undefined || !actuator.type.trim()) {
+            throw(new Error("actuator type is not valid"));
+        }
+        //Check if sensor scan_interval is valid
+        if (!actuator.values === undefined || actuator.values.length == 0) {
+            throw(new Error ("actuator values is undefined or empty."));
+        }
+
+        actuator.values.forEach((value: string) => {
+            if (value.length === 0) {
+                throw(new Error ("an actuator value is empty."));
+            }
+        })
     });
 }
 

@@ -3,13 +3,13 @@ export interface Cube {
     ip: string,
     location: string,
     sensors: Array<Sensor>,
-    actuators: Array<string>
+    actuators: Array<Actuator>
 }
 
 export interface CubeVariables {
     location: string,
     sensors: Array<Sensor>,
-    actuators: Array<string>
+    actuators: Array<Actuator>
 }
 
 export interface App {
@@ -23,8 +23,13 @@ export interface Sensor {
     scanInterval: number
 }
 
+export interface Actuator {
+    type: string,
+    values: Array<string>
+}
+
 export interface ActuatorData {
-    value: number,
+    value: object,
     time?: number
 }
 

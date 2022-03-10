@@ -113,7 +113,7 @@ export function publishCube(event: "create" | "update" | "delete", cube: Cube) {
     publishMQTTMessage(topic, message, 2);
 }
 
-export function publishActuatorAction(location: string, cubeId: string, actuator: string, targetValue: number, timeToTarget?: number) {
+export function publishActuatorAction(location: string, cubeId: string, actuator: string, targetValue: object, timeToTarget?: number) {
     let topic: string = `actuator/${actuator}/${cubeId}/${location}`;
 
     let data: ActuatorData = {

@@ -1,5 +1,5 @@
 //type imports
-import { Cube, CubeVariables, Sensor } from '../types';
+import { Actuator, Cube, CubeVariables, Sensor } from '../types';
 import { QueryResult } from 'pg';
 import { AxiosResponse } from "axios";
 //other external imports
@@ -8,7 +8,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 //internal imports
 import { pool } from "../index";
-import { checkCubeId, checkSensorArray } from '../utils/input_check_utils';
+import { checkCubeId, checkSensorArray, checkActuatorArray } from '../utils/input_check_utils';
 import { compareSensorTypes, getCubeSensorEndpointObject, getSensorTypesArray } from "../utils/general_utils";
 import { subscribeCubeMQTTTopic, publishCube } from '../utils/mqtt_utils';
 
@@ -16,7 +16,7 @@ import { subscribeCubeMQTTTopic, publishCube } from '../utils/mqtt_utils';
 const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID PRIMARY KEY, ip CHAR(15), location CHAR(255) NOT NULL)";
 //Junction tables
 const createCubeSensorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_sensors (cube_id UUID NOT NULL, sensor_type CHAR(64) NOT NULL, scan_interval NUMERIC NOT NULL, PRIMARY KEY (cube_id, sensor_type), FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE)";
-const createCubeActuatorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_actuators (cube_id UUID NOT NULL, actuator_type CHAR(64) NOT NULL, PRIMARY KEY (cube_id, actuator_type), FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE)";
+const createCubeActuatorsTableQuery: string = "CREATE TABLE IF NOT EXISTS cube_actuators (cube_id UUID NOT NULL, actuator_type CHAR(64) NOT NULL, values CHAR(64)[] NOT NULL, PRIMARY KEY (cube_id, actuator_type), FOREIGN KEY (cube_id) REFERENCES cubes (id) ON DELETE CASCADE)";
 
 //Manage cubes
 const getCubesQuery: string = 'SELECT * FROM cubes';
@@ -29,7 +29,7 @@ const getCubeSensorsWithIdQuery: string = 'SELECT * FROM cube_sensors WHERE cube
 const addCubeSensorsQuery: string = "INSERT INTO cube_sensors (cube_id, sensor_type, scan_interval) VALUES ($1, $2, $3)";
 const updateCubeSensorsQuery: string = "UPDATE cube_sensors SET scan_interval=$3 WHERE cube_id=$1 AND sensor_type=$2";
 const getCubeActuatorsWithIdQuery: string = 'SELECT * FROM cube_actuators WHERE cube_id=$1';
-const addCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type) VALUES ($1, $2)";
+const addCubeActuatorsQuery: string = "INSERT INTO cube_actuators (cube_id, actuator_type, values) VALUES ($1, $2, $3)";
 
 export async function createCubeTables(): Promise<void> {
     return new Promise(async (resolve, reject) => {
@@ -89,7 +89,7 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
             let sensors: Array<Sensor> = await getCubeSensors(cubeId);
             cube.sensors = sensors;
 
-            let actuators: Array<string> = await getCubeActuators(cubeId);
+            let actuators: Array<Actuator> = await getCubeActuators(cubeId);
             cube.actuators = actuators;
 
             return resolve(cube);
@@ -126,7 +126,7 @@ async function getCubeSensors(cubeId: string): Promise<Array<Sensor>> {
     });
 }
 
-async function getCubeActuators(cubeId: string): Promise<Array<string>> {
+async function getCubeActuators(cubeId: string): Promise<Array<Actuator>> {
     return new Promise(async (resolve, reject) => {
         //Check cubeId
         try {
@@ -136,11 +136,14 @@ async function getCubeActuators(cubeId: string): Promise<Array<string>> {
         }
         
         try {
-            let actuators: Array<string> = [];
+            let actuators: Array<Actuator> = [];
             let res: QueryResult = await pool.query(getCubeActuatorsWithIdQuery, [cubeId]);
 
             res.rows.forEach((value) => {
-                actuators.push(value.actuator_type.trim());
+                actuators.push({
+                    "type": value.actuator_type.trim(),
+                    "values": value.values
+                });
             })
 
             return resolve(actuators)
@@ -176,13 +179,13 @@ export async function addCube(targetIP: string, location: string): Promise<void>
     let response: AxiosResponse = await axios.post("http://"+targetIP.trim(), data)
     //Get cube sensors and actuators
     let sensors: Array<Sensor> = response.data['sensors'];
-    let actuators: Array<string> = response.data['actuators']; 
+    let actuators: Array<Actuator> = response.data['actuators']; 
 
     //Persist cube
     return persistCube(id, targetIP, location, sensors, actuators);
 }
 
-function persistCube(cubeId: string, ip: string, location: string, sensors: Array<Sensor>, actuators: Array<string>): Promise<void> {
+function persistCube(cubeId: string, ip: string, location: string, sensors: Array<Sensor>, actuators: Array<Actuator>): Promise<void> {
     return new Promise(async (resolve, reject) => {
         //Check input
         try {
@@ -194,9 +197,7 @@ function persistCube(cubeId: string, ip: string, location: string, sensors: Arra
                 throw(new Error("location is undefined or empty"));
             }
             checkSensorArray(sensors);
-            if (actuators === undefined || actuators.length == 0) {
-                throw(new Error("actuators array is undefined or empty"));
-            }
+            checkActuatorArray(actuators);
         } catch(err) {
             return reject(err);
         }
@@ -217,8 +218,8 @@ function persistCube(cubeId: string, ip: string, location: string, sensors: Arra
             })
 
             //Add actuators to cube
-            actuators.forEach(async (value: string) => {
-                await client.query(addCubeActuatorsQuery, [cubeId, value])
+            actuators.forEach(async (actuator: Actuator) => {
+                await client.query(addCubeActuatorsQuery, [cubeId, actuator.type, actuator.values])
                             .catch((err: Error) => {
                                 reject(err);
                             });
