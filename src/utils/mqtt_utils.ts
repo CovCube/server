@@ -124,7 +124,6 @@ export function publishActuatorAction(location: string, cubeId: string, actuator
     }
 
     let message: string = JSON.stringify(data);
-    console.log(message);
 
     publishMQTTMessage(topic, message, 2);
 }
