@@ -16,6 +16,9 @@ NODE_ENV = 'development' # Can also be 'production'
 
 See the [express documentation](http://expressjs.com/en/advanced/best-practice-performance.html#set-node_env-to-production)
 
+If the node environment is set to *production* the send content security policy header forces all http requests from
+the server frontend to be upgraded to https. If it is set *development* this is not done.
+
 ### Express config
 
 The express package can be customized with the following variables:

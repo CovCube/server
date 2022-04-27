@@ -58,11 +58,16 @@ app.use(helmet({
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
 }));
-app.use(helmet.contentSecurityPolicy({
-    directives: {
-        "upgrade-insecure-requests": null,
-    }
-}));
+// Decide if CSP should be set to always upgrade to https
+if (process.env.NODE_ENV == "development") {
+    app.use(helmet.contentSecurityPolicy({
+        directives: {
+            "upgrade-insecure-requests": null,
+        }
+    }));
+} else {
+    app.use(helmet.contentSecurityPolicy());
+}
 
 // Add other middleware
 app.use(session({
@@ -167,15 +172,22 @@ export function updateHelmetCSP() {
         app._router.stack = stack;
     }
 
+    // Add directives into an object
+    let directives: any = {
+        "frame-src": frame_src,
+        "script-src": script_src,
+        "style-src": style_src,
+    };
+
+    // Decide if CSP should be set to always upgrade to https
+    if (process.env.NODE_ENV == "development") {
+        directives["upgrade-insecure-requests"] = null;
+    }
+
     // Add new helmet middleware
     app.use(helmet.contentSecurityPolicy({
         useDefaults: true,
-        directives: {
-            "frame-src": frame_src,
-            "script-src": script_src,
-            "style-src": style_src,
-            "upgrade-insecure-requests": null,
-        }
+        directives: directives
     }));
 
     // Move middleware before routers
