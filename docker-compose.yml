@@ -52,6 +52,8 @@ services:
     volumes:
       # Get the config file
       - "./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf"
+      # Get the passwords file
+      - "./mosquitto/passwords:/mosquitto/passwords"
       # Define persistence and logging location on host
       - "./mosquitto/data:/mosquitto/data"
       - "./mosquitto/log:/mosquitto/log"
