@@ -58,7 +58,11 @@ app.use(helmet({
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
 }));
-app.use(helmet.contentSecurityPolicy());
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        "upgrade-insecure-requests": null,
+    }
+}));
 
 // Add other middleware
 app.use(session({
@@ -169,7 +173,8 @@ export function updateHelmetCSP() {
         directives: {
             "frame-src": frame_src,
             "script-src": script_src,
-            "style-src": style_src
+            "style-src": style_src,
+            "upgrade-insecure-requests": null,
         }
     }));
 
