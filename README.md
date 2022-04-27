@@ -62,8 +62,8 @@ MQTT_PUBLICPORT = '1884'
 The MQTTPUBLIC and MQTT_PUBLICPORT variables can be used to point to the public
 address of the mqtt server. If these are not provided, MQTTURL and MQTTPORT are used.
 The values of these variables are send to the cubes, so they can connect to the mqtt server.
-This is useful, if the cube & mqtt servers run inside of containers and are connected internally.
-Or if the cubes should use a different port than the cube server to connect to the mqtt server.
+This is useful, if the cubekit & mqtt servers run inside of containers and are connected internally.
+Or if the cubes should use a different port than the cubekit server to connect to the mqtt server.
 
 ## Docker
 
@@ -101,7 +101,7 @@ MQTTPORT: "1883"
 PGDATA: "/var/lib/postgres/data/pgdata"
 ```
 
-#### Cube-Server & PostgreSQL containers
+#### Cubekit-Server & PostgreSQL containers
 
 Environment variables for the images can be set with the .env-file for the node server
 and postgres.env for the database. These have to be located in the root of this repository.
@@ -116,10 +116,9 @@ the PostgreSQL and Mosquitto containers.
 Don't forget to set the variables PGUSER, PGPASSWORD and PGDATABASE in the .env-file.
 
 The variables MQTT_PUBLIC and MQTT_PUBLICPORT should be set in the .env file, to make
-sure cubes can connect to Mosquitto form outside the docker network.
+sure cubes can connect to Mosquitto from outside the docker network.
 
-When changing the .env-files, make sure to recreate the containers or rebuild the
-images.
+When changing the .env-files, make sure to rebuild the containers.
 
 ```text
 docker compose up -d --build
