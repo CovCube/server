@@ -79,7 +79,7 @@ docker build --build-arg SERVER_PORT=8080 -t imagename:tag .
 The docker-compose file creates containers for the server, postgresql and eclipse-mosquitto and links them up.
 
 ```text
-docker-compose up
+docker compose up -d
 ```
 
 These environmental variables are overwritten by docker-compose, because they define connections inside the docker network. So they do not need to be provided in their .env-files:
@@ -110,8 +110,7 @@ When changing the .env-files, make sure to recreate the containers or rebuild th
 images.
 
 ```text
-docker-compose up --force-recreate
-docker-compose build --no-cache
+docker compose up -d --build
 ```
 
 #### Mosquitto container
