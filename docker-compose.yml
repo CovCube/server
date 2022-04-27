@@ -1,8 +1,8 @@
 version: "3.9"
 services:
   # Config for the cube-server
-  node_server:
-    container_name: node_server
+  cube_server:
+    container_name: cubekit_server
     build: .
     restart: always
     depends_on:
