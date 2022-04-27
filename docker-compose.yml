@@ -33,8 +33,12 @@ services:
       - "5432"
     networks:
       - "cube"
+    volumes:
+      - "/var/lib/postgres/data:/var/lib/postgres/data"
     env_file:
       - "./postgres.env"
+    environment:
+      PGDATA: "/var/lib/postgres/data/pgdata"
 
   # Config for the MQTT broker Mosquitto
   mosquitto_broker:

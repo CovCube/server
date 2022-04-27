@@ -82,13 +82,20 @@ The docker-compose file creates containers for the server, postgresql and eclips
 docker compose up -d
 ```
 
+Make sure the following directory is created on the host: /var/lib/postgres/data  
+This is where the database files for postgresql are saved to.
+
 These environmental variables are overwritten by docker-compose, because they define connections inside the docker network. So they do not need to be provided in their .env-files:
 
 ```text
+# .env variables
 PGHOST: "postgres_db"
 PGPORT: "5432"
 MQTTURL: "mosquitto_broker"
 MQTTPORT: "1883"
+
+# postgres.env variables
+PGDATA: "/var/lib/postgres/data/pgdata"
 ```
 
 #### Cube-Server & PostgreSQL containers
