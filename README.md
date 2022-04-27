@@ -60,7 +60,7 @@ The MQTTPUBLIC and MQTT_PUBLICPORT variables can be used to point to the public
 address of the mqtt server. If these are not provided, MQTTURL and MQTTPORT are used.
 The values of these variables are send to the cubes, so they can connect to the mqtt server.
 This is useful, if the cube & mqtt servers run inside of containers and are connected internally.
-Or if the cubes should use a different port, than the cube server to connect to the mqtt server.
+Or if the cubes should use a different port than the cube server to connect to the mqtt server.
 
 ## Docker
 
