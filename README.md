@@ -71,7 +71,7 @@ Or if the cubes should use a different port than the cube server to connect to t
 
 The Dockerfile creates an image of the server which exposes a port, given through
 build-arg.
-The server can be modified with the server.env file. See the documentation above at [server config](#server-config).
+The server can be modified with the servers .env-file. See the documentation above at [server config](#server-config).
 
 ```text
 docker build --build-arg SERVER_PORT=8080 -t imagename:tag .
