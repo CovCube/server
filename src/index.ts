@@ -53,7 +53,7 @@ hbs.registerHelper('nav_apps', nav_apps);
 app.use('/static', express.static(path.join(__dirname, './public')));
 
 // Add helmet middleware
-// CSP middleware needs to be axtra, so it can be replaced later
+// CSP middleware needs to be extra, so it can be replaced later
 app.use(helmet({
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
