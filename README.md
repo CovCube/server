@@ -37,9 +37,9 @@ The node-postgres package connects to the database through these variables:
 
 ```text
 PGHOST = 'localhost'
-PGUSER = process.env.USER
-PGPASSWORD = null
-PGDATABASE = process.env.USER
+PGUSER = postgres
+PGPASSWORD = pw
+PGDATABASE = postgres
 PGPORT = 5432
 ```
 
@@ -102,6 +102,8 @@ For postgres.env see the documentation at [postgres config](https://github.com/d
 The variables PGHOST, PGPORT, MQTTURL and MQTTPORT are set directly in the docker-compose file and
 override the variables in the .env-file. This is done to ensure connection to
 the PostgreSQL and Mosquitto containers.
+
+Don't forget to set the variables PGUSER, PGPASSWORD and PGDATABASE in the .env-file.
 
 The variables MQTT_PUBLIC and MQTT_PUBLICPORT should be set in the .env file, to make
 sure cubes can connect to Mosquitto form outside the docker network.
