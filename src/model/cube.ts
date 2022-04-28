@@ -45,19 +45,29 @@ export async function createCubeTables(): Promise<void> {
     });
 }
 
-export function getCubes(): Promise<Array<Cube>> {
+export function getCubes(withSensors?: boolean, withActuators?: boolean): Promise<Array<Cube>> {
     return new Promise(async (resolve, reject) => {
         try {
             let res: QueryResult = await pool.query(getCubesQuery);
 
             let cubes: Array<Cube> = [];
 
-            res.rows.forEach((row) => {
-                let cube = row;
-                cube.location = row.location.trim();
+            for(let i = 0; i < res.rows.length; i++) {
+                let cube = res.rows[i];
+                cube.location = cube.location.trim();
+                cube.sensors = [];
+                cube.actuators = [];
+
+                if (withSensors) {
+                    cube.sensors = await getCubeSensors(cube.id);
+                }
+
+                if (withActuators) {
+                    cube.actuators = await getCubeActuators(cube.id);
+                }
 
                 cubes.push(cube);
-            })
+            }
 
             return resolve(cubes);
         } catch(err) {
