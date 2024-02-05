@@ -30,6 +30,6 @@ router.post('/login', (req: Request, res:Response, next: NextFunction) => {
 });
 
 router.get('/logout', (req: Request, res:Response) => {
-    req.logout();
+    req.logout({keepSessionInfo: false}, function(err: any) {});
     res.redirect('/login');
 });
