@@ -1,4 +1,4 @@
-FROM node:14-slim
+FROM node:21-alpine
 
 # Define arguments for build
 ARG SERVER_PORT
