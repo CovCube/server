@@ -133,7 +133,7 @@ export function addApp(name: string, address: string): Promise<App> {
             let cubes: Array<Cube> = await getCubes(true, true);
 
             // Send access token and registered cubes to app and get one in return
-            let response: AxiosResponse = await axios.post("http://"+address.trim()+"/api/setup", {serverToken: serverToken.token, cubes: cubes});
+            let response: AxiosResponse = await axios.post("http://"+address.trim()+"/setup", {serverToken: serverToken.token, cubes: cubes});
             let appToken: string = response.data["appToken"];
 
             let res: QueryResult = await pool.query(addAppQuery, [name, address, appToken]);
