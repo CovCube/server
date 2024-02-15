@@ -66,7 +66,13 @@ if (process.env.NODE_ENV == "development") {
         }
     }));
 } else {
-    app.use(helmet.contentSecurityPolicy());
+    app.use(helmet.contentSecurityPolicy(
+        {
+            directives: {
+                "object-src": ["'self'"]
+            }
+        }
+    ));
 }
 
 // Add other middleware
@@ -153,6 +159,10 @@ export function updateHelmetCSP() {
         }
     });
 
+    console.log(frame_src);
+    console.log(script_src);
+    console.log(style_src);
+
     // Remove existing helmet middleware from stack
     let stack: Array<any> = app._router.stack;
     let helmetIndex: number = stack.length + 1;
@@ -177,6 +187,7 @@ export function updateHelmetCSP() {
         "frame-src": frame_src,
         "script-src": script_src,
         "style-src": style_src,
+        "object-src": ["'self'"]
     };
 
     // Decide if CSP should be set to always upgrade to https

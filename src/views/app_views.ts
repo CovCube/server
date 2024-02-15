@@ -9,17 +9,20 @@ import { Router, Request, Response } from "express";
 import { App } from "../types";
 // External imports
 import express from "express";
+import axios, { AxiosResponse } from "axios";
 // Internale import
 import { authenticateUser } from "../utils/passport_utils";
 import { addApp, deleteApp, getAppByName, getApps } from "../model/app";
+import { filterHTMLContent, addBaseAddress } from "../utils/content_util";
+
 
 export var router: Router = express.Router();
 // Routes
-router.use(authenticateUser);
+//router.use(authenticateUser);
 router.get('/',  getAppsView);
 router.post('/', addAppView);
 router.get('/delete/:name', deleteAppView);
-router.get('/installed/:name', getAppiFrame);
+router.get('/content/:name', getAppContent);
 
 /**
  * Renders the view of the overview of all apps
@@ -96,18 +99,38 @@ async function deleteAppView(req: Request, res: Response): Promise<void> {
     }
 }
 
+
 /**
- * Renders the view for an app with an iFrame to the interface of an app
+ * Renders the view for an app by fetching the html of an app
+ * Replaces the urls to point to the correct path
  * 
  * @param req 
  * @param res 
  */
-async function getAppiFrame(req: Request, res: Response): Promise<void> {
+async function getAppContent(req: Request, res: Response): Promise<void> {
     let name: string = decodeURIComponent(req.params["name"]);
     let app: App = await getAppByName(name);
 
-    res.render('app-iframe', { 
-        address: "http://"+app.address.trim(),
-        token: app.token,
-     });
+    let url: string = req.query["url"]?.toString() ?? "";
+    let address: string = "http://" + app.address + "/" + url
+    console.log(address);
+
+    let response: AxiosResponse = await axios.get(address, {
+        headers: {
+            Authorization: "Bearer " + app.token
+        }
+    });
+
+    let content: string = response.data;
+    
+    let header = filterHTMLContent(content, "head");
+    let body = filterHTMLContent(content, "body");
+
+    header = addBaseAddress(header, app.address, "/apps/content/" + req.params["name"] + "/");
+    body = addBaseAddress(body, app.address, "/apps/content/" + req.params["name"] + "/");
+
+    res.render('app-content', {
+        header: header,
+        content: body
+    });
 }

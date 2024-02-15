@@ -2,6 +2,7 @@
 {{#> html_head}}
     {{!Add custom scripts}}
     <link rel="stylesheet" href="/static/css/app-iframe.css">
+    {{#each header}}{{{this}}}{{/each}}
 {{/html_head}}
 
 <body>
@@ -9,10 +10,7 @@
     {{> navbar}}
 
     {{!Fill content}}
-    <div id="content">
-       <iframe src="{{address}}?access_token={{token}}" frameborder="0">
-       </iframe>
-    </div>
+    {{#each content}}{{{this}}}{{/each}}
 
     {{!Add footer}}
     {{> footer}}
