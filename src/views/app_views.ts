@@ -115,7 +115,6 @@ async function getAppContent(req: Request, res: Response): Promise<void> {
 
     let url: string = req.query["url"]?.toString() ?? "";
     let address: string = "http://" + app.address + "/" + url
-    console.log(address);
     
     try {
         let response: AxiosResponse = await axios.get(address, {
@@ -139,6 +138,6 @@ async function getAppContent(req: Request, res: Response): Promise<void> {
         });
     } catch (e) {
         console.log(e);
-        res.send(500).end();
+        res.sendStatus(500).end();
     }
 }
