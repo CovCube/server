@@ -22,9 +22,9 @@
   "author": "ArcticFall",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ArcticFall/cube2_server/issues"
+    "url": "https://github.com/Cube-Kit/server/issues"
   },
-  "homepage": "https://github.com/ArcticFall/cube2_server#readme",
+  "homepage": "https://github.com/Cube-Kit/server#readme",
   "dependencies": {
     "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
