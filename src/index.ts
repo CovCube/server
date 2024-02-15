@@ -146,6 +146,7 @@ export function updateHelmetCSP() {
     // Get apps
     let apps: Array<App> = getAvailableApps();
     // Define standard directives
+    let default_src: Array<string> = ["'self'"];
     let frame_src: Array<string> = ["'self'"];
     let script_src: Array<string> = ["'self'"];
     let style_src: Array<string> = ["'self'", "https: 'unsafe-inline'"];
@@ -153,15 +154,12 @@ export function updateHelmetCSP() {
     // Add custom directives
     apps.forEach((app: App) => {
         if (app.address !== '') {
+            default_src.push(app.address);
             frame_src.push(app.address);
             script_src.push(app.address);
             style_src.push(app.address);
         }
     });
-
-    console.log(frame_src);
-    console.log(script_src);
-    console.log(style_src);
 
     // Remove existing helmet middleware from stack
     let stack: Array<any> = app._router.stack;
@@ -184,6 +182,7 @@ export function updateHelmetCSP() {
 
     // Add directives into an object
     let directives: any = {
+        "default-src": default_src,
         "frame-src": frame_src,
         "script-src": script_src,
         "style-src": style_src,

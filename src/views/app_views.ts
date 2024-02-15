@@ -15,10 +15,12 @@ import { authenticateUser } from "../utils/passport_utils";
 import { addApp, deleteApp, getAppByName, getApps } from "../model/app";
 import { filterHTMLContent, addBaseAddress } from "../utils/content_util";
 
-
 export var router: Router = express.Router();
-// Routes
+
+// TODO: reenable
 //router.use(authenticateUser);
+
+// Routes
 router.get('/',  getAppsView);
 router.post('/', addAppView);
 router.get('/delete/:name', deleteAppView);
@@ -114,23 +116,29 @@ async function getAppContent(req: Request, res: Response): Promise<void> {
     let url: string = req.query["url"]?.toString() ?? "";
     let address: string = "http://" + app.address + "/" + url
     console.log(address);
-
-    let response: AxiosResponse = await axios.get(address, {
-        headers: {
-            Authorization: "Bearer " + app.token
-        }
-    });
-
-    let content: string = response.data;
     
-    let header = filterHTMLContent(content, "head");
-    let body = filterHTMLContent(content, "body");
+    try {
+        let response: AxiosResponse = await axios.get(address, {
+            headers: {
+                Authorization: "Bearer " + app.token
+            }
+        });
 
-    header = addBaseAddress(header, app.address, "/apps/content/" + req.params["name"] + "/");
-    body = addBaseAddress(body, app.address, "/apps/content/" + req.params["name"] + "/");
+        let content: string = response.data;
+        
+        let header = filterHTMLContent(content, "head");
+        let body = filterHTMLContent(content, "body");
 
-    res.render('app-content', {
-        header: header,
-        content: body
-    });
+        header = addBaseAddress(header, app.address, "/apps/content/" + req.params["name"] + "/");
+        body = addBaseAddress(body, app.address, "/apps/content/" + req.params["name"] + "/");
+
+        res.render('app-content', {
+            header: header,
+            content: body,
+            appAddress: app.address
+        });
+    } catch (e) {
+        console.log(e);
+        res.send(500).end();
+    }
 }

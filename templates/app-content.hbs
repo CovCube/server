@@ -9,6 +9,8 @@
     {{!Add navbar}}
     {{> navbar}}
 
+    <input id="appAddress" type="hidden" value="{{appAddress}}">
+
     {{!Fill content}}
     {{#each content}}{{{this}}}{{/each}}
 
