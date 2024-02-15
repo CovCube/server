@@ -136,6 +136,8 @@ async function setupServer(): Promise<void> {
         setupPassport();
         // Setup mqtt
         await setupMQTT();
+        // Setup helmet
+        updateHelmetCSP();
     } catch(err) {
         console.log(err);
     }
