@@ -34,7 +34,9 @@ services:
     networks:
       - "cube"
     volumes:
-      - "/var/lib/postgres/data:/var/lib/postgres/data"
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgres/data
     env_file:
       - "./postgres.env"
     environment:
@@ -65,3 +67,6 @@ services:
 networks:
   cube:
     name: cubekit
+
+volumes:
+  postgres_data:
